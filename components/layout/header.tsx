@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { LinkButton } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server";
+import { UserMenu } from "@/components/layout/user-menu";
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
     <header className="border-b border-[var(--color-line)] bg-[var(--color-paper)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
@@ -22,15 +27,24 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/auth/login"
-            className="hidden text-sm font-medium hover:text-[var(--color-rust)] sm:block"
-          >
-            Sign in
-          </Link>
-          <LinkButton href="/auth/signup" size="sm">
-            Create free account
-          </LinkButton>
+          {user ? (
+            <UserMenu
+              email={user.email ?? ""}
+              name={user.user_metadata?.full_name}
+            />
+          ) : (
+            <>
+              <Link
+                href="/auth/login"
+                className="hidden text-sm font-medium hover:text-[var(--color-rust)] sm:block"
+              >
+                Sign in
+              </Link>
+              <LinkButton href="/auth/signup" size="sm">
+                Create free account
+              </LinkButton>
+            </>
+          )}
         </div>
       </div>
     </header>
