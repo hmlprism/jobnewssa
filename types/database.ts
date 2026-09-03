@@ -1,4 +1,5 @@
 export type UserRole = "job_seeker" | "employer" | "admin";
+export type WorkAuthorization = "citizen" | "permanent_resident" | "work_permit" | "other";
 export type ContractType =
   | "permanent"
   | "part_time"
@@ -20,6 +21,20 @@ export interface Profile {
   headline: string | null;
   resume_url: string | null;
   avatar_url: string | null;
+  // Qualifications
+  nqf_level: string | null;
+  qualification_title: string | null;
+  qualification_type: string | null;
+  professional_registration: string | null;
+  // Work authorisation
+  work_authorization: WorkAuthorization | null;
+  // Job preferences (used for future candidate matching)
+  preferred_province: string | null;
+  preferred_contract_type: ContractType | null;
+  desired_salary_min: number | null;
+  // Private — owner-only via security definer RPC; never returned by select *
+  disability_status: string | null;
+  ee_designation: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -63,6 +78,8 @@ export interface Job {
   salary_is_market_related: boolean;
   ee_aa_only: boolean;
   disabled_only: boolean;
+  employment_equity_note: string | null;
+  accommodation_contact: string | null;
   source: JobSource;
   external_id: string | null;
   external_url: string | null;

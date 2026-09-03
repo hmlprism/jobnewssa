@@ -15,18 +15,28 @@ export default async function ProfileEditPage() {
 
   if (!user) redirect("/auth/login");
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  // select("*") returns all columns the authenticated role can see.
+  // disability_status and ee_designation are revoked from the authenticated
+  // role at the column-privilege level, so they are absent from this result.
+  // They are fetched separately via a security-definer RPC that enforces
+  // owner-only access at the database level.
+  const [{ data: profile }, { data: sensitiveRows }] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", user.id).single(),
+    supabase.rpc("get_my_sensitive_profile_fields").maybeSingle(),
+  ]);
+
+  const fullProfile: Profile = {
+    ...(profile as Profile),
+    disability_status: (sensitiveRows as { disability_status: string | null } | null)?.disability_status ?? null,
+    ee_designation: (sensitiveRows as { ee_designation: string | null } | null)?.ee_designation ?? null,
+  };
 
   return (
     <>
       <SiteHeader />
       <main className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
         <h1 className="mb-8 font-display text-2xl">My profile</h1>
-        <ProfileEditForm profile={profile as Profile} userId={user.id} />
+        <ProfileEditForm profile={fullProfile} userId={user.id} />
       </main>
       <SiteFooter />
     </>
