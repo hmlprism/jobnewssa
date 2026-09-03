@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -136,66 +135,53 @@ export default function PostJobPage() {
 
   if (authState === "loading") {
     return (
-      <>
-        <SiteHeader />
-        <main className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-          <div className="h-40 animate-pulse bg-[var(--color-paper-dim)]" />
-        </main>
-      </>
+      <main className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+        <div className="h-40 animate-pulse bg-[var(--color-paper-dim)]" />
+      </main>
     );
   }
 
   if (authState === "signed_out") {
     return (
-      <>
-        <SiteHeader />
-        <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
-          <h1 className="font-display text-2xl">Sign in to post a job</h1>
-          <p className="mt-2 text-sm text-[var(--color-muted)]">
-            You need an employer account to post vacancies.
-          </p>
-          <Link
-            href="/auth/signup"
-            className="mt-6 inline-flex bg-[var(--color-rust)] px-6 py-3 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
-          >
-            Create employer account
-          </Link>
-        </main>
-      </>
+      <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
+        <h1 className="font-display text-2xl">Sign in to post a job</h1>
+        <p className="mt-2 text-sm text-[var(--color-muted)]">
+          You need an employer account to post vacancies.
+        </p>
+        <Link
+          href="/auth/signup"
+          className="mt-6 inline-flex bg-[var(--color-rust)] px-6 py-3 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
+        >
+          Create employer account
+        </Link>
+      </main>
     );
   }
 
   if (authState === "wrong_role") {
     return (
-      <>
-        <SiteHeader />
-        <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
-          <h1 className="font-display text-2xl">Employer account required</h1>
-          <p className="mt-2 text-sm text-[var(--color-muted)]">
-            Your account is registered as a job seeker. Contact support to switch to an employer account.
-          </p>
-        </main>
-      </>
+      <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
+        <h1 className="font-display text-2xl">Employer account required</h1>
+        <p className="mt-2 text-sm text-[var(--color-muted)]">
+          Your account is registered as a job seeker. Contact support to switch to an employer account.
+        </p>
+      </main>
     );
   }
 
   if (success) {
     return (
-      <>
-        <SiteHeader />
-        <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
-          <h1 className="font-display text-2xl">Job posted</h1>
-          <p className="mt-2 text-sm text-[var(--color-muted)]">
-            Your vacancy is live. Redirecting to your dashboard…
-          </p>
-        </main>
-      </>
+      <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
+        <h1 className="font-display text-2xl">Job posted</h1>
+        <p className="mt-2 text-sm text-[var(--color-muted)]">
+          Your vacancy is live. Redirecting to your dashboard…
+        </p>
+      </main>
     );
   }
 
   return (
     <>
-      <SiteHeader />
       <main className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
         <h1 className="font-display text-2xl">Post a job</h1>
         <p className="mt-1 text-sm text-[var(--color-muted)]">

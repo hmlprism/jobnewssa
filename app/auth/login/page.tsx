@@ -4,7 +4,6 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { SiteHeader } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
@@ -30,9 +29,7 @@ export default function LoginPage() {
   }
 
   return (
-    <>
-      <SiteHeader />
-      <main className="mx-auto max-w-sm px-4 py-16 sm:px-6">
+    <main className="mx-auto max-w-sm px-4 py-16 sm:px-6">
         <h1 className="font-display text-2xl">Sign in</h1>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
           Welcome back. Search and apply for jobs across South Africa.
@@ -55,8 +52,7 @@ export default function LoginPage() {
             Create one
           </Link>
         </p>
-      </main>
-    </>
+    </main>
   );
 }
 

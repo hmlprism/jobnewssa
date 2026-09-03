@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { SiteHeader } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
 import type { UserRole } from "@/types/database";
 
@@ -40,22 +39,17 @@ export default function SignupPage() {
 
   if (done) {
     return (
-      <>
-        <SiteHeader />
-        <main className="mx-auto max-w-sm px-4 py-16 sm:px-6 text-center">
-          <h1 className="font-display text-2xl">Check your email</h1>
-          <p className="mt-2 text-sm text-[var(--color-muted)]">
-            We&apos;ve sent a confirmation link to {email}. Click it to activate your account.
-          </p>
-        </main>
-      </>
+      <main className="mx-auto max-w-sm px-4 py-16 sm:px-6 text-center">
+        <h1 className="font-display text-2xl">Check your email</h1>
+        <p className="mt-2 text-sm text-[var(--color-muted)]">
+          We&apos;ve sent a confirmation link to {email}. Click it to activate your account.
+        </p>
+      </main>
     );
   }
 
   return (
-    <>
-      <SiteHeader />
-      <main className="mx-auto max-w-sm px-4 py-16 sm:px-6">
+    <main className="mx-auto max-w-sm px-4 py-16 sm:px-6">
         <h1 className="font-display text-2xl">Create your account</h1>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
           Free for job seekers and employers.
@@ -99,8 +93,7 @@ export default function SignupPage() {
             Sign in
           </Link>
         </p>
-      </main>
-    </>
+    </main>
   );
 }
 
