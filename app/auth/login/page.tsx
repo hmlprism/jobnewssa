@@ -25,8 +25,8 @@ export default function LoginPage() {
       setLoading(false);
       return;
     }
-    router.push("/jobs");
     router.refresh();
+    router.push("/jobs");
   }
 
   return (
