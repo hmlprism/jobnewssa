@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export function ApplyPanel({ jobId }: { jobId: string }) {
-  const [status, setStatus] = useState<"loading" | "signed_out" | "ready" | "applied" | "submitting">(
+  const [status, setStatus] = useState<"loading" | "signed_out" | "no_resume" | "ready" | "applied" | "submitting">(
     "loading"
   );
   const [coverNote, setCoverNote] = useState("");
@@ -19,12 +19,19 @@ export function ApplyPanel({ jobId }: { jobId: string }) {
         setStatus("signed_out");
         return;
       }
-      const { data: existing } = await supabase
-        .from("applications")
-        .select("id")
-        .eq("job_id", jobId)
-        .eq("applicant_id", user.id)
-        .maybeSingle();
+      const [{ data: profile }, { data: existing }] = await Promise.all([
+        supabase.from("profiles").select("resume_url").eq("id", user.id).single(),
+        supabase
+          .from("applications")
+          .select("id")
+          .eq("job_id", jobId)
+          .eq("applicant_id", user.id)
+          .maybeSingle(),
+      ]);
+      if (!profile?.resume_url) {
+        setStatus("no_resume");
+        return;
+      }
       setStatus(existing ? "applied" : "ready");
     });
   }, [jobId]);
@@ -68,6 +75,22 @@ export function ApplyPanel({ jobId }: { jobId: string }) {
           className="inline-flex w-full justify-center bg-[var(--color-rust)] px-4 py-2.5 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
         >
           Sign in to apply
+        </Link>
+      </div>
+    );
+  }
+
+  if (status === "no_resume") {
+    return (
+      <div className="border border-[var(--color-line)] px-4 py-4">
+        <p className="mb-3 text-sm text-[var(--color-muted)]">
+          You need to upload a resume before you can apply.
+        </p>
+        <Link
+          href="/profile/edit"
+          className="inline-flex w-full justify-center bg-[var(--color-rust)] px-4 py-2.5 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
+        >
+          Complete your profile
         </Link>
       </div>
     );
