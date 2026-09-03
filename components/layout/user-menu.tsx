@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export function UserMenu({ email, name }: { email: string; name?: string }) {
+export function UserMenu({ email, name, role }: { email: string; name?: string; role?: string | null }) {
   const router = useRouter();
 
   async function handleSignOut() {
@@ -20,6 +20,14 @@ export function UserMenu({ email, name }: { email: string; name?: string }) {
       <span className="hidden text-sm font-medium text-[var(--color-ink)] sm:block">
         {name ?? email}
       </span>
+      {role === "employer" && (
+        <Link
+          href="/employer/dashboard"
+          className="hidden text-sm font-medium hover:text-[var(--color-rust)] sm:block"
+        >
+          Dashboard
+        </Link>
+      )}
       <Link
         href="/profile/edit"
         className="hidden text-sm font-medium hover:text-[var(--color-rust)] sm:block"

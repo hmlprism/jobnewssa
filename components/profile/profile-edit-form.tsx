@@ -193,7 +193,7 @@ export function ProfileEditForm({
                 type="button"
                 onClick={handleViewResume}
                 disabled={viewingResume}
-                className="text-sm font-medium text-[var(--color-rust)] underline underline-offset-2 hover:text-[var(--color-rust-dark)] disabled:opacity-50"
+                className="cursor-pointer text-sm font-medium text-[var(--color-rust)] underline underline-offset-2 hover:text-[var(--color-rust-dark)] disabled:opacity-50"
               >
                 {viewingResume ? "Opening…" : "View resume"}
               </button>

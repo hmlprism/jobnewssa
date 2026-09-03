@@ -6,7 +6,7 @@ type Variant = "primary" | "secondary" | "ghost";
 type Size = "sm" | "md";
 
 const base =
-  "inline-flex items-center justify-center gap-2 font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex cursor-pointer items-center justify-center gap-2 font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none";
 
 const variants: Record<Variant, string> = {
   primary: "bg-[var(--color-rust)] text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]",

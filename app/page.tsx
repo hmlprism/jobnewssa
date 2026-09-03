@@ -46,7 +46,7 @@ export default async function Home() {
             </div>
             <button
               type="submit"
-              className="bg-[var(--color-ink)] px-6 py-3 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-ink)]/90"
+              className="cursor-pointer bg-[var(--color-ink)] px-6 py-3 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-ink)]/90"
             >
               Search jobs
             </button>

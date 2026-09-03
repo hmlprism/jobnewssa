@@ -102,7 +102,7 @@ function RoleButton({ active, onClick, label }: { active: boolean; onClick: () =
     <button
       type="button"
       onClick={onClick}
-      className={`border px-3 py-2.5 text-sm font-medium transition-colors ${
+      className={`cursor-pointer border px-3 py-2.5 text-sm font-medium transition-colors ${
         active
           ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-[var(--color-paper)]"
           : "border-[var(--color-line)] hover:border-[var(--color-ink)]"

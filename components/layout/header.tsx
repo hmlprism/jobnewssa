@@ -7,6 +7,16 @@ export async function SiteHeader() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  let role: string | null = null;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    role = profile?.role ?? null;
+  }
+
   return (
     <header className="border-b border-[var(--color-line)] bg-[var(--color-paper)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
@@ -31,6 +41,7 @@ export async function SiteHeader() {
             <UserMenu
               email={user.email ?? ""}
               name={user.user_metadata?.full_name}
+              role={role}
             />
           ) : (
             <>
