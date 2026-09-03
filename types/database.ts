@@ -80,6 +80,8 @@ export interface Job {
   disabled_only: boolean;
   employment_equity_note: string | null;
   accommodation_contact: string | null;
+  required_nqf_level: string | null;
+  required_qualification_type: string | null;
   source: JobSource;
   external_id: string | null;
   external_url: string | null;

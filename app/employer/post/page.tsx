@@ -7,6 +7,34 @@ import { SiteFooter } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { SA_PROVINCES, CONTRACT_TYPE_LABELS, type ContractType, type Sector } from "@/types/database";
+
+const NQF_LEVELS = [
+  { value: "1", label: "Level 1 — Grade 9" },
+  { value: "2", label: "Level 2 — Grade 10" },
+  { value: "3", label: "Level 3 — Grade 11" },
+  { value: "4", label: "Level 4 — National Senior Certificate (Matric)" },
+  { value: "5", label: "Level 5 — Higher Certificate" },
+  { value: "6", label: "Level 6 — Diploma / Advanced Certificate" },
+  { value: "7", label: "Level 7 — Bachelor's Degree / Advanced Diploma" },
+  { value: "8", label: "Level 8 — Honours / Postgraduate Diploma" },
+  { value: "9", label: "Level 9 — Master's Degree" },
+  { value: "10", label: "Level 10 — Doctoral Degree" },
+];
+
+const QUALIFICATION_TYPES = [
+  "Certificate",
+  "Higher Certificate",
+  "Diploma",
+  "Advanced Certificate",
+  "Advanced Diploma",
+  "Bachelor's Degree",
+  "Bachelor Honours Degree",
+  "Postgraduate Diploma",
+  "Professional Degree",
+  "Master's Degree",
+  "Doctoral Degree",
+  "Other",
+];
 import { slugify } from "@/lib/slug";
 
 export default function PostJobPage() {
@@ -25,6 +53,11 @@ export default function PostJobPage() {
   const [salaryMin, setSalaryMin] = useState("");
   const [salaryMax, setSalaryMax] = useState("");
   const [marketRelated, setMarketRelated] = useState(true);
+
+  const [eeNote, setEeNote] = useState("");
+  const [accommodationContact, setAccommodationContact] = useState("");
+  const [requiredNqfLevel, setRequiredNqfLevel] = useState("");
+  const [requiredQualificationType, setRequiredQualificationType] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -120,6 +153,10 @@ export default function PostJobPage() {
       status: "published",
       posted_at: new Date().toISOString(),
       expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      employment_equity_note: eeNote || null,
+      accommodation_contact: accommodationContact || null,
+      required_nqf_level: requiredNqfLevel || null,
+      required_qualification_type: requiredQualificationType || null,
     });
 
     if (jobError) {
@@ -280,6 +317,61 @@ export default function PostJobPage() {
               <Field label="Max salary (R/month)" type="number" value={salaryMax} onChange={setSalaryMax} />
             </div>
           )}
+
+          <div className="grid grid-cols-2 gap-4">
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium">
+                Min. NQF level required{" "}
+                <span className="font-normal text-[var(--color-muted)]">(optional)</span>
+              </span>
+              <select
+                value={requiredNqfLevel}
+                onChange={(e) => setRequiredNqfLevel(e.target.value)}
+                className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm"
+              >
+                <option value="">No minimum</option>
+                {NQF_LEVELS.map(({ value, label }) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium">
+                Required qualification type{" "}
+                <span className="font-normal text-[var(--color-muted)]">(optional)</span>
+              </span>
+              <select
+                value={requiredQualificationType}
+                onChange={(e) => setRequiredQualificationType(e.target.value)}
+                className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm"
+              >
+                <option value="">No specific requirement</option>
+                {QUALIFICATION_TYPES.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <label className="block">
+            <span className="mb-1.5 block text-sm font-medium">
+              Employment Equity / Affirmative Action statement{" "}
+              <span className="font-normal text-[var(--color-muted)]">(optional)</span>
+            </span>
+            <textarea
+              value={eeNote}
+              onChange={(e) => setEeNote(e.target.value)}
+              rows={3}
+              className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] p-3 text-sm"
+              placeholder="e.g. Preference will be given to candidates from designated groups as defined in the Employment Equity Act."
+            />
+          </label>
+
+          <Field
+            label="Accessibility accommodation contact (optional)"
+            value={accommodationContact}
+            onChange={setAccommodationContact}
+          />
 
           {error && <p className="text-sm text-[var(--color-rust)]">{error}</p>}
 

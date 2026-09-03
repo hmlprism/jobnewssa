@@ -40,23 +40,35 @@ export default async function EmployerDashboard() {
           </div>
         ) : (
           <div className="border-t border-[var(--color-line)]">
-            {jobs.map((job) => (
-              <Link
-                key={job.id}
-                href={`/jobs/${job.slug}`}
-                className="flex items-center justify-between border-b border-[var(--color-line)] px-1 py-4 hover:bg-[var(--color-paper-dim)]"
-              >
-                <div>
-                  <h3 className="font-medium">{job.title}</h3>
-                  <p className="text-sm text-[var(--color-muted)]">
-                    Posted {timeAgo(job.posted_at)} · {job.status}
-                  </p>
+            {jobs.map((job) => {
+              const count =
+                (job as unknown as { applications: { count: number }[] })
+                  .applications?.[0]?.count ?? 0;
+              return (
+                <div
+                  key={job.id}
+                  className="flex items-center justify-between border-b border-[var(--color-line)] px-1 py-4"
+                >
+                  <div>
+                    <Link
+                      href={`/jobs/${job.slug}`}
+                      className="font-medium hover:text-[var(--color-rust)]"
+                    >
+                      {job.title}
+                    </Link>
+                    <p className="text-sm text-[var(--color-muted)]">
+                      Posted {timeAgo(job.posted_at)} · {job.status}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/employer/dashboard/${job.id}/applicants`}
+                    className="shrink-0 text-sm font-medium text-[var(--color-rust)] hover:underline"
+                  >
+                    View applicants ({count})
+                  </Link>
                 </div>
-                <span className="text-sm text-[var(--color-muted)]">
-                  {(job as unknown as { applications: { count: number }[] }).applications?.[0]?.count ?? 0} applicants
-                </span>
-              </Link>
-            ))}
+              );
+            })}
           </div>
         )}
       </main>
