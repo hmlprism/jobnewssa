@@ -75,6 +75,8 @@ export function ProfileEditForm({
   // Resume
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [hasResume, setHasResume] = useState(!!profile.resume_url);
+  const [resumePath, setResumePath] = useState(profile.resume_url);
+  const [viewingResume, setViewingResume] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Qualifications
@@ -103,6 +105,17 @@ export function ProfileEditForm({
 
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+
+  async function handleViewResume() {
+    if (!resumePath) return;
+    setViewingResume(true);
+    const supabase = createClient();
+    const { data } = await supabase.storage
+      .from("resumes")
+      .createSignedUrl(resumePath, 60);
+    setViewingResume(false);
+    if (data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -153,7 +166,10 @@ export function ProfileEditForm({
       return;
     }
 
-    if (resumeFile) setHasResume(true);
+    if (resumeFile) {
+      setHasResume(true);
+      setResumePath(resume_url);
+    }
     setSaveStatus("saved");
     setResumeFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
@@ -171,13 +187,35 @@ export function ProfileEditForm({
             <span className="font-normal text-[var(--color-muted)]">(PDF, max 5 MB)</span>
           </label>
           {hasResume && (
-            <p className="mb-2 text-sm text-[var(--color-green)]">Resume on file</p>
+            <div className="mb-3 flex items-center gap-3">
+              <p className="text-sm text-[var(--color-green)]">Resume on file</p>
+              <button
+                type="button"
+                onClick={handleViewResume}
+                disabled={viewingResume}
+                className="text-sm font-medium text-[var(--color-rust)] underline underline-offset-2 hover:text-[var(--color-rust-dark)] disabled:opacity-50"
+              >
+                {viewingResume ? "Opening…" : "View resume"}
+              </button>
+            </div>
           )}
+          <div className="flex items-center gap-3">
+            <label
+              htmlFor="resume-upload"
+              className="inline-flex cursor-pointer items-center border border-[var(--color-ink)] bg-[var(--color-paper)] px-3 py-1.5 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)]"
+            >
+              Choose file
+            </label>
+            {resumeFile && (
+              <span className="text-sm text-[var(--color-muted)]">{resumeFile.name}</span>
+            )}
+          </div>
           <input
             ref={fileInputRef}
+            id="resume-upload"
             type="file"
             accept="application/pdf"
-            className="block text-sm text-[var(--color-ink)]"
+            className="sr-only"
             onChange={(e) => {
               const file = e.target.files?.[0] ?? null;
               if (file && file.size > 5 * 1024 * 1024) {
