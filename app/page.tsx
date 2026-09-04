@@ -5,6 +5,8 @@ import { searchJobs, getAllSectors } from "@/lib/jobs-query";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
+export const revalidate = 60;
+
 export default async function Home() {
   const [{ jobs, count }, sectors] = await Promise.all([
     searchJobs({}),

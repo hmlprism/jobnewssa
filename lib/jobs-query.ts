@@ -1,4 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createRawClient } from "@supabase/supabase-js";
+import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import type { Job } from "@/types/database";
 
 export interface JobSearchFilters {
@@ -67,13 +70,28 @@ export async function searchJobs(filters: JobSearchFilters) {
   };
 }
 
+// Sectors change rarely — cache for 1 hour. Uses a plain anon client (no
+// cookies) so it can safely run inside unstable_cache's cross-request scope.
+const getCachedSectors = unstable_cache(
+  async () => {
+    const supabase = createRawClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data } = await supabase.from("sectors").select("*").order("name");
+    return data ?? [];
+  },
+  ["all-sectors"],
+  { revalidate: 3600, tags: ["sectors"] }
+);
+
 export async function getAllSectors() {
-  const supabase = await createClient();
-  const { data } = await supabase.from("sectors").select("*").order("name");
-  return data ?? [];
+  return getCachedSectors();
 }
 
-export async function getJobBySlug(slug: string) {
+// React.cache deduplicates getJobBySlug calls within a single request so
+// generateMetadata and the page component share one DB round-trip.
+export const getJobBySlug = cache(async (slug: string) => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("jobs")
@@ -82,4 +100,4 @@ export async function getJobBySlug(slug: string) {
     .eq("status", "published")
     .single();
   return data as unknown as Job | null;
-}
+});
