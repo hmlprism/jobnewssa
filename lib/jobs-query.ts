@@ -12,19 +12,35 @@ export interface JobSearchFilters {
   min_salary?: string;
   remote?: string;
   page?: string;
+  limit?: number;
 }
 
 const PAGE_SIZE = 20;
 
+// Fields needed by JobCard — omits description (potentially huge) and other
+// columns not rendered in the listing view. getJobBySlug keeps full select.
+const LISTING_SELECT =
+  "id, title, slug, company_name_raw, province, city, is_remote, " +
+  "contract_type, salary_min, salary_max, salary_is_market_related, " +
+  "source, posted_at, expires_at, " +
+  "company:companies(id, name, slug, verified)";
+
 export async function searchJobs(filters: JobSearchFilters) {
   const supabase = await createClient();
+  const pageSize = filters.limit ?? PAGE_SIZE;
   const page = Math.max(1, parseInt(filters.page ?? "1", 10) || 1);
-  const from = (page - 1) * PAGE_SIZE;
-  const to = from + PAGE_SIZE - 1;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  // When filtering by sector, use !inner join so PostgREST filters parent rows
+  // directly — no separate sector-ID round-trip needed.
+  const sectorJoin = filters.sector
+    ? "sector:sectors!inner(id, name, slug)"
+    : "sector:sectors(id, name, slug)";
 
   let query = supabase
     .from("jobs")
-    .select("*, company:companies(*), sector:sectors(*)", { count: "exact" })
+    .select(`${LISTING_SELECT}, ${sectorJoin}`, { count: "exact" })
     .eq("status", "published")
     .order("posted_at", { ascending: false })
     .range(from, to);
@@ -45,14 +61,8 @@ export async function searchJobs(filters: JobSearchFilters) {
     query = query.eq("is_remote", true);
   }
   if (filters.sector) {
-    const { data: sectorRow } = await supabase
-      .from("sectors")
-      .select("id")
-      .eq("slug", filters.sector)
-      .single();
-    if (sectorRow) {
-      query = query.eq("sector_id", sectorRow.id);
-    }
+    // Filter on the embedded sector alias — resolved by PostgREST in one query.
+    query = query.eq("sector.slug", filters.sector);
   }
 
   const { data, error, count } = await query;
@@ -66,7 +76,7 @@ export async function searchJobs(filters: JobSearchFilters) {
     jobs: (data ?? []) as unknown as Job[],
     count: count ?? 0,
     page,
-    pageCount: Math.max(1, Math.ceil((count ?? 0) / PAGE_SIZE)),
+    pageCount: Math.max(1, Math.ceil((count ?? 0) / pageSize)),
   };
 }
 

@@ -8,13 +8,12 @@ import { Search } from "lucide-react";
 export const revalidate = 60;
 
 export default async function Home() {
-  const [{ jobs, count }, sectors] = await Promise.all([
-    searchJobs({}),
+  const [{ jobs: recentJobs, count }, sectors] = await Promise.all([
+    searchJobs({ limit: 8 }),
     getAllSectors(),
   ]);
 
   const topSectors = sectors.slice(0, 12);
-  const recentJobs = jobs.slice(0, 8);
 
   return (
     <>
