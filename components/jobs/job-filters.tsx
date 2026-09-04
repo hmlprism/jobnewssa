@@ -74,6 +74,7 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
 
       <FilterGroup label="Province">
         <select
+          aria-label="Province"
           value={activeProvince ?? ""}
           onChange={(e) => setParam("province", e.target.value || null)}
           className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-sm"
@@ -89,6 +90,7 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
 
       <FilterGroup label="Sector">
         <select
+          aria-label="Sector"
           value={activeSector ?? ""}
           onChange={(e) => setParam("sector", e.target.value || null)}
           className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-sm"
