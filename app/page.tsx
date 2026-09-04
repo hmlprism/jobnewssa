@@ -1,15 +1,20 @@
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { JobCard } from "@/components/jobs/job-card";
-import { searchJobs, getAllSectors } from "@/lib/jobs-query";
+import { getCachedRecentJobs, getCachedJobCount, getAllSectors } from "@/lib/jobs-query";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
-export const revalidate = 60;
+// SiteHeader reads cookies() on every request, making this page dynamic by
+// nature. Declare it explicitly so Next.js doesn't attempt a build-time
+// prerender (which would call the unstable_cache callbacks before env vars
+// are available in the build environment).
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [{ jobs: recentJobs, count }, sectors] = await Promise.all([
-    searchJobs({ limit: 8 }),
+  const [recentJobs, count, sectors] = await Promise.all([
+    getCachedRecentJobs(),
+    getCachedJobCount(),
     getAllSectors(),
   ]);
 

@@ -80,6 +80,54 @@ export async function searchJobs(filters: JobSearchFilters) {
   };
 }
 
+// Homepage: 8 most-recent published jobs, cached 60 s.
+// Uses a plain anon client — no cookies — so unstable_cache can persist the
+// result across requests without being forced dynamic.
+const _cachedRecentJobs = unstable_cache(
+  async () => {
+    const supabase = createRawClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data } = await supabase
+      .from("jobs")
+      .select(`${LISTING_SELECT}, sector:sectors(id, name, slug)`)
+      .eq("status", "published")
+      .order("posted_at", { ascending: false })
+      .range(0, 7);
+    return (data ?? []) as unknown as Job[];
+  },
+  ["recent-jobs-home"],
+  { revalidate: 60, tags: ["jobs"] }
+);
+
+export async function getCachedRecentJobs() {
+  return _cachedRecentJobs();
+}
+
+// Total count of published jobs for the "N vacancies live" stat, cached 60 s.
+// Uses a HEAD request (head: true) so PostgREST returns only the count header,
+// no row data transferred.
+const _cachedJobCount = unstable_cache(
+  async () => {
+    const supabase = createRawClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { count } = await supabase
+      .from("jobs")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "published");
+    return count ?? 0;
+  },
+  ["published-job-count"],
+  { revalidate: 60, tags: ["jobs"] }
+);
+
+export async function getCachedJobCount() {
+  return _cachedJobCount();
+}
+
 // Sectors change rarely — cache for 1 hour. Uses a plain anon client (no
 // cookies) so it can safely run inside unstable_cache's cross-request scope.
 const getCachedSectors = unstable_cache(
