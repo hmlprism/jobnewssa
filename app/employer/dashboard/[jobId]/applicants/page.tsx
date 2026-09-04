@@ -1,4 +1,4 @@
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient, getAuthUser } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
@@ -42,12 +42,10 @@ export default async function ApplicantsPage({
 }) {
   const { jobId } = await params;
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getAuthUser();
   if (!user) redirect("/auth/login");
+
+  const supabase = await createClient();
 
   // Verify the signed-in user owns this job
   const { data: job } = await supabase

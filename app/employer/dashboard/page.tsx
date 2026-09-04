@@ -1,6 +1,6 @@
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getAuthUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { LinkButton } from "@/components/ui/button";
@@ -8,12 +8,10 @@ import { timeAgo } from "@/lib/utils";
 import type { Company } from "@/types/database";
 
 export default async function EmployerDashboard() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getAuthUser();
   if (!user) redirect("/auth/login");
+
+  const supabase = await createClient();
 
   const [{ data: jobs }, { data: companyData }] = await Promise.all([
     supabase

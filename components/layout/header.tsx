@@ -1,21 +1,12 @@
 import Link from "next/link";
 import { LinkButton } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { getAuthUser, getAuthProfile } from "@/lib/supabase/server";
 import { UserMenu } from "@/components/layout/user-menu";
 
 export async function SiteHeader() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  let role: string | null = null;
-  if (user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-    role = profile?.role ?? null;
-  }
+  const user = await getAuthUser();
+  const profile = user ? await getAuthProfile() : null;
+  const role = profile?.role ?? null;
 
   return (
     <header className="border-b border-[var(--color-line)] bg-[var(--color-paper)]">

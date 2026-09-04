@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getAuthUser, getAuthProfile } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
@@ -8,20 +8,15 @@ import type { Profile } from "@/types/database";
 export const metadata = { title: "My Profile" };
 
 export default async function ProfileEditPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getAuthUser();
   if (!user) redirect("/auth/login");
 
-  // select("*") returns all columns the authenticated role can see.
-  // disability_status and ee_designation are revoked from the authenticated
-  // role at the column-privilege level, so they are absent from this result.
-  // They are fetched separately via a security-definer RPC that enforces
-  // owner-only access at the database level.
-  const [{ data: profile }, { data: sensitiveRows }] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", user.id).single(),
+  // getAuthProfile() is memoised for this request — the result is shared with
+  // SiteHeader so the DB query only runs once. The RPC fetches the two
+  // column-privilege-restricted fields that select("*") cannot return.
+  const supabase = await createClient();
+  const [profile, { data: sensitiveRows }] = await Promise.all([
+    getAuthProfile(),
     supabase.rpc("get_my_sensitive_profile_fields").maybeSingle(),
   ]);
 

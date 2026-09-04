@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createRawClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
+import { cache } from "react";
+import type { Profile } from "@/types/database";
 
 // No Database generic passed to either client below — see the comment in
 // lib/supabase/client.ts for why. Query results are typed at the call-site
@@ -30,6 +32,28 @@ export async function createClient() {
     }
   );
 }
+
+// Deduplicated auth helpers — memoised per request via react.cache so that
+// every server component in the same render tree (e.g. page + SiteHeader)
+// shares one Supabase Auth round-trip instead of making independent ones.
+
+export const getAuthUser = cache(async () => {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
+});
+
+export const getAuthProfile = cache(async () => {
+  const user = await getAuthUser();
+  if (!user) return null;
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+  return data as Profile | null;
+});
 
 // Service-role client for trusted server-only operations (ingestion, admin tasks).
 // NEVER import this into client components or expose SUPABASE_SERVICE_ROLE_KEY to the browser.
