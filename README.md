@@ -1,4 +1,4 @@
-# Mzansi Works — South Africa Job Board
+# Job News SA — South Africa Job Board
 
 A job vacancies website for South Africa: search by sector, province, salary
 band, and contract type; employer job posting; job-seeker applications; and

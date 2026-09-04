@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { LinkButton } from "@/components/ui/button";
 import { timeAgo } from "@/lib/utils";
+import type { Company } from "@/types/database";
 
 export default async function EmployerDashboard() {
   const supabase = await createClient();
@@ -14,11 +15,19 @@ export default async function EmployerDashboard() {
 
   if (!user) redirect("/auth/login");
 
-  const { data: jobs } = await supabase
-    .from("jobs")
-    .select("*, applications(count)")
-    .eq("posted_by", user.id)
-    .order("posted_at", { ascending: false });
+  const [{ data: jobs }, { data: companyData }] = await Promise.all([
+    supabase
+      .from("jobs")
+      .select("*, applications(count)")
+      .eq("posted_by", user.id)
+      .order("posted_at", { ascending: false }),
+    supabase
+      .from("companies")
+      .select("id, verified, verification_method, verified_at")
+      .eq("owner_id", user.id)
+      .maybeSingle(),
+  ]);
+  const company = companyData as Company | null;
 
   return (
     <>
@@ -30,6 +39,21 @@ export default async function EmployerDashboard() {
             Post a job
           </LinkButton>
         </div>
+
+        {company && !company.verified && (
+          <div className="mb-6 border border-[var(--color-clay)] bg-[var(--color-clay-dim)] px-4 py-3 text-sm text-[var(--color-ink)]">
+            <span className="font-medium">Your employer account is unverified.</span>{" "}
+            Your jobs are visible but show an &quot;Unverified employer&quot; badge.{" "}
+            <Link href="/employer/verify" className="underline underline-offset-2 hover:text-[var(--color-rust)]">
+              Verify your account →
+            </Link>
+          </div>
+        )}
+        {company?.verified && (
+          <div className="mb-6 border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-4 py-3 text-sm text-[var(--color-indigo)]">
+            <span className="font-medium">✓ Verified employer</span> — your jobs display a verified badge.
+          </div>
+        )}
 
         {!jobs || jobs.length === 0 ? (
           <div className="border border-[var(--color-line)] px-6 py-16 text-center">

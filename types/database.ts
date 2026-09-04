@@ -50,6 +50,8 @@ export interface Company {
   province: string | null;
   city: string | null;
   verified: boolean;
+  verification_method: string | null;
+  verified_at: string | null;
   created_at: string;
 }
 

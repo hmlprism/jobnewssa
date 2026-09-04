@@ -19,8 +19,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Mzansi Works — South Africa Job Vacancies",
-    template: "%s | Mzansi Works",
+    default: "Job News SA — South Africa Jobs & Employment News",
+    template: "%s | Job News SA",
   },
   description:
     "Find real job vacancies across South Africa. Search by sector, province, salary and contract type. Free for job seekers.",

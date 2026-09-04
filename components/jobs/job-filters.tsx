@@ -35,7 +35,7 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
         {(activeProvince || activeSector || activeSalary || activeContract || remoteOnly) && (
           <button
             onClick={() => router.push(pathname)}
-            className="cursor-pointer text-xs text-[var(--color-rust)] hover:underline"
+            className="cursor-pointer text-xs text-[var(--color-muted)] hover:text-[var(--color-rust)]"
           >
             Clear all
           </button>

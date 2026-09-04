@@ -34,10 +34,23 @@ export default async function JobDetailPage({
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
         <div className="mb-6">
-          <p className="text-sm text-[var(--color-muted)]">
-            {companyName}
-            {job.city ? ` · ${job.city}` : job.province ? ` · ${job.province}` : ""}
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-[var(--color-muted)]">
+              {companyName}
+              {job.city ? ` · ${job.city}` : job.province ? ` · ${job.province}` : ""}
+            </p>
+            {job.source === "employer_direct" && job.company && (
+              job.company.verified ? (
+                <span className="border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-1.5 py-0.5 text-xs font-medium text-[var(--color-indigo)]">
+                  ✓ Verified
+                </span>
+              ) : (
+                <span className="border border-[var(--color-line)] px-1.5 py-0.5 text-xs text-[var(--color-muted)]">
+                  Unverified employer
+                </span>
+              )
+            )}
+          </div>
           <h1 className="mt-1 font-display text-3xl">{job.title}</h1>
 
           <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">

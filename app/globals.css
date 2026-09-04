@@ -4,15 +4,24 @@
   --font-display: "Fraunces", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --color-ink: #0f1e17;
+  --color-ink: #12211a;
   --color-paper: #f7f5f0;
   --color-paper-dim: #efece3;
   --color-rust: #c9481f;
   --color-rust-dark: #a53c19;
-  --color-green: #1d5c3f;
-  --color-green-dim: #e4ede8;
+  /* Saved / success states — muted sage replaces vivid green */
+  --color-green: #6b7a5e;
+  --color-green-dim: #eaede8;
+  /* Informational accent — verified employer badge, non-action */
+  --color-indigo: #2a3d66;
+  --color-indigo-dim: #eaecf3;
+  /* Closing-soon urgency — desaturated, not celebratory */
+  --color-clay: #b8804a;
+  --color-clay-dim: #f5ede0;
   --color-muted: #6b6558;
   --color-line: #ddd8ca;
+  /* Slightly darker hairline for hover states — no layout shift */
+  --color-line-hover: #c4bfb2;
 }
 
 html {

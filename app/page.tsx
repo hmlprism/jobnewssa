@@ -20,7 +20,7 @@ export default async function Home() {
 
       <section className="border-b border-[var(--color-line)]">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-          <p className="mb-4 text-sm font-medium text-[var(--color-rust)]">
+          <p className="mb-4 text-sm text-[var(--color-muted)]">
             {count.toLocaleString()} vacancies live right now
           </p>
           <h1 className="max-w-2xl font-display text-4xl leading-[1.1] sm:text-5xl">
@@ -73,8 +73,8 @@ export default async function Home() {
         <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="font-display text-xl">Recently posted</h2>
-            <Link href="/jobs" className="text-sm text-[var(--color-rust)] hover:underline">
-              View all jobs
+            <Link href="/jobs" className="text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]">
+              View all jobs →
             </Link>
           </div>
           <div className="border-t border-[var(--color-line)]">

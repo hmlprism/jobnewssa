@@ -56,14 +56,31 @@ export default async function JobsPage({
             </div>
 
             {jobs.length === 0 ? (
-              <div className="border border-[var(--color-line)] px-6 py-16 text-center">
-                <p className="font-display text-lg">No jobs match those filters</p>
-                <p className="mt-2 text-sm text-[var(--color-muted)]">
-                  Try widening your search — remove a filter or search a broader keyword.
+              <div className="border-t border-[var(--color-line)] pb-16 pt-10">
+                <h2 className="font-display text-2xl">No listings match — yet.</h2>
+                <p className="mt-3 max-w-sm text-[var(--color-muted)]">
+                  The market moves quickly. Try a broader keyword, a different province, or remove a filter.
                 </p>
-                <Link href="/jobs" className="mt-4 inline-block text-sm text-[var(--color-rust)] hover:underline">
-                  Clear filters
-                </Link>
+                <div className="mt-6 space-y-3 text-sm">
+                  <div>
+                    <Link
+                      href="/jobs"
+                      className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
+                    >
+                      Clear all filters
+                    </Link>
+                  </div>
+                  <p className="text-[var(--color-muted)]">
+                    Want to be notified when matching roles are posted?{" "}
+                    <Link
+                      href="/auth/signup"
+                      className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
+                    >
+                      Create a free account
+                    </Link>{" "}
+                    and set up a job alert.
+                  </p>
+                </div>
               </div>
             ) : (
               <div>

@@ -35,7 +35,7 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <h3 className="mb-3 text-sm font-semibold">Mzansi Works</h3>
+            <h3 className="mb-3 text-sm font-semibold">Job News SA</h3>
             <p className="text-sm text-[var(--color-muted)]">
               A free, independent job board for South Africa. Listings are
               sourced from public job feeds and direct employer submissions.
@@ -43,7 +43,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="mt-10 border-t border-[var(--color-line)] pt-6 text-xs text-[var(--color-muted)]">
-          © {new Date().getFullYear()} Mzansi Works. Not affiliated with Careers24 or any other job board.
+          © {new Date().getFullYear()} Job News SA. Not affiliated with Careers24 or any other job board.
         </div>
       </div>
     </footer>

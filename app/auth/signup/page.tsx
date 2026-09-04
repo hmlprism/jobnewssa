@@ -89,7 +89,7 @@ export default function SignupPage() {
 
         <p className="mt-6 text-sm text-[var(--color-muted)]">
           Already have an account?{" "}
-          <Link href="/auth/login" className="text-[var(--color-rust)] hover:underline">
+          <Link href="/auth/login" className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]">
             Sign in
           </Link>
         </p>

@@ -48,7 +48,7 @@ export default function LoginPage() {
 
         <p className="mt-6 text-sm text-[var(--color-muted)]">
           Don&apos;t have an account?{" "}
-          <Link href="/auth/signup" className="text-[var(--color-rust)] hover:underline">
+          <Link href="/auth/signup" className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]">
             Create one
           </Link>
         </p>

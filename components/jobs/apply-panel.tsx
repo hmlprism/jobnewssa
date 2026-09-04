@@ -98,9 +98,19 @@ export function ApplyPanel({ jobId }: { jobId: string }) {
 
   if (status === "applied") {
     return (
-      <p className="border border-[var(--color-green)] bg-[var(--color-green-dim)] px-4 py-3 text-sm font-medium text-[var(--color-green)]">
-        You&apos;ve applied to this job.
-      </p>
+      <div className="border-t border-[var(--color-line)] pt-5">
+        <p className="font-display text-xl text-[var(--color-ink)]">Your application is in.</p>
+        <p className="mt-2 text-sm text-[var(--color-muted)]">
+          The employer will be in touch if your profile is a match. In the meantime,{" "}
+          <Link
+            href="/jobs"
+            className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
+          >
+            browse more vacancies
+          </Link>
+          .
+        </p>
+      </div>
     );
   }
 
