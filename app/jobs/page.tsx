@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { JobFilters } from "@/components/jobs/job-filters";
@@ -46,7 +47,9 @@ export default async function JobsPage({
         </form>
 
         <div className="flex flex-col gap-8 md:flex-row">
-          <JobFilters sectors={sectors} />
+          <Suspense fallback={<div className="w-full shrink-0 md:w-64" />}>
+            <JobFilters sectors={sectors} />
+          </Suspense>
 
           <div className="min-w-0 flex-1">
             <div className="mb-4 flex items-center justify-between">
