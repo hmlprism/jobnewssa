@@ -147,15 +147,29 @@ export async function getAllSectors() {
   return getCachedSectors();
 }
 
-// React.cache deduplicates getJobBySlug calls within a single request so
-// generateMetadata and the page component share one DB round-trip.
+// Cross-request cache for job detail pages — 120 s TTL, tagged "jobs".
+// Uses a plain anon client (no cookies) so unstable_cache can persist the
+// result across requests. Per-container behavior is expected (not a bug).
+const _cachedJobBySlug = unstable_cache(
+  async (slug: string) => {
+    const supabase = createRawClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data } = await supabase
+      .from("jobs")
+      .select("*, company:companies(*), sector:sectors(*)")
+      .eq("slug", slug)
+      .eq("status", "published")
+      .single();
+    return data as unknown as Job | null;
+  },
+  ["job-detail"],
+  { revalidate: 120, tags: ["jobs"] }
+);
+
+// React.cache deduplicates within a single render so generateMetadata and
+// the page component share one unstable_cache lookup rather than two.
 export const getJobBySlug = cache(async (slug: string) => {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("jobs")
-    .select("*, company:companies(*), sector:sectors(*)")
-    .eq("slug", slug)
-    .eq("status", "published")
-    .single();
-  return data as unknown as Job | null;
+  return _cachedJobBySlug(slug);
 });
