@@ -7,14 +7,14 @@ const fraunces = Fraunces({
   variable: "--font-fraunces",
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
-  display: "swap",
+  display: "optional",
 });
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   weight: ["400", "500", "600", "700"],
-  display: "swap",
+  display: "optional",
 });
 
 export const metadata: Metadata = {
