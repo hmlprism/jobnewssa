@@ -109,6 +109,15 @@ export interface Application {
   updated_at: string;
 }
 
+export interface Message {
+  id: string;
+  application_id: string;
+  sender_id: string;
+  body: string;
+  created_at: string;
+  read_at: string | null;
+}
+
 export interface JobAlert {
   id: string;
   user_id: string | null;

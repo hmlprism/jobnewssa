@@ -96,6 +96,24 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
     })
   );
 
+  // Unread message counts: messages sent by applicants that the employer hasn't read yet
+  const appIds = applicants.map((a) => a.id);
+  const unreadByApp: Record<string, number> = {};
+
+  if (appIds.length > 0) {
+    const { data: unreadRows } = await supabase
+      .from("messages")
+      .select("application_id")
+      .in("application_id", appIds)
+      .is("read_at", null)
+      .neq("sender_id", user.id);
+
+    for (const m of unreadRows ?? []) {
+      const id = m.application_id as string;
+      unreadByApp[id] = (unreadByApp[id] ?? 0) + 1;
+    }
+  }
+
   return (
     <>
       <h1 className="font-display text-2xl">{job.title}</h1>
@@ -113,55 +131,73 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
           </div>
         ) : (
           <div className="divide-y divide-[var(--color-line)] border border-[var(--color-line)]">
-            {applicants.map((app) => (
-              <div key={app.id} className="px-5 py-5">
-                <div className="flex items-start justify-between gap-6">
-                  {/* Left: name + headline + date */}
-                  <div className="min-w-0">
-                    <p className="font-medium">
-                      {app.profile?.full_name ?? "Applicant"}
-                    </p>
-                    {app.profile?.headline && (
-                      <p className="text-sm text-[var(--color-muted)]">
-                        {app.profile.headline}
+            {applicants.map((app) => {
+              const unread = unreadByApp[app.id] ?? 0;
+              return (
+                <div key={app.id} className="px-5 py-5">
+                  <div className="flex items-start justify-between gap-6">
+                    {/* Left: name + headline + date */}
+                    <div className="min-w-0">
+                      <p className="font-medium">
+                        {app.profile?.full_name ?? "Applicant"}
                       </p>
-                    )}
-                    <p className="mt-1 text-xs text-[var(--color-muted)]">
-                      Applied {timeAgo(app.created_at)}
-                    </p>
-                  </div>
+                      {app.profile?.headline && (
+                        <p className="text-sm text-[var(--color-muted)]">
+                          {app.profile.headline}
+                        </p>
+                      )}
+                      <p className="mt-1 text-xs text-[var(--color-muted)]">
+                        Applied {timeAgo(app.created_at)}
+                      </p>
+                    </div>
 
-                  {/* Right: status + resume */}
-                  <div className="flex shrink-0 flex-col items-end gap-2">
-                    <ApplicantStatus
-                      applicationId={app.id}
-                      initialStatus={app.status}
-                    />
-                    {app.resumeSignedUrl ? (
-                      <a
-                        href={app.resumeSignedUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm font-medium text-[var(--color-rust)] underline underline-offset-2 hover:text-[var(--color-rust-dark)]"
+                    {/* Right: status + resume + message */}
+                    <div className="flex shrink-0 flex-col items-end gap-2">
+                      <ApplicantStatus
+                        applicationId={app.id}
+                        initialStatus={app.status}
+                      />
+                      {app.resumeSignedUrl ? (
+                        <a
+                          href={app.resumeSignedUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm font-medium text-[var(--color-rust)] underline underline-offset-2 hover:text-[var(--color-rust-dark)]"
+                        >
+                          View resume
+                        </a>
+                      ) : (
+                        <span className="text-xs text-[var(--color-muted)]">No resume</span>
+                      )}
+                      <Link
+                        href={`/applications/${app.id}/thread?from=${jobId}`}
+                        className="text-sm font-medium text-[var(--color-indigo)] hover:underline"
                       >
-                        View resume
-                      </a>
-                    ) : (
-                      <span className="text-xs text-[var(--color-muted)]">No resume</span>
-                    )}
+                        {unread > 0 ? (
+                          <>
+                            Message{" "}
+                            <span className="inline-block bg-[var(--color-rust)] px-1.5 py-0.5 text-xs font-semibold text-[var(--color-paper)]">
+                              {unread}
+                            </span>
+                          </>
+                        ) : (
+                          "Message"
+                        )}
+                      </Link>
+                    </div>
                   </div>
-                </div>
 
-                {app.cover_note && (
-                  <div className="mt-4 border-l-2 border-[var(--color-line)] pl-4">
-                    <p className="mb-1 text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                      Cover note
-                    </p>
-                    <p className="whitespace-pre-wrap text-sm">{app.cover_note}</p>
-                  </div>
-                )}
-              </div>
-            ))}
+                  {app.cover_note && (
+                    <div className="mt-4 border-l-2 border-[var(--color-line)] pl-4">
+                      <p className="mb-1 text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">
+                        Cover note
+                      </p>
+                      <p className="whitespace-pre-wrap text-sm">{app.cover_note}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

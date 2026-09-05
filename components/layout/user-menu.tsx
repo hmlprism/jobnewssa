@@ -28,6 +28,14 @@ export function UserMenu({ email, name, role }: { email: string; name?: string; 
           Dashboard
         </Link>
       )}
+      {role === "job_seeker" && (
+        <Link
+          href="/applications"
+          className="hidden text-sm font-medium hover:text-[var(--color-rust)] sm:block"
+        >
+          My applications
+        </Link>
+      )}
       <Link
         href="/profile/edit"
         className="hidden text-sm font-medium hover:text-[var(--color-rust)] sm:block"
