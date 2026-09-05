@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { createClient, createServiceClient, getAuthUser } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { SiteHeader } from "@/components/layout/header";
@@ -35,19 +36,15 @@ export async function generateMetadata({
   return { title: job ? `Applicants — ${job.title}` : "Applicants" };
 }
 
-export default async function ApplicantsPage({
-  params,
-}: {
-  params: Promise<{ jobId: string }>;
-}) {
-  const { jobId } = await params;
-
+// Security: auth check + ownership verification happen inside this component,
+// before any applicant data is fetched or rendered. Suspense never leaks data.
+async function ApplicantsContent({ jobId }: { jobId: string }) {
   const user = await getAuthUser();
   if (!user) redirect("/auth/login");
 
   const supabase = await createClient();
 
-  // Verify the signed-in user owns this job
+  // Verify the signed-in user owns this job — posted_by = auth.uid()
   const { data: job } = await supabase
     .from("jobs")
     .select("id, title, posted_by")
@@ -58,7 +55,6 @@ export default async function ApplicantsPage({
   if (!job) notFound();
 
   // Applications with applicant profile fields joined via FK
-  // RLS: "Applicants view their own applications" covers posted_by = auth.uid()
   const { data: raw } = await supabase
     .from("applications")
     .select(
@@ -102,21 +98,12 @@ export default async function ApplicantsPage({
 
   return (
     <>
-      <SiteHeader />
-      <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-        <div className="mb-8">
-          <Link
-            href="/employer/dashboard"
-            className="mb-3 block text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
-          >
-            ← Back to dashboard
-          </Link>
-          <h1 className="font-display text-2xl">{job.title}</h1>
-          <p className="mt-1 text-sm text-[var(--color-muted)]">
-            {applicants.length} applicant{applicants.length !== 1 ? "s" : ""}
-          </p>
-        </div>
+      <h1 className="font-display text-2xl">{job.title}</h1>
+      <p className="mt-1 text-sm text-[var(--color-muted)]">
+        {applicants.length} applicant{applicants.length !== 1 ? "s" : ""}
+      </p>
 
+      <div className="mt-8">
         {applicants.length === 0 ? (
           <div className="border border-[var(--color-line)] px-6 py-16 text-center">
             <p className="font-display text-lg">No applications yet</p>
@@ -177,6 +164,56 @@ export default async function ApplicantsPage({
             ))}
           </div>
         )}
+      </div>
+    </>
+  );
+}
+
+function ApplicantsSkeleton() {
+  return (
+    <>
+      <div className="h-7 w-64 animate-pulse bg-[var(--color-line)]" />
+      <div className="mt-2 h-4 w-24 animate-pulse bg-[var(--color-line)]" />
+      <div className="mt-8 divide-y divide-[var(--color-line)] border border-[var(--color-line)]">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="px-5 py-5">
+            <div className="flex items-start justify-between gap-6">
+              <div className="space-y-2">
+                <div className="h-4 w-36 animate-pulse bg-[var(--color-line)]" />
+                <div className="h-3 w-48 animate-pulse bg-[var(--color-line)]" />
+              </div>
+              <div className="h-8 w-24 animate-pulse bg-[var(--color-line)]" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+export default async function ApplicantsPage({
+  params,
+}: {
+  params: Promise<{ jobId: string }>;
+}) {
+  const { jobId } = await params;
+
+  return (
+    <>
+      <SiteHeader />
+      <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+        <div className="mb-8">
+          <Link
+            href="/employer/dashboard"
+            className="mb-3 block text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
+          >
+            ← Back to dashboard
+          </Link>
+
+          <Suspense fallback={<ApplicantsSkeleton />}>
+            <ApplicantsContent jobId={jobId} />
+          </Suspense>
+        </div>
       </main>
       <SiteFooter />
     </>
