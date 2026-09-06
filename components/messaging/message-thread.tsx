@@ -80,8 +80,6 @@ export function MessageThread({
         application_id: applicationId,
         sender_id: currentUserId,
         body: trimmed,
-        // Sender's own message is immediately "read" from their perspective
-        read_at: new Date().toISOString(),
       })
       .select("id, sender_id, body, created_at")
       .single();
@@ -164,7 +162,7 @@ export function MessageThread({
           value={body}
           onChange={(e) => setBody(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Write your message… (Enter to send, Shift+Enter for new line)"
+          placeholder="Write your message…"
           rows={3}
           disabled={sending}
           className="w-full resize-none border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-sm placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-ink)] disabled:opacity-50"
