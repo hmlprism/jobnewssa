@@ -1,17 +1,31 @@
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
+import { unstable_cache } from "next/cache";
 import { timeAgo } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "South Africa job market news" };
 
+const getCachedArticles = unstable_cache(
+  async () => {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data } = await supabase
+      .from("news_articles")
+      .select("*")
+      .order("published_at", { ascending: false })
+      .limit(30);
+    return data ?? [];
+  },
+  ["news-articles"],
+  { revalidate: 300, tags: ["news"] }
+);
+
 export default async function NewsPage() {
-  const supabase = await createClient();
-  const { data: articles } = await supabase
-    .from("news_articles")
-    .select("*")
-    .order("published_at", { ascending: false })
-    .limit(30);
+  const articles = await getCachedArticles();
 
   return (
     <>

@@ -1,4 +1,3 @@
-import { createClient } from "@/lib/supabase/server";
 import { createClient as createRawClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
@@ -25,8 +24,14 @@ const LISTING_SELECT =
   "source, posted_at, expires_at, " +
   "company:companies(id, name, slug, verified)";
 
-export async function searchJobs(filters: JobSearchFilters) {
-  const supabase = await createClient();
+// Cached job search — public data, no auth context needed.
+// Cache key includes serialized filters; 60 s TTL per unique filter combo.
+async function _searchJobsImpl(filterJson: string) {
+  const filters: JobSearchFilters = JSON.parse(filterJson);
+  const supabase = createRawClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   const pageSize = filters.limit ?? PAGE_SIZE;
   const page = Math.max(1, parseInt(filters.page ?? "1", 10) || 1);
   const from = (page - 1) * pageSize;
@@ -61,7 +66,6 @@ export async function searchJobs(filters: JobSearchFilters) {
     query = query.eq("is_remote", true);
   }
   if (filters.sector) {
-    // Filter on the embedded sector alias — resolved by PostgREST in one query.
     query = query.eq("sector.slug", filters.sector);
   }
 
@@ -78,6 +82,23 @@ export async function searchJobs(filters: JobSearchFilters) {
     page,
     pageCount: Math.max(1, Math.ceil((count ?? 0) / pageSize)),
   };
+}
+
+const _cachedSearchJobs = unstable_cache(
+  _searchJobsImpl,
+  ["search-jobs"],
+  { revalidate: 60, tags: ["jobs"] }
+);
+
+export async function searchJobs(filters: JobSearchFilters) {
+  // Serialize filters to a stable JSON string for the cache key.
+  // Only include non-empty values so default /jobs hits the same cache entry.
+  const clean: Record<string, string> = {};
+  for (const [k, v] of Object.entries(filters)) {
+    if (v != null && v !== "" && v !== undefined) clean[k] = String(v);
+  }
+  const filterJson = JSON.stringify(clean, Object.keys(clean).sort());
+  return _cachedSearchJobs(filterJson);
 }
 
 // Homepage: 8 most-recent published jobs, cached 60 s.
