@@ -3,22 +3,24 @@ import Link from "next/link";
 import type { ButtonHTMLAttributes } from "react";
 
 type Variant = "primary" | "secondary" | "ghost";
-type Size = "sm" | "md";
+type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex cursor-pointer items-center justify-center gap-2 font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex cursor-pointer items-center justify-center gap-2 font-medium transition-colors duration-150 disabled:opacity-50 disabled:pointer-events-none";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-[var(--color-rust)] text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]",
+  primary:
+    "bg-[var(--color-rust)] text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)] active:bg-[var(--color-rust-dark)]",
   secondary:
     "bg-[var(--color-ink)] text-[var(--color-paper)] hover:bg-[var(--color-ink)]/90",
   ghost:
-    "bg-transparent text-[var(--color-ink)] border border-[var(--color-line)] hover:border-[var(--color-ink)]",
+    "bg-transparent text-[var(--color-ink)] border border-[var(--color-line)] hover:border-[var(--color-ink)] hover:bg-[var(--color-paper-dim)]",
 };
 
 const sizes: Record<Size, string> = {
   sm: "text-sm px-3 py-1.5",
-  md: "text-[15px] px-4 py-2.5",
+  md: "text-sm px-5 py-2.5",
+  lg: "text-[15px] px-6 py-3",
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

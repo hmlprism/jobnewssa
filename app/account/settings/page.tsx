@@ -11,13 +11,15 @@ export default async function AccountSettingsPage() {
   const user = await getAuthUser();
   if (!user) redirect("/auth/login");
 
-  const profile = await getAuthProfile() as Profile | null;
+  const profile = (await getAuthProfile()) as Profile | null;
 
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-        <h1 className="mb-8 font-display text-2xl">Account settings</h1>
+      <main className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+        <h1 className="mb-8 font-display text-2xl font-semibold">
+          Account settings
+        </h1>
         <AccountSettingsForm
           userId={user.id}
           email={user.email ?? ""}

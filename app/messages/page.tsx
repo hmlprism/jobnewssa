@@ -3,11 +3,10 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
+import { MessageSquare } from "lucide-react";
 
 export const metadata = { title: "Messages" };
 export const dynamic = "force-dynamic";
-
-// ── types ────────────────────────────────────────────────────────────────────
 
 type ConversationSummary = {
   applicationId: string;
@@ -20,20 +19,28 @@ type ConversationSummary = {
   myRole: "applicant" | "employer";
 };
 
-// ── helpers ───────────────────────────────────────────────────────────────────
-
 function formatInboxTime(iso: string): string {
   const d = new Date(iso);
   const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const msgStart  = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  const diffDays  = Math.round((todayStart.getTime() - msgStart.getTime()) / 86400000);
+  const todayStart = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+  const msgStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diffDays = Math.round(
+    (todayStart.getTime() - msgStart.getTime()) / 86400000
+  );
 
   if (diffDays === 0) {
-    return d.toLocaleTimeString("en-ZA", { hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleTimeString("en-ZA", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }
   if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return d.toLocaleDateString("en-ZA", { weekday: "short" });
+  if (diffDays < 7)
+    return d.toLocaleDateString("en-ZA", { weekday: "short" });
   return d.toLocaleDateString("en-ZA", {
     day: "numeric",
     month: "short",
@@ -41,22 +48,17 @@ function formatInboxTime(iso: string): string {
   });
 }
 
-// Truncate to first line, max 80 chars
 function previewBody(body: string): string {
   const firstLine = body.split("\n")[0];
   return firstLine.length > 80 ? firstLine.slice(0, 80) + "…" : firstLine;
 }
 
-// ── inbox data fetch ──────────────────────────────────────────────────────────
-
-async function getInboxConversations(userId: string): Promise<ConversationSummary[]> {
+async function getInboxConversations(
+  userId: string
+): Promise<ConversationSummary[]> {
   const supabase = await createClient();
 
-  // Fetch all applications the user is party to (as applicant or job poster).
-  // RLS enforces that only legitimate parties can read.
-  const { data: rawApps } = await supabase
-    .from("applications")
-    .select(`
+  const { data: rawApps } = await supabase.from("applications").select(`
       id,
       applicant_id,
       applicant_profile:profiles!applicant_id (full_name),
@@ -68,8 +70,6 @@ async function getInboxConversations(userId: string): Promise<ConversationSummar
 
   const appIds = apps.map((a) => a.id);
 
-  // Fetch all messages in those threads, newest first. The messages RLS policy
-  // allows reading any message in a thread you're party to.
   const { data: rawMsgs } = await supabase
     .from("messages")
     .select("id, application_id, sender_id, body, created_at, read_at")
@@ -78,10 +78,10 @@ async function getInboxConversations(userId: string): Promise<ConversationSummar
 
   const allMsgs = rawMsgs ?? [];
 
-  // Group messages by application_id (already sorted desc so first = latest).
   const msgByApp = new Map<string, typeof allMsgs>();
   for (const msg of allMsgs) {
-    if (!msgByApp.has(msg.application_id)) msgByApp.set(msg.application_id, []);
+    if (!msgByApp.has(msg.application_id))
+      msgByApp.set(msg.application_id, []);
     msgByApp.get(msg.application_id)!.push(msg);
   }
 
@@ -93,8 +93,11 @@ async function getInboxConversations(userId: string): Promise<ConversationSummar
       posted_by: string;
       company_name_raw: string | null;
     };
-    const applicantProfile = app.applicant_profile as unknown as { full_name: string | null } | null;
-    const myRole: "applicant" | "employer" = app.applicant_id === userId ? "applicant" : "employer";
+    const applicantProfile = app.applicant_profile as unknown as {
+      full_name: string | null;
+    } | null;
+    const myRole: "applicant" | "employer" =
+      app.applicant_id === userId ? "applicant" : "employer";
     const appMsgs = msgByApp.get(app.id) ?? [];
     const latestMsg = appMsgs[0] ?? null;
     const unreadCount = appMsgs.filter(
@@ -118,7 +121,6 @@ async function getInboxConversations(userId: string): Promise<ConversationSummar
     };
   });
 
-  // Sort by most recent message; threads with no messages sink to the bottom.
   conversations.sort((a, b) => {
     if (!a.lastAt && !b.lastAt) return 0;
     if (!a.lastAt) return 1;
@@ -129,23 +131,31 @@ async function getInboxConversations(userId: string): Promise<ConversationSummar
   return conversations;
 }
 
-// ── sub-components ────────────────────────────────────────────────────────────
-
 function ConversationRow({ conv }: { conv: ConversationSummary }) {
   const hasUnread = conv.unreadCount > 0;
   return (
     <Link
       href={`/applications/${conv.applicationId}/thread`}
-      className={`group relative block border-b border-[var(--color-line)] px-4 py-4 hover:bg-[var(--color-paper)]/60 ${
-        hasUnread ? "border-l-2 border-l-[var(--color-rust)] pl-3.5" : ""
+      className={`group block border-b border-[var(--color-line)] px-5 py-4 transition-colors hover:bg-[var(--color-paper-dim)] ${
+        hasUnread
+          ? "border-l-3 border-l-[var(--color-rust)]"
+          : ""
       }`}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <p className={`truncate text-sm ${hasUnread ? "font-semibold" : "font-medium"}`}>
+          <p
+            className={`truncate text-sm ${
+              hasUnread ? "font-semibold" : "font-medium"
+            }`}
+          >
             {conv.otherPartyName}
-            <span className="mx-1.5 text-[var(--color-muted)] font-normal">·</span>
-            <span className="font-normal">{conv.jobTitle}</span>
+            <span className="mx-1.5 font-normal text-[var(--color-muted)]">
+              ·
+            </span>
+            <span className="font-normal text-[var(--color-muted)]">
+              {conv.jobTitle}
+            </span>
           </p>
           <p className="mt-0.5 truncate text-sm text-[var(--color-muted)]">
             {conv.lastBody ? previewBody(conv.lastBody) : "No messages yet"}
@@ -178,10 +188,10 @@ function ConversationGroup({
   if (conversations.length === 0) return null;
   return (
     <section>
-      <h2 className="mb-0 border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
+      <h2 className="border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
         {label}
       </h2>
-      <div className="divide-y-0">
+      <div>
         {conversations.map((conv) => (
           <ConversationRow key={conv.applicationId} conv={conv} />
         ))}
@@ -190,30 +200,32 @@ function ConversationGroup({
   );
 }
 
-// ── page ──────────────────────────────────────────────────────────────────────
-
 export default async function MessagesPage() {
   const user = await getAuthUser();
   if (!user) redirect("/auth/login");
 
   const conversations = await getInboxConversations(user.id);
 
-  const asSeeker   = conversations.filter((c) => c.myRole === "applicant");
+  const asSeeker = conversations.filter((c) => c.myRole === "applicant");
   const asEmployer = conversations.filter((c) => c.myRole === "employer");
   const showRoleLabels = asSeeker.length > 0 && asEmployer.length > 0;
 
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-        <h1 className="mb-8 font-display text-2xl">Messages</h1>
+      <main className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+        <h1 className="mb-8 font-display text-2xl font-semibold">Messages</h1>
 
         {conversations.length === 0 ? (
-          <div className="border border-[var(--color-line)] px-6 py-12 text-center">
+          <div className="border border-[var(--color-line)] px-6 py-14 text-center">
+            <MessageSquare
+              size={32}
+              className="mx-auto mb-3 text-[var(--color-muted)]"
+            />
             <p className="font-display text-lg">No conversations yet</p>
             <p className="mt-2 text-sm text-[var(--color-muted)]">
-              Conversations start when an employer messages an applicant, or vice versa,
-              after a job application is submitted.
+              Conversations start when an employer messages an applicant, or
+              vice versa, after a job application is submitted.
             </p>
             <div className="mt-6 flex justify-center gap-4 text-sm">
               <Link
@@ -232,14 +244,18 @@ export default async function MessagesPage() {
             </div>
           </div>
         ) : showRoleLabels ? (
-          // User appears in both seeker and employer threads — group by role
           <div className="space-y-8">
-            <ConversationGroup label="As job seeker" conversations={asSeeker} />
-            <ConversationGroup label="As employer" conversations={asEmployer} />
+            <ConversationGroup
+              label="As job seeker"
+              conversations={asSeeker}
+            />
+            <ConversationGroup
+              label="As employer"
+              conversations={asEmployer}
+            />
           </div>
         ) : (
-          // Common case: one role only — skip the role label
-          <div>
+          <div className="border-t border-[var(--color-line)]">
             {conversations.map((conv) => (
               <ConversationRow key={conv.applicationId} conv={conv} />
             ))}

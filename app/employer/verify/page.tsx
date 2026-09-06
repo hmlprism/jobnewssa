@@ -6,15 +6,24 @@ import { SiteFooter } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import type { Company } from "@/types/database";
+import { ArrowLeft } from "lucide-react";
 
-type PageState = "loading" | "no_access" | "no_company" | "verified" | "unverified";
+type PageState =
+  | "loading"
+  | "no_access"
+  | "no_company"
+  | "verified"
+  | "unverified";
 
 export default function EmployerVerifyPage() {
   const [pageState, setPageState] = useState<PageState>("loading");
   const [company, setCompany] = useState<Company | null>(null);
   const [websiteUrl, setWebsiteUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
+  const [result, setResult] = useState<{
+    ok: boolean;
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -34,7 +43,9 @@ export default function EmployerVerifyPage() {
       }
       const { data: co } = await supabase
         .from("companies")
-        .select("id, name, website, verified, verification_method, verified_at, owner_id, slug, logo_url, description, province, city, created_at")
+        .select(
+          "id, name, website, verified, verification_method, verified_at, owner_id, slug, logo_url, description, province, city, created_at"
+        )
         .eq("owner_id", user.id)
         .maybeSingle();
       if (!co) {
@@ -60,9 +71,15 @@ export default function EmployerVerifyPage() {
       const json = await res.json();
       if (json.verified) {
         setPageState("verified");
-        setResult({ ok: true, message: "Your employer account is now verified." });
+        setResult({
+          ok: true,
+          message: "Your employer account is now verified.",
+        });
       } else {
-        setResult({ ok: false, message: json.message ?? json.error ?? "Verification failed." });
+        setResult({
+          ok: false,
+          message: json.message ?? json.error ?? "Verification failed.",
+        });
       }
     } catch {
       setResult({ ok: false, message: "Something went wrong. Try again." });
@@ -86,11 +103,16 @@ export default function EmployerVerifyPage() {
     return (
       <>
         <main className="mx-auto max-w-lg px-4 py-16 text-center sm:px-6">
-          <h1 className="font-display text-2xl">Employer account required</h1>
+          <h1 className="font-display text-2xl font-semibold">
+            Employer account required
+          </h1>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
             Sign in with an employer account to verify your company.
           </p>
-          <Link href="/auth/login" className="mt-6 inline-block text-sm text-[var(--color-rust)] underline">
+          <Link
+            href="/auth/login"
+            className="mt-6 inline-block text-sm font-medium text-[var(--color-rust)] underline underline-offset-2"
+          >
             Sign in
           </Link>
         </main>
@@ -103,11 +125,16 @@ export default function EmployerVerifyPage() {
     return (
       <>
         <main className="mx-auto max-w-lg px-4 py-16 text-center sm:px-6">
-          <h1 className="font-display text-2xl">Post a job first</h1>
+          <h1 className="font-display text-2xl font-semibold">
+            Post a job first
+          </h1>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
             Your company profile is created when you post your first job.
           </p>
-          <Link href="/employer/post" className="mt-6 inline-block text-sm text-[var(--color-rust)] underline">
+          <Link
+            href="/employer/post"
+            className="mt-6 inline-block text-sm font-medium text-[var(--color-rust)] underline underline-offset-2"
+          >
             Post a vacancy
           </Link>
         </main>
@@ -118,36 +145,46 @@ export default function EmployerVerifyPage() {
 
   return (
     <>
-      <main className="mx-auto max-w-lg px-4 py-12 sm:px-6">
+      <main className="mx-auto max-w-lg px-4 py-10 sm:px-6 sm:py-12">
         <Link
           href="/employer/dashboard"
-          className="mb-6 inline-block text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
+          className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
         >
-          ← Back to dashboard
+          <ArrowLeft size={14} />
+          Back to dashboard
         </Link>
 
-        <h1 className="font-display text-2xl">Verify your employer account</h1>
+        <h1 className="font-display text-2xl font-semibold">
+          Verify your employer account
+        </h1>
 
         {pageState === "verified" ? (
-          <div className="mt-6 border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-4 py-4 text-sm text-[var(--color-indigo)]">
-            <p className="font-medium">✓ Your account is verified</p>
+          <div className="mt-6 border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-5 py-4 text-sm text-[var(--color-indigo)]">
+            <p className="font-semibold">✓ Your account is verified</p>
             <p className="mt-1">
               Your jobs display a verified badge.
               {company?.verified_at && (
-                <> Verified on {new Date(company.verified_at).toLocaleDateString("en-ZA")}.</>
+                <>
+                  {" "}
+                  Verified on{" "}
+                  {new Date(company.verified_at).toLocaleDateString("en-ZA")}.
+                </>
               )}
             </p>
           </div>
         ) : (
           <>
             <p className="mt-2 text-sm text-[var(--color-muted)]">
-              We check that your account email domain matches your company website. If they match,
-              your account is verified instantly and your jobs show a verified badge.
+              We check that your account email domain matches your company
+              website. If they match, your account is verified instantly and your
+              jobs show a verified badge.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
               <label className="block">
-                <span className="mb-1.5 block text-sm font-medium">Company website URL</span>
+                <span className="mb-1.5 block text-sm font-medium">
+                  Company website URL
+                </span>
                 <input
                   type="text"
                   value={websiteUrl}
@@ -164,7 +201,7 @@ export default function EmployerVerifyPage() {
 
               {result && (
                 <div
-                  className={`border px-3 py-2.5 text-sm ${
+                  className={`border px-4 py-3 text-sm ${
                     result.ok
                       ? "border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] text-[var(--color-indigo)]"
                       : "border-[var(--color-clay)] bg-[var(--color-clay-dim)] text-[var(--color-ink)]"
@@ -174,7 +211,11 @@ export default function EmployerVerifyPage() {
                 </div>
               )}
 
-              <Button type="submit" disabled={submitting} className="w-full justify-center">
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="w-full justify-center"
+              >
                 {submitting ? "Checking…" : "Verify now"}
               </Button>
             </form>

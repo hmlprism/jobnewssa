@@ -6,7 +6,12 @@ import { useRouter } from "next/navigation";
 import { SiteFooter } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { SA_PROVINCES, CONTRACT_TYPE_LABELS, type ContractType, type Sector } from "@/types/database";
+import {
+  SA_PROVINCES,
+  CONTRACT_TYPE_LABELS,
+  type ContractType,
+  type Sector,
+} from "@/types/database";
 
 const NQF_LEVELS = [
   { value: "1", label: "Level 1 — Grade 9" },
@@ -37,9 +42,14 @@ const QUALIFICATION_TYPES = [
 ];
 import { slugify } from "@/lib/slug";
 
+const inputClass =
+  "w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm";
+
 export default function PostJobPage() {
   const router = useRouter();
-  const [authState, setAuthState] = useState<"loading" | "signed_out" | "wrong_role" | "ready">("loading");
+  const [authState, setAuthState] = useState<
+    "loading" | "signed_out" | "wrong_role" | "ready"
+  >("loading");
   const [sectors, setSectors] = useState<Sector[]>([]);
 
   const [companyName, setCompanyName] = useState("");
@@ -57,7 +67,8 @@ export default function PostJobPage() {
   const [eeNote, setEeNote] = useState("");
   const [accommodationContact, setAccommodationContact] = useState("");
   const [requiredNqfLevel, setRequiredNqfLevel] = useState("");
-  const [requiredQualificationType, setRequiredQualificationType] = useState("");
+  const [requiredQualificationType, setRequiredQualificationType] =
+    useState("");
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -104,7 +115,6 @@ export default function PostJobPage() {
       return;
     }
 
-    // Find or create the employer's company record
     let companyId: string | null = null;
     const { data: existingCompany } = await supabase
       .from("companies")
@@ -146,13 +156,23 @@ export default function PostJobPage() {
       city: city || null,
       is_remote: isRemote,
       contract_type: contractType,
-      salary_min: marketRelated ? null : salaryMin ? parseInt(salaryMin, 10) : null,
-      salary_max: marketRelated ? null : salaryMax ? parseInt(salaryMax, 10) : null,
+      salary_min: marketRelated
+        ? null
+        : salaryMin
+          ? parseInt(salaryMin, 10)
+          : null,
+      salary_max: marketRelated
+        ? null
+        : salaryMax
+          ? parseInt(salaryMax, 10)
+          : null,
       salary_is_market_related: marketRelated,
       source: "employer_direct",
       status: "published",
       posted_at: new Date().toISOString(),
-      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      expires_at: new Date(
+        Date.now() + 30 * 24 * 60 * 60 * 1000
+      ).toISOString(),
       employment_equity_note: eeNote || null,
       accommodation_contact: accommodationContact || null,
       required_nqf_level: requiredNqfLevel || null,
@@ -181,7 +201,9 @@ export default function PostJobPage() {
   if (authState === "signed_out") {
     return (
       <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
-        <h1 className="font-display text-2xl">Sign in to post a job</h1>
+        <h1 className="font-display text-2xl font-semibold">
+          Sign in to post a job
+        </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
           You need an employer account to post vacancies.
         </p>
@@ -198,9 +220,12 @@ export default function PostJobPage() {
   if (authState === "wrong_role") {
     return (
       <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
-        <h1 className="font-display text-2xl">Employer account required</h1>
+        <h1 className="font-display text-2xl font-semibold">
+          Employer account required
+        </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Your account is registered as a job seeker. Contact support to switch to an employer account.
+          Your account is registered as a job seeker. Contact support to switch
+          to an employer account.
         </p>
       </main>
     );
@@ -209,7 +234,7 @@ export default function PostJobPage() {
   if (success) {
     return (
       <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
-        <h1 className="font-display text-2xl">Job posted</h1>
+        <h1 className="font-display text-2xl font-semibold">Job posted</h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
           Your vacancy is live. Redirecting to your dashboard…
         </p>
@@ -219,163 +244,236 @@ export default function PostJobPage() {
 
   return (
     <>
-      <main className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-        <h1 className="font-display text-2xl">Post a job</h1>
-        <p className="mt-1 text-sm text-[var(--color-muted)]">
+      <main className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+        <h1 className="font-display text-2xl font-semibold">Post a job</h1>
+        <p className="mt-1.5 text-sm text-[var(--color-muted)]">
           Free to post. Live immediately, expires after 30 days.
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-          <Field label="Company name" value={companyName} onChange={setCompanyName} required />
-          <Field label="Job title" value={title} onChange={setTitle} required />
-
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium">Job description</span>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          {/* Section: Basic details */}
+          <fieldset className="space-y-4">
+            <legend className="mb-3 border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
+              Job details
+            </legend>
+            <Field
+              label="Company name"
+              value={companyName}
+              onChange={setCompanyName}
               required
-              rows={8}
-              className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] p-3 text-sm"
-              placeholder="Responsibilities, requirements, how to apply..."
             />
-          </label>
-
-          <div className="grid grid-cols-2 gap-4">
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium">Province</span>
-              <select
-                value={province}
-                onChange={(e) => setProvince(e.target.value)}
-                className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm"
-              >
-                {SA_PROVINCES.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <Field label="City / town" value={city} onChange={setCity} />
-          </div>
-
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={isRemote}
-              onChange={(e) => setIsRemote(e.target.checked)}
-              className="accent-[var(--color-rust)]"
+            <Field
+              label="Job title"
+              value={title}
+              onChange={setTitle}
+              required
             />
-            This is a remote position
-          </label>
-
-          <div className="grid grid-cols-2 gap-4">
             <label className="block">
-              <span className="mb-1.5 block text-sm font-medium">Contract type</span>
-              <select
-                value={contractType}
-                onChange={(e) => setContractType(e.target.value as ContractType)}
-                className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm"
-              >
-                {(Object.keys(CONTRACT_TYPE_LABELS) as ContractType[]).map((ct) => (
-                  <option key={ct} value={ct}>
-                    {CONTRACT_TYPE_LABELS[ct]}
-                  </option>
-                ))}
-              </select>
+              <span className="mb-1.5 block text-sm font-medium">
+                Job description
+              </span>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                rows={8}
+                className={`${inputClass} p-3`}
+                placeholder="Responsibilities, requirements, how to apply..."
+              />
             </label>
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium">Sector</span>
-              <select
-                value={sectorId}
-                onChange={(e) => setSectorId(e.target.value)}
-                className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm"
-              >
-                <option value="">Select sector</option>
-                {sectors.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
+          </fieldset>
 
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              checked={marketRelated}
-              onChange={(e) => setMarketRelated(e.target.checked)}
-              className="accent-[var(--color-rust)]"
-            />
-            Salary is market related (don&apos;t specify a figure)
-          </label>
-
-          {!marketRelated && (
+          {/* Section: Location */}
+          <fieldset className="space-y-4">
+            <legend className="mb-3 border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
+              Location
+            </legend>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Min salary (R/month)" type="number" value={salaryMin} onChange={setSalaryMin} />
-              <Field label="Max salary (R/month)" type="number" value={salaryMax} onChange={setSalaryMax} />
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium">
+                  Province
+                </span>
+                <select
+                  value={province}
+                  onChange={(e) => setProvince(e.target.value)}
+                  className={inputClass}
+                >
+                  {SA_PROVINCES.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <Field label="City / town" value={city} onChange={setCity} />
             </div>
+            <label className="flex cursor-pointer items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={isRemote}
+                onChange={(e) => setIsRemote(e.target.checked)}
+              />
+              This is a remote position
+            </label>
+          </fieldset>
+
+          {/* Section: Classification */}
+          <fieldset className="space-y-4">
+            <legend className="mb-3 border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
+              Classification & salary
+            </legend>
+            <div className="grid grid-cols-2 gap-4">
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium">
+                  Contract type
+                </span>
+                <select
+                  value={contractType}
+                  onChange={(e) =>
+                    setContractType(e.target.value as ContractType)
+                  }
+                  className={inputClass}
+                >
+                  {(Object.keys(CONTRACT_TYPE_LABELS) as ContractType[]).map(
+                    (ct) => (
+                      <option key={ct} value={ct}>
+                        {CONTRACT_TYPE_LABELS[ct]}
+                      </option>
+                    )
+                  )}
+                </select>
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium">
+                  Sector
+                </span>
+                <select
+                  value={sectorId}
+                  onChange={(e) => setSectorId(e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">Select sector</option>
+                  {sectors.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <label className="flex cursor-pointer items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={marketRelated}
+                onChange={(e) => setMarketRelated(e.target.checked)}
+              />
+              Salary is market related (don&apos;t specify a figure)
+            </label>
+
+            {!marketRelated && (
+              <div className="grid grid-cols-2 gap-4">
+                <Field
+                  label="Min salary (R/month)"
+                  type="number"
+                  value={salaryMin}
+                  onChange={setSalaryMin}
+                />
+                <Field
+                  label="Max salary (R/month)"
+                  type="number"
+                  value={salaryMax}
+                  onChange={setSalaryMax}
+                />
+              </div>
+            )}
+          </fieldset>
+
+          {/* Section: Requirements */}
+          <fieldset className="space-y-4">
+            <legend className="mb-3 border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
+              Requirements{" "}
+              <span className="font-normal normal-case tracking-normal">
+                (optional)
+              </span>
+            </legend>
+            <div className="grid grid-cols-2 gap-4">
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium">
+                  Min. NQF level required
+                </span>
+                <select
+                  value={requiredNqfLevel}
+                  onChange={(e) => setRequiredNqfLevel(e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">No minimum</option>
+                  {NQF_LEVELS.map(({ value, label }) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium">
+                  Required qualification type
+                </span>
+                <select
+                  value={requiredQualificationType}
+                  onChange={(e) =>
+                    setRequiredQualificationType(e.target.value)
+                  }
+                  className={inputClass}
+                >
+                  <option value="">No specific requirement</option>
+                  {QUALIFICATION_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </fieldset>
+
+          {/* Section: EE & accessibility */}
+          <fieldset className="space-y-4">
+            <legend className="mb-3 border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
+              Equity & accessibility{" "}
+              <span className="font-normal normal-case tracking-normal">
+                (optional)
+              </span>
+            </legend>
+            <label className="block">
+              <span className="mb-1.5 block text-sm font-medium">
+                Employment Equity / Affirmative Action statement
+              </span>
+              <textarea
+                value={eeNote}
+                onChange={(e) => setEeNote(e.target.value)}
+                rows={3}
+                className={`${inputClass} p-3`}
+                placeholder="e.g. Preference will be given to candidates from designated groups as defined in the Employment Equity Act."
+              />
+            </label>
+            <Field
+              label="Accessibility accommodation contact"
+              value={accommodationContact}
+              onChange={setAccommodationContact}
+            />
+          </fieldset>
+
+          {error && (
+            <p className="text-sm text-[var(--color-rust)]">{error}</p>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium">
-                Min. NQF level required{" "}
-                <span className="font-normal text-[var(--color-muted)]">(optional)</span>
-              </span>
-              <select
-                value={requiredNqfLevel}
-                onChange={(e) => setRequiredNqfLevel(e.target.value)}
-                className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm"
-              >
-                <option value="">No minimum</option>
-                {NQF_LEVELS.map(({ value, label }) => (
-                  <option key={value} value={value}>{label}</option>
-                ))}
-              </select>
-            </label>
-            <label className="block">
-              <span className="mb-1.5 block text-sm font-medium">
-                Required qualification type{" "}
-                <span className="font-normal text-[var(--color-muted)]">(optional)</span>
-              </span>
-              <select
-                value={requiredQualificationType}
-                onChange={(e) => setRequiredQualificationType(e.target.value)}
-                className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm"
-              >
-                <option value="">No specific requirement</option>
-                {QUALIFICATION_TYPES.map((t) => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium">
-              Employment Equity / Affirmative Action statement{" "}
-              <span className="font-normal text-[var(--color-muted)]">(optional)</span>
-            </span>
-            <textarea
-              value={eeNote}
-              onChange={(e) => setEeNote(e.target.value)}
-              rows={3}
-              className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] p-3 text-sm"
-              placeholder="e.g. Preference will be given to candidates from designated groups as defined in the Employment Equity Act."
-            />
-          </label>
-
-          <Field
-            label="Accessibility accommodation contact (optional)"
-            value={accommodationContact}
-            onChange={setAccommodationContact}
-          />
-
-          {error && <p className="text-sm text-[var(--color-rust)]">{error}</p>}
-
-          <Button type="submit" disabled={submitting} className="w-full justify-center">
+          <Button
+            type="submit"
+            disabled={submitting}
+            size="lg"
+            className="w-full justify-center"
+          >
             {submitting ? "Posting…" : "Post job"}
           </Button>
         </form>
@@ -406,7 +504,7 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm"
+        className={inputClass}
       />
     </label>
   );

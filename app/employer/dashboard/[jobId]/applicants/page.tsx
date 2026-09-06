@@ -1,5 +1,9 @@
 import { Suspense } from "react";
-import { createClient, createServiceClient, getAuthUser } from "@/lib/supabase/server";
+import {
+  createClient,
+  createServiceClient,
+  getAuthUser,
+} from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
@@ -7,6 +11,7 @@ import { ApplicantStatus } from "@/components/employer/applicant-status";
 import { timeAgo } from "@/lib/utils";
 import Link from "next/link";
 import type { ApplicationStatus } from "@/types/database";
+import { ArrowLeft, FileText, MessageSquare } from "lucide-react";
 
 type ApplicantRow = {
   id: string;
@@ -36,15 +41,12 @@ export async function generateMetadata({
   return { title: job ? `Applicants — ${job.title}` : "Applicants" };
 }
 
-// Security: auth check + ownership verification happen inside this component,
-// before any applicant data is fetched or rendered. Suspense never leaks data.
 async function ApplicantsContent({ jobId }: { jobId: string }) {
   const user = await getAuthUser();
   if (!user) redirect("/auth/login");
 
   const supabase = await createClient();
 
-  // Verify the signed-in user owns this job — posted_by = auth.uid()
   const { data: job } = await supabase
     .from("jobs")
     .select("id, title, posted_by")
@@ -54,7 +56,6 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
 
   if (!job) notFound();
 
-  // Applications with applicant profile fields joined via FK
   const { data: raw } = await supabase
     .from("applications")
     .select(
@@ -63,10 +64,6 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
     .eq("job_id", jobId)
     .order("created_at", { ascending: false });
 
-  // Signed resume URLs require the service role: storage RLS restricts
-  // objects to their owner (applicant), so the employer's session cannot
-  // call createSignedUrl directly. The service client bypasses storage RLS
-  // server-side only — it is never exposed to the browser.
   const serviceClient = createServiceClient();
 
   const applicants: ApplicantRow[] = await Promise.all(
@@ -81,7 +78,7 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
       if (profile?.resume_url) {
         const { data } = await serviceClient.storage
           .from("resumes")
-          .createSignedUrl(profile.resume_url, 3600); // 1 hour
+          .createSignedUrl(profile.resume_url, 3600);
         resumeSignedUrl = data?.signedUrl ?? null;
       }
 
@@ -96,7 +93,6 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
     })
   );
 
-  // Unread message counts: messages sent by applicants that the employer hasn't read yet
   const appIds = applicants.map((a) => a.id);
   const unreadByApp: Record<string, number> = {};
 
@@ -116,7 +112,7 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
 
   return (
     <>
-      <h1 className="font-display text-2xl">{job.title}</h1>
+      <h1 className="font-display text-2xl font-semibold">{job.title}</h1>
       <p className="mt-1 text-sm text-[var(--color-muted)]">
         {applicants.length} applicant{applicants.length !== 1 ? "s" : ""}
       </p>
@@ -130,13 +126,15 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-[var(--color-line)] border border-[var(--color-line)]">
+          <div className="border border-[var(--color-line)]">
             {applicants.map((app) => {
               const unread = unreadByApp[app.id] ?? 0;
               return (
-                <div key={app.id} className="px-5 py-5">
+                <div
+                  key={app.id}
+                  className="border-b border-[var(--color-line)] px-5 py-5 last:border-b-0"
+                >
                   <div className="flex items-start justify-between gap-6">
-                    {/* Left: name + headline + date */}
                     <div className="min-w-0">
                       <p className="font-medium">
                         {app.profile?.full_name ?? "Applicant"}
@@ -151,48 +149,55 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
                       </p>
                     </div>
 
-                    {/* Right: status + resume + message */}
                     <div className="flex shrink-0 flex-col items-end gap-2">
                       <ApplicantStatus
                         applicationId={app.id}
                         initialStatus={app.status}
                       />
-                      {app.resumeSignedUrl ? (
-                        <a
-                          href={app.resumeSignedUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm font-medium text-[var(--color-rust)] underline underline-offset-2 hover:text-[var(--color-rust-dark)]"
-                        >
-                          View resume
-                        </a>
-                      ) : (
-                        <span className="text-xs text-[var(--color-muted)]">No resume</span>
-                      )}
-                      <Link
-                        href={`/applications/${app.id}/thread?from=${jobId}`}
-                        className="text-sm font-medium text-[var(--color-indigo)] hover:underline"
-                      >
-                        {unread > 0 ? (
-                          <>
-                            Message{" "}
-                            <span className="inline-block bg-[var(--color-rust)] px-1.5 py-0.5 text-xs font-semibold text-[var(--color-paper)]">
-                              {unread}
-                            </span>
-                          </>
+                      <div className="flex items-center gap-3">
+                        {app.resumeSignedUrl ? (
+                          <a
+                            href={app.resumeSignedUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-sm font-medium text-[var(--color-rust)] hover:underline"
+                          >
+                            <FileText size={13} />
+                            Resume
+                          </a>
                         ) : (
-                          "Message"
+                          <span className="text-xs text-[var(--color-muted)]">
+                            No resume
+                          </span>
                         )}
-                      </Link>
+                        <Link
+                          href={`/applications/${app.id}/thread?from=${jobId}`}
+                          className="flex items-center gap-1 text-sm font-medium text-[var(--color-indigo)] hover:underline"
+                        >
+                          <MessageSquare size={13} />
+                          {unread > 0 ? (
+                            <>
+                              Message{" "}
+                              <span className="inline-block bg-[var(--color-rust)] px-1.5 py-0.5 text-xs font-semibold text-[var(--color-paper)]">
+                                {unread}
+                              </span>
+                            </>
+                          ) : (
+                            "Message"
+                          )}
+                        </Link>
+                      </div>
                     </div>
                   </div>
 
                   {app.cover_note && (
                     <div className="mt-4 border-l-2 border-[var(--color-line)] pl-4">
-                      <p className="mb-1 text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">
+                      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
                         Cover note
                       </p>
-                      <p className="whitespace-pre-wrap text-sm">{app.cover_note}</p>
+                      <p className="whitespace-pre-wrap text-sm">
+                        {app.cover_note}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -210,9 +215,12 @@ function ApplicantsSkeleton() {
     <>
       <div className="h-7 w-64 animate-pulse bg-[var(--color-line)]" />
       <div className="mt-2 h-4 w-24 animate-pulse bg-[var(--color-line)]" />
-      <div className="mt-8 divide-y divide-[var(--color-line)] border border-[var(--color-line)]">
+      <div className="mt-8 border border-[var(--color-line)]">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="px-5 py-5">
+          <div
+            key={i}
+            className="border-b border-[var(--color-line)] px-5 py-5 last:border-b-0"
+          >
             <div className="flex items-start justify-between gap-6">
               <div className="space-y-2">
                 <div className="h-4 w-36 animate-pulse bg-[var(--color-line)]" />
@@ -237,19 +245,18 @@ export default async function ApplicantsPage({
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-        <div className="mb-8">
-          <Link
-            href="/employer/dashboard"
-            className="mb-3 block text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
-          >
-            ← Back to dashboard
-          </Link>
+      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12">
+        <Link
+          href="/employer/dashboard"
+          className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
+        >
+          <ArrowLeft size={14} />
+          Back to dashboard
+        </Link>
 
-          <Suspense fallback={<ApplicantsSkeleton />}>
-            <ApplicantsContent jobId={jobId} />
-          </Suspense>
-        </div>
+        <Suspense fallback={<ApplicantsSkeleton />}>
+          <ApplicantsContent jobId={jobId} />
+        </Suspense>
       </main>
       <SiteFooter />
     </>

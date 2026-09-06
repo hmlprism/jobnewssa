@@ -2,56 +2,81 @@ import Link from "next/link";
 import type { Job } from "@/types/database";
 import { CONTRACT_TYPE_LABELS } from "@/types/database";
 import { formatSalary, daysLeft, timeAgo } from "@/lib/utils";
+import { MapPin, Clock, Wifi } from "lucide-react";
 
 export function JobCard({ job }: { job: Job }) {
   const left = daysLeft(job.expires_at);
-  const companyName = job.company?.name ?? job.company_name_raw ?? "Confidential company";
+  const companyName =
+    job.company?.name ?? job.company_name_raw ?? "Confidential company";
+  const location = job.city || job.province || null;
 
   return (
     <Link
       href={`/jobs/${job.slug}`}
-      className="group relative block border-b border-[var(--color-line)] px-1 py-5 transition-colors duration-100 hover:bg-[var(--color-paper-dim)] hover:border-[var(--color-line-hover)] before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[var(--color-rust)] before:opacity-0 before:transition-opacity before:duration-75 hover:before:opacity-100"
+      className="group relative block border-b border-[var(--color-line)] py-4 transition-colors duration-75 hover:bg-[var(--color-paper-dim)] hover:border-[var(--color-line-hover)] before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[var(--color-rust)] before:opacity-0 before:transition-opacity before:duration-75 hover:before:opacity-100"
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <h2 className="text-[17px] font-semibold leading-snug group-hover:text-[var(--color-rust)]">
+      <div className="pl-3">
+        {/* Top row: title + days left */}
+        <div className="flex items-start justify-between gap-4">
+          <h2 className="text-[15px] font-semibold leading-snug group-hover:text-[var(--color-rust)]">
             {job.title}
           </h2>
-          <p className="mt-0.5 text-sm text-[var(--color-muted)]">
-            {companyName}
-            {job.city ? ` · ${job.city}` : job.province ? ` · ${job.province}` : ""}
-            {job.is_remote ? " · Remote" : ""}
-          </p>
-
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-muted)]">
-            <span className="border border-[var(--color-line)] px-2 py-0.5">
-              {CONTRACT_TYPE_LABELS[job.contract_type]}
+          {left && (
+            <span
+              className={`shrink-0 whitespace-nowrap text-xs font-medium ${
+                left === "Expired"
+                  ? "text-[var(--color-muted)]"
+                  : left === "Last day" || (typeof left === "string" && left.startsWith("1 "))
+                    ? "text-[var(--color-rust)]"
+                    : "text-[var(--color-clay)]"
+              }`}
+            >
+              {left}
             </span>
-            <span>{formatSalary(job.salary_min, job.salary_max, job.salary_is_market_related)}</span>
-            <span>Posted {timeAgo(job.posted_at)}</span>
-            {job.source === "employer_direct" && job.company && (
-              job.company.verified ? (
-                <span className="border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-1.5 py-0.5 font-medium text-[var(--color-indigo)]">
-                  ✓ Verified
-                </span>
-              ) : (
-                <span className="border border-[var(--color-line)] px-1.5 py-0.5 text-[var(--color-muted)]">
-                  Unverified employer
-                </span>
-              )
-            )}
-          </div>
+          )}
         </div>
 
-        {left && (
-          <span
-            className={`shrink-0 whitespace-nowrap text-xs font-medium ${
-              left === "Expired" ? "text-[var(--color-muted)]" : "text-[var(--color-rust)]"
-            }`}
-          >
-            {left}
+        {/* Company + location row */}
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 text-sm text-[var(--color-muted)]">
+          <span className="font-medium text-[var(--color-ink)]/80">{companyName}</span>
+          {location && (
+            <span className="flex items-center gap-1">
+              <MapPin size={12} />
+              {location}
+            </span>
+          )}
+          {job.is_remote && (
+            <span className="flex items-center gap-1">
+              <Wifi size={12} />
+              Remote
+            </span>
+          )}
+        </div>
+
+        {/* Meta row: badges */}
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+          <span className="border border-[var(--color-line)] px-2 py-0.5 text-[var(--color-ink)]">
+            {CONTRACT_TYPE_LABELS[job.contract_type]}
           </span>
-        )}
+          <span className="text-[var(--color-ink)]/70">
+            {formatSalary(job.salary_min, job.salary_max, job.salary_is_market_related)}
+          </span>
+          <span className="flex items-center gap-1 text-[var(--color-muted)]">
+            <Clock size={11} />
+            {timeAgo(job.posted_at)}
+          </span>
+          {job.source === "employer_direct" &&
+            job.company &&
+            (job.company.verified ? (
+              <span className="border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-1.5 py-0.5 font-medium text-[var(--color-indigo)]">
+                ✓ Verified
+              </span>
+            ) : (
+              <span className="border border-[var(--color-line)] px-1.5 py-0.5 text-[var(--color-muted)]">
+                Unverified employer
+              </span>
+            ))}
+        </div>
       </div>
     </Link>
   );

@@ -38,15 +38,15 @@ export function ApplicantStatus({
       value={status}
       onChange={(e) => handleChange(e.target.value as ApplicationStatus)}
       disabled={saving}
-      className="border border-[var(--color-line)] bg-[var(--color-paper)] px-2 py-1 text-sm disabled:opacity-50"
+      className="border border-[var(--color-line)] bg-[var(--color-paper)] px-2.5 py-1.5 text-sm disabled:opacity-50"
     >
-      {(Object.entries(STATUS_LABELS) as [ApplicationStatus, string][]).map(
-        ([value, label]) => (
-          <option key={value} value={value}>
-            {label}
-          </option>
-        )
-      )}
+      {(
+        Object.entries(STATUS_LABELS) as [ApplicationStatus, string][]
+      ).map(([value, label]) => (
+        <option key={value} value={value}>
+          {label}
+        </option>
+      ))}
     </select>
   );
 }

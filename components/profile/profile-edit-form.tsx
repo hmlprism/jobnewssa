@@ -3,7 +3,12 @@
 import { useState, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { SA_PROVINCES, CONTRACT_TYPE_LABELS, type Profile, type ContractType } from "@/types/database";
+import {
+  SA_PROVINCES,
+  CONTRACT_TYPE_LABELS,
+  type Profile,
+  type ContractType,
+} from "@/types/database";
 
 const NQF_LEVELS = [
   { value: "1", label: "Level 1 — Grade 9" },
@@ -40,56 +45,33 @@ const WORK_AUTHORIZATION_LABELS: Record<string, string> = {
   other: "Other",
 };
 
-// Major South African cities and towns, organised for datalist autocomplete.
 const SA_CITIES = [
-  // Gauteng
   "Johannesburg", "Pretoria", "Tshwane", "Centurion", "Sandton", "Soweto",
   "Midrand", "Roodepoort", "Krugersdorp", "Germiston", "Benoni", "Boksburg",
   "Alberton", "Kempton Park", "Ekurhuleni", "Springs", "Vereeniging", "Vanderbijlpark",
-  // Western Cape
   "Cape Town", "George", "Stellenbosch", "Paarl", "Worcester", "Knysna",
   "Mossel Bay", "Hermanus", "Bellville", "Somerset West", "Malmesbury", "Strand",
-  // KwaZulu-Natal
   "Durban", "Pietermaritzburg", "Richards Bay", "Newcastle", "Pinetown",
   "Umhlanga", "Ballito", "Port Shepstone", "Ladysmith", "Tongaat",
-  // Eastern Cape
   "Gqeberha", "East London", "Mthatha", "Queenstown", "King William's Town",
   "Makhanda", "Bhisho", "Butterworth", "Port Alfred",
-  // Limpopo
   "Polokwane", "Tzaneen", "Thohoyandou", "Mokopane", "Giyani", "Bela-Bela",
-  // Mpumalanga
   "Mbombela", "eMalahleni", "Secunda", "Middelburg", "Standerton",
   "Piet Retief", "White River",
-  // North West
   "Rustenburg", "Klerksdorp", "Potchefstroom", "Mahikeng", "Brits", "Hartbeespoort",
-  // Free State
   "Bloemfontein", "Welkom", "Phuthaditjhaba", "Sasolburg", "Kroonstad", "Bethlehem",
-  // Northern Cape
   "Kimberley", "Upington", "Springbok", "De Aar", "Kuruman",
 ];
 
-/**
- * Validates a South African phone number.
- * Accepts: 0XXXXXXXXX (10 digits, starting with 0)
- *       or +27XXXXXXXXX (+27 followed by exactly 9 digits)
- * Spaces, hyphens, and parentheses in the original input are ignored.
- * Returns null if valid, or an error string if not.
- */
 function validatePhone(value: string): string | null {
-  if (!value.trim()) return null; // optional field
+  if (!value.trim()) return null;
   if (/[a-zA-Z]/.test(value)) return "Phone number must contain digits only.";
-  // Strip common formatting characters before checking the digit pattern
   const stripped = value.replace(/[\s\-().]/g, "");
   if (/^\+27[0-9]{9}$/.test(stripped)) return null;
   if (/^0[0-9]{9}$/.test(stripped)) return null;
   return "Enter a valid South African phone number — 10 digits starting with 0 (e.g. 082 123 4567), or international format (e.g. +27 82 123 4567).";
 }
 
-/**
- * Basic format validation for professional registration numbers.
- * Only validates when a known body prefix is detected; accepts all other input.
- * Returns null if valid/unrecognised, or an error string.
- */
 function validateProfReg(value: string): string | null {
   if (!value.trim()) return null;
   const upper = value.toUpperCase().trim();
@@ -100,36 +82,33 @@ function validateProfReg(value: string): string | null {
       return "SAICA membership numbers are 8 digits (e.g. SAICA: 12345678).";
     }
   }
-
   if (upper.startsWith("ECSA")) {
     const rest = value.replace(/^ECSA[:\s]*/i, "").trim();
     if (rest && !/^[0-9]+$/.test(rest)) {
       return "ECSA registration numbers are numeric (e.g. ECSA: 123456).";
     }
   }
-
   if (upper.startsWith("SACAP")) {
     const rest = value.replace(/^SACAP[:\s]*/i, "").trim();
     if (rest && !/^[A-Z0-9/\-]+$/i.test(rest)) {
       return "Check your SACAP number format (e.g. SACAP: 12345).";
     }
   }
-
-  // HPCSA formats vary widely per professional board — accept any non-empty suffix
   if (upper.startsWith("HPCSA")) {
     const rest = value.replace(/^HPCSA[:\s]*/i, "").trim();
-    if (!rest) return "Please include your HPCSA registration number after the prefix.";
+    if (!rest)
+      return "Please include your HPCSA registration number after the prefix.";
   }
 
   return null;
 }
 
 const inputClass =
-  "w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-sm";
+  "w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm";
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="border-b border-[var(--color-line)] pb-2 font-display text-base">
+    <h2 className="border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
       {children}
     </h2>
   );
@@ -137,7 +116,7 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 
 function PrivateBadge() {
   return (
-    <span className="ml-2 text-xs font-normal text-[var(--color-muted)]">
+    <span className="ml-2 text-xs font-normal normal-case tracking-normal text-[var(--color-muted)]">
       Private — only visible to you
     </span>
   );
@@ -152,46 +131,56 @@ export function ProfileEditForm({
 }) {
   const isEmployer = profile.role === "employer";
 
-  // Basic info
   const [headline, setHeadline] = useState(profile.headline ?? "");
   const [phone, setPhone] = useState(profile.phone ?? "");
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [province, setProvince] = useState(profile.province ?? "");
   const [city, setCity] = useState(profile.city ?? "");
 
-  // Resume (job seekers only)
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [hasResume, setHasResume] = useState(!!profile.resume_url);
   const [resumePath, setResumePath] = useState(profile.resume_url);
   const [viewingResume, setViewingResume] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Qualifications
   const [nqfLevel, setNqfLevel] = useState(profile.nqf_level ?? "");
-  const [qualificationTitle, setQualificationTitle] = useState(profile.qualification_title ?? "");
-  const [qualificationType, setQualificationType] = useState(profile.qualification_type ?? "");
+  const [qualificationTitle, setQualificationTitle] = useState(
+    profile.qualification_title ?? ""
+  );
+  const [qualificationType, setQualificationType] = useState(
+    profile.qualification_type ?? ""
+  );
   const [professionalRegistration, setProfessionalRegistration] = useState(
     profile.professional_registration ?? ""
   );
   const [profRegError, setProfRegError] = useState<string | null>(null);
 
-  // Work authorisation
-  const [workAuthorization, setWorkAuthorization] = useState(profile.work_authorization ?? "");
+  const [workAuthorization, setWorkAuthorization] = useState(
+    profile.work_authorization ?? ""
+  );
 
-  // Preferences
-  const [preferredProvince, setPreferredProvince] = useState(profile.preferred_province ?? "");
+  const [preferredProvince, setPreferredProvince] = useState(
+    profile.preferred_province ?? ""
+  );
   const [preferredContractType, setPreferredContractType] = useState(
     profile.preferred_contract_type ?? ""
   );
   const [desiredSalaryMin, setDesiredSalaryMin] = useState(
-    profile.desired_salary_min != null ? String(profile.desired_salary_min) : ""
+    profile.desired_salary_min != null
+      ? String(profile.desired_salary_min)
+      : ""
   );
 
-  // Private EE fields
-  const [disabilityStatus, setDisabilityStatus] = useState(profile.disability_status ?? "");
-  const [eeDesignation, setEeDesignation] = useState(profile.ee_designation ?? "");
+  const [disabilityStatus, setDisabilityStatus] = useState(
+    profile.disability_status ?? ""
+  );
+  const [eeDesignation, setEeDesignation] = useState(
+    profile.ee_designation ?? ""
+  );
 
-  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [saveStatus, setSaveStatus] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
   const [error, setError] = useState<string | null>(null);
 
   async function handleViewResume() {
@@ -202,13 +191,13 @@ export function ProfileEditForm({
       .from("resumes")
       .createSignedUrl(resumePath, 60);
     setViewingResume(false);
-    if (data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+    if (data?.signedUrl)
+      window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // Run field validations before sending to server
     const phoneErr = validatePhone(phone);
     const profRegErr = validateProfReg(professionalRegistration);
     setPhoneError(phoneErr);
@@ -225,7 +214,6 @@ export function ProfileEditForm({
     const supabase = createClient();
     let resume_url = profile.resume_url;
 
-    // Resume upload — job seekers only
     if (!isEmployer && resumeFile) {
       const path = `${userId}/${Date.now()}_${resumeFile.name}`;
       const { error: uploadError } = await supabase.storage
@@ -247,7 +235,6 @@ export function ProfileEditForm({
         phone: phone || null,
         province: province || null,
         city: city || null,
-        // Only update resume_url for job seekers; employers have no resume
         ...(!isEmployer ? { resume_url } : {}),
         nqf_level: nqfLevel || null,
         qualification_title: qualificationTitle || null,
@@ -255,7 +242,8 @@ export function ProfileEditForm({
         professional_registration: professionalRegistration || null,
         work_authorization: workAuthorization || null,
         preferred_province: preferredProvince || null,
-        preferred_contract_type: (preferredContractType as ContractType) || null,
+        preferred_contract_type:
+          (preferredContractType as ContractType) || null,
         desired_salary_min: desiredSalaryMin ? Number(desiredSalaryMin) : null,
         disability_status: disabilityStatus || null,
         ee_designation: eeDesignation || null,
@@ -279,19 +267,22 @@ export function ProfileEditForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-
-      {/* ── Resume (job seekers only) ── */}
+      {/* Resume */}
       {!isEmployer && (
         <div className="space-y-4">
           <SectionHeading>Resume</SectionHeading>
           <div>
             <label className="mb-1.5 block text-sm font-medium">
               Resume{" "}
-              <span className="font-normal text-[var(--color-muted)]">(PDF, max 5 MB)</span>
+              <span className="font-normal text-[var(--color-muted)]">
+                (PDF, max 5 MB)
+              </span>
             </label>
             {hasResume && (
               <div className="mb-3 flex items-center gap-3">
-                <p className="text-sm text-[var(--color-green)]">Resume on file</p>
+                <p className="text-sm text-[var(--color-green)]">
+                  Resume on file
+                </p>
                 <button
                   type="button"
                   onClick={handleViewResume}
@@ -310,7 +301,9 @@ export function ProfileEditForm({
                 Choose file
               </label>
               {resumeFile && (
-                <span className="text-sm text-[var(--color-muted)]">{resumeFile.name}</span>
+                <span className="text-sm text-[var(--color-muted)]">
+                  {resumeFile.name}
+                </span>
               )}
             </div>
             <input
@@ -339,7 +332,7 @@ export function ProfileEditForm({
         </div>
       )}
 
-      {/* ── Basic info ── */}
+      {/* Basic info */}
       <div className="space-y-4">
         <SectionHeading>Basic information</SectionHeading>
 
@@ -373,13 +366,18 @@ export function ProfileEditForm({
             className={inputClass}
           />
           {phoneError && (
-            <p className="mt-1 text-sm text-[var(--color-rust)]">{phoneError}</p>
+            <p className="mt-1 text-sm text-[var(--color-rust)]">
+              {phoneError}
+            </p>
           )}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="province" className="mb-1.5 block text-sm font-medium">
+            <label
+              htmlFor="province"
+              className="mb-1.5 block text-sm font-medium"
+            >
               Province
             </label>
             <select
@@ -390,7 +388,9 @@ export function ProfileEditForm({
             >
               <option value="">Select province</option>
               {SA_PROVINCES.map((p) => (
-                <option key={p} value={p}>{p}</option>
+                <option key={p} value={p}>
+                  {p}
+                </option>
               ))}
             </select>
           </div>
@@ -417,12 +417,15 @@ export function ProfileEditForm({
         </div>
       </div>
 
-      {/* ── Qualifications ── */}
+      {/* Qualifications */}
       <div className="space-y-4">
         <SectionHeading>Qualifications</SectionHeading>
 
         <div>
-          <label htmlFor="nqf-level" className="mb-1.5 block text-sm font-medium">
+          <label
+            htmlFor="nqf-level"
+            className="mb-1.5 block text-sm font-medium"
+          >
             Highest NQF level
           </label>
           <select
@@ -433,13 +436,18 @@ export function ProfileEditForm({
           >
             <option value="">Select NQF level</option>
             {NQF_LEVELS.map(({ value, label }) => (
-              <option key={value} value={value}>{label}</option>
+              <option key={value} value={value}>
+                {label}
+              </option>
             ))}
           </select>
         </div>
 
         <div>
-          <label htmlFor="qual-title" className="mb-1.5 block text-sm font-medium">
+          <label
+            htmlFor="qual-title"
+            className="mb-1.5 block text-sm font-medium"
+          >
             Qualification title
           </label>
           <input
@@ -453,7 +461,10 @@ export function ProfileEditForm({
         </div>
 
         <div>
-          <label htmlFor="qual-type" className="mb-1.5 block text-sm font-medium">
+          <label
+            htmlFor="qual-type"
+            className="mb-1.5 block text-sm font-medium"
+          >
             Qualification type
           </label>
           <select
@@ -464,13 +475,18 @@ export function ProfileEditForm({
           >
             <option value="">Select type</option>
             {QUALIFICATION_TYPES.map((t) => (
-              <option key={t} value={t}>{t}</option>
+              <option key={t} value={t}>
+                {t}
+              </option>
             ))}
           </select>
         </div>
 
         <div>
-          <label htmlFor="prof-reg" className="mb-1.5 block text-sm font-medium">
+          <label
+            htmlFor="prof-reg"
+            className="mb-1.5 block text-sm font-medium"
+          >
             Professional registration number
           </label>
           <input
@@ -485,21 +501,28 @@ export function ProfileEditForm({
             className={inputClass}
           />
           {profRegError && (
-            <p className="mt-1 text-sm text-[var(--color-rust)]">{profRegError}</p>
+            <p className="mt-1 text-sm text-[var(--color-rust)]">
+              {profRegError}
+            </p>
           )}
           <p className="mt-1 text-xs text-[var(--color-muted)]">
-            Include the registering body prefix (HPCSA, SAICA, ECSA, SACAP, etc.).{" "}
-            <span className="font-medium">Self-reported — not independently verified.</span>
+            Include the registering body prefix (HPCSA, SAICA, ECSA, SACAP,
+            etc.).{" "}
+            <span className="font-medium">
+              Self-reported — not independently verified.
+            </span>
           </p>
         </div>
       </div>
 
-      {/* ── Work authorisation ── */}
+      {/* Work authorisation */}
       <div className="space-y-4">
         <SectionHeading>Work authorisation</SectionHeading>
-
         <div>
-          <label htmlFor="work-auth" className="mb-1.5 block text-sm font-medium">
+          <label
+            htmlFor="work-auth"
+            className="mb-1.5 block text-sm font-medium"
+          >
             Work authorisation status
           </label>
           <select
@@ -509,20 +532,27 @@ export function ProfileEditForm({
             className={inputClass}
           >
             <option value="">Select status</option>
-            {Object.entries(WORK_AUTHORIZATION_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
-            ))}
+            {Object.entries(WORK_AUTHORIZATION_LABELS).map(
+              ([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              )
+            )}
           </select>
         </div>
       </div>
 
-      {/* ── Job preferences (job seekers only) ── */}
+      {/* Job preferences */}
       {!isEmployer && (
         <div className="space-y-4">
           <SectionHeading>Job preferences</SectionHeading>
 
           <div>
-            <label htmlFor="pref-province" className="mb-1.5 block text-sm font-medium">
+            <label
+              htmlFor="pref-province"
+              className="mb-1.5 block text-sm font-medium"
+            >
               Preferred province
             </label>
             <select
@@ -533,13 +563,18 @@ export function ProfileEditForm({
             >
               <option value="">No preference</option>
               {SA_PROVINCES.map((p) => (
-                <option key={p} value={p}>{p}</option>
+                <option key={p} value={p}>
+                  {p}
+                </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label htmlFor="pref-contract" className="mb-1.5 block text-sm font-medium">
+            <label
+              htmlFor="pref-contract"
+              className="mb-1.5 block text-sm font-medium"
+            >
               Preferred contract type
             </label>
             <select
@@ -549,14 +584,24 @@ export function ProfileEditForm({
               className={inputClass}
             >
               <option value="">No preference</option>
-              {(Object.entries(CONTRACT_TYPE_LABELS) as [ContractType, string][]).map(([value, label]) => (
-                <option key={value} value={value}>{label}</option>
+              {(
+                Object.entries(CONTRACT_TYPE_LABELS) as [
+                  ContractType,
+                  string,
+                ][]
+              ).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label htmlFor="salary-min" className="mb-1.5 block text-sm font-medium">
+            <label
+              htmlFor="salary-min"
+              className="mb-1.5 block text-sm font-medium"
+            >
               Minimum desired salary (ZAR / month)
             </label>
             <input
@@ -573,19 +618,23 @@ export function ProfileEditForm({
         </div>
       )}
 
-      {/* ── Employment equity (private) ── */}
+      {/* Employment equity */}
       <div className="space-y-4">
         <SectionHeading>
           Employment equity
           <PrivateBadge />
         </SectionHeading>
         <p className="text-xs text-[var(--color-muted)]">
-          This information is stored privately and is never shared with employers or
-          visible to other users. It may be used in aggregate, anonymised reporting only.
+          This information is stored privately and is never shared with
+          employers or visible to other users. It may be used in aggregate,
+          anonymised reporting only.
         </p>
 
         <div>
-          <label htmlFor="disability" className="mb-1.5 block text-sm font-medium">
+          <label
+            htmlFor="disability"
+            className="mb-1.5 block text-sm font-medium"
+          >
             Disability status
             <PrivateBadge />
           </label>
@@ -600,7 +649,10 @@ export function ProfileEditForm({
         </div>
 
         <div>
-          <label htmlFor="ee-designation" className="mb-1.5 block text-sm font-medium">
+          <label
+            htmlFor="ee-designation"
+            className="mb-1.5 block text-sm font-medium"
+          >
             EE designation
             <PrivateBadge />
           </label>
@@ -623,7 +675,9 @@ export function ProfileEditForm({
         </div>
       </div>
 
-      {error && <p className="text-sm text-[var(--color-rust)]">{error}</p>}
+      {error && (
+        <p className="text-sm text-[var(--color-rust)]">{error}</p>
+      )}
 
       {saveStatus === "saved" && (
         <p className="text-sm text-[var(--color-green)]">Profile saved.</p>

@@ -2,24 +2,26 @@ import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
-import { MessageThread, type MsgRow } from "@/components/messaging/message-thread";
+import {
+  MessageThread,
+  type MsgRow,
+} from "@/components/messaging/message-thread";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
-// Never cache this page — router.refresh() must always get fresh messages.
 export const dynamic = "force-dynamic";
 
-// ── suspended content (auth + queries + mark-read) ─────────────────────────
-
-async function ThreadContent({ applicationId }: { applicationId: string }) {
+async function ThreadContent({
+  applicationId,
+}: {
+  applicationId: string;
+}) {
   const user = await getAuthUser();
   if (!user) redirect("/auth/login");
 
   const supabase = await createClient();
 
-  // Fetch the application with job and applicant details.
-  // The applications SELECT RLS policy allows this only if auth.uid() is
-  // the applicant OR the job poster — so a 404 here means unauthorised.
   const { data: appData } = await supabase
     .from("applications")
     .select(
@@ -37,18 +39,15 @@ async function ThreadContent({ applicationId }: { applicationId: string }) {
     posted_by: string;
     company_name_raw: string | null;
   };
-  const applicantProfile = appData.profiles as unknown as { full_name: string | null } | null;
+  const applicantProfile = appData.profiles as unknown as {
+    full_name: string | null;
+  } | null;
 
   const isApplicant = appData.applicant_id === user.id;
-  const isEmployer  = job.posted_by === user.id;
+  const isEmployer = job.posted_by === user.id;
 
-  // Extra defence-in-depth: RLS should already reject non-parties, but
-  // verify explicitly before showing any content.
   if (!isApplicant && !isEmployer) notFound();
 
-  // Mark all unread messages from the OTHER party as read now that this
-  // user has opened the thread. The RLS UPDATE policy (sender_id != auth.uid()
-  // AND party check) ensures we can only update messages we received.
   await supabase
     .from("messages")
     .update({ read_at: new Date().toISOString() })
@@ -56,10 +55,11 @@ async function ThreadContent({ applicationId }: { applicationId: string }) {
     .neq("sender_id", user.id)
     .is("read_at", null);
 
-  // Fetch messages oldest-first for chronological display.
   const { data: rawMessages } = await supabase
     .from("messages")
-    .select("id, sender_id, body, created_at, profiles!sender_id(full_name)")
+    .select(
+      "id, sender_id, body, created_at, profiles!sender_id(full_name)"
+    )
     .eq("application_id", applicationId)
     .order("created_at", { ascending: true });
 
@@ -68,7 +68,9 @@ async function ThreadContent({ applicationId }: { applicationId: string }) {
     sender_id: m.sender_id,
     body: m.body,
     created_at: m.created_at,
-    senderName: (m.profiles as unknown as { full_name: string | null } | null)?.full_name ?? null,
+    senderName:
+      (m.profiles as unknown as { full_name: string | null } | null)
+        ?.full_name ?? null,
   }));
 
   const otherPartyName = isApplicant
@@ -77,24 +79,25 @@ async function ThreadContent({ applicationId }: { applicationId: string }) {
 
   return (
     <>
-      {/* Context strip */}
+      {/* Context header */}
       <div className="mb-6 border-b border-[var(--color-line)] pb-4">
-        <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
           {isApplicant ? "Employer" : "Applicant"}
         </p>
-        <h1 className="font-display text-2xl">{otherPartyName}</h1>
+        <h1 className="mt-1 font-display text-2xl font-semibold">
+          {otherPartyName}
+        </h1>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
           Re:{" "}
           <Link
             href={`/jobs/${job.slug}`}
-            className="hover:text-[var(--color-rust)] underline underline-offset-2"
+            className="underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
             {job.title}
           </Link>
         </p>
       </div>
 
-      {/* Client component: renders message list + send form with optimistic updates */}
       <MessageThread
         applicationId={applicationId}
         currentUserId={user.id}
@@ -115,7 +118,10 @@ function ThreadSkeleton() {
       </div>
       <div className="space-y-4">
         {[0, 1].map((i) => (
-          <div key={i} className={`flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}>
+          <div
+            key={i}
+            className={`flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}
+          >
             <div className="h-16 w-56 animate-pulse bg-[var(--color-line)]" />
           </div>
         ))}
@@ -123,8 +129,6 @@ function ThreadSkeleton() {
     </div>
   );
 }
-
-// ── page shell ─────────────────────────────────────────────────────────────
 
 export default async function ThreadPage({
   params,
@@ -136,19 +140,20 @@ export default async function ThreadPage({
   const { applicationId } = await params;
   const { from } = await searchParams;
 
-  // Resolve back link: employer comes from the applicants list, seeker from their apps.
-  // The "from" query param carries the jobId when the employer navigates here.
-  const backHref = from ? `/employer/dashboard/${from}/applicants` : "/applications";
-  const backLabel = from ? "← Back to applicants" : "← Back to my applications";
+  const backHref = from
+    ? `/employer/dashboard/${from}/applicants`
+    : "/applications";
+  const backLabel = from ? "Back to applicants" : "Back to my applications";
 
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
+      <main className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
         <Link
           href={backHref}
-          className="mb-6 block text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
+          className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
         >
+          <ArrowLeft size={14} />
           {backLabel}
         </Link>
 

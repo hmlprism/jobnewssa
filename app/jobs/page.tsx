@@ -3,7 +3,11 @@ import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { JobFilters } from "@/components/jobs/job-filters";
 import { JobCard } from "@/components/jobs/job-card";
-import { searchJobs, getAllSectors, type JobSearchFilters } from "@/lib/jobs-query";
+import {
+  searchJobs,
+  getAllSectors,
+  type JobSearchFilters,
+} from "@/lib/jobs-query";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
@@ -24,18 +28,19 @@ export default async function JobsPage({
     <>
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <form action="/jobs" className="mb-8 flex gap-2">
+        {/* Search bar */}
+        <form action="/jobs" className="mb-8 flex gap-0">
           <div className="relative flex-1">
             <Search
               size={18}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
             />
             <input
               type="text"
               name="q"
               defaultValue={filters.q}
               placeholder="Job title, keyword, or company"
-              className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] py-3 pl-10 pr-4 text-sm"
+              className="w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3 pl-11 pr-4 text-sm"
             />
           </div>
           <button
@@ -47,22 +52,30 @@ export default async function JobsPage({
         </form>
 
         <div className="flex flex-col gap-8 md:flex-row">
-          <Suspense fallback={<div className="w-full shrink-0 md:w-64" />}>
+          {/* Sidebar filters */}
+          <Suspense
+            fallback={<div className="w-full shrink-0 md:w-60 lg:w-64" />}
+          >
             <JobFilters sectors={sectors} />
           </Suspense>
 
+          {/* Results */}
           <div className="min-w-0 flex-1">
-            <div className="mb-4 flex items-center justify-between">
-              <h1 className="font-display text-xl">
-                {count.toLocaleString()} South Africa job{count === 1 ? "" : "s"}
+            <div className="mb-4 flex items-baseline justify-between border-b border-[var(--color-line)] pb-4">
+              <h1 className="font-display text-xl font-semibold">
+                {count.toLocaleString()} South Africa job
+                {count === 1 ? "" : "s"}
               </h1>
             </div>
 
             {jobs.length === 0 ? (
-              <div className="border-t border-[var(--color-line)] pb-16 pt-10">
-                <h2 className="font-display text-2xl">No listings match — yet.</h2>
+              <div className="pb-16 pt-10">
+                <h2 className="font-display text-2xl">
+                  No listings match — yet.
+                </h2>
                 <p className="mt-3 max-w-sm text-[var(--color-muted)]">
-                  The market moves quickly. Try a broader keyword, a different province, or remove a filter.
+                  The market moves quickly. Try a broader keyword, a different
+                  province, or remove a filter.
                 </p>
                 <div className="mt-6 space-y-3 text-sm">
                   <div>
@@ -93,16 +106,25 @@ export default async function JobsPage({
               </div>
             )}
 
+            {/* Pagination */}
             {pageCount > 1 && (
-              <div className="mt-8 flex items-center justify-center gap-4 text-sm">
+              <div className="mt-8 flex items-center justify-center gap-4 border-t border-[var(--color-line)] pt-6 text-sm">
                 {page > 1 && (
-                  <PageLink filters={filters} page={page - 1} label="Previous" />
+                  <PageLink
+                    filters={filters}
+                    page={page - 1}
+                    label="← Previous"
+                  />
                 )}
                 <span className="text-[var(--color-muted)]">
                   Page {page} of {pageCount}
                 </span>
                 {page < pageCount && (
-                  <PageLink filters={filters} page={page + 1} label="Next" />
+                  <PageLink
+                    filters={filters}
+                    page={page + 1}
+                    label="Next →"
+                  />
                 )}
               </div>
             )}
@@ -128,7 +150,10 @@ function PageLink({
     page: String(page),
   });
   return (
-    <Link href={`/jobs?${params.toString()}`} className="text-[var(--color-rust)] hover:underline">
+    <Link
+      href={`/jobs?${params.toString()}`}
+      className="font-medium text-[var(--color-rust)] hover:underline"
+    >
       {label}
     </Link>
   );

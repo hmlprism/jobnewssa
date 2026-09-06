@@ -9,18 +9,14 @@
   --color-paper-dim: #efece3;
   --color-rust: #be421c;
   --color-rust-dark: #a53c19;
-  /* Saved / success states — muted sage replaces vivid green */
   --color-green: #6b7a5e;
   --color-green-dim: #eaede8;
-  /* Informational accent — verified employer badge, non-action */
   --color-indigo: #2a3d66;
   --color-indigo-dim: #eaecf3;
-  /* Closing-soon urgency — desaturated, not celebratory */
   --color-clay: #b8804a;
   --color-clay-dim: #f5ede0;
   --color-muted: #6b6558;
   --color-line: #ddd8ca;
-  /* Slightly darker hairline for hover states — no layout shift */
   --color-line-hover: #c4bfb2;
 }
 
@@ -32,6 +28,8 @@ body {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, .font-display {
@@ -54,4 +52,45 @@ h1, h2, h3, .font-display {
 ::selection {
   background: var(--color-rust);
   color: var(--color-paper);
+}
+
+/* ── Form primitives ── */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="number"],
+input[type="url"],
+input[type="search"],
+select,
+textarea {
+  transition: border-color 0.15s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-ink);
+}
+
+/* Checkbox / radio accent */
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--color-rust);
+}
+
+/* Job description prose */
+.prose-job {
+  line-height: 1.7;
+}
+.prose-job p + p {
+  margin-top: 0.75em;
 }

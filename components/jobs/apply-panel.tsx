@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export function ApplyPanel({ jobId }: { jobId: string }) {
-  const [status, setStatus] = useState<"loading" | "signed_out" | "no_resume" | "ready" | "applied" | "submitting">(
-    "loading"
-  );
+  const [status, setStatus] = useState<
+    "loading" | "signed_out" | "no_resume" | "ready" | "applied" | "submitting"
+  >("loading");
   const [coverNote, setCoverNote] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +20,11 @@ export function ApplyPanel({ jobId }: { jobId: string }) {
         return;
       }
       const [{ data: profile }, { data: existing }] = await Promise.all([
-        supabase.from("profiles").select("resume_url").eq("id", user.id).single(),
+        supabase
+          .from("profiles")
+          .select("resume_url")
+          .eq("id", user.id)
+          .single(),
         supabase
           .from("applications")
           .select("id")
@@ -82,7 +86,7 @@ export function ApplyPanel({ jobId }: { jobId: string }) {
 
   if (status === "no_resume") {
     return (
-      <div className="border border-[var(--color-line)] px-4 py-4">
+      <div>
         <p className="mb-3 text-sm text-[var(--color-muted)]">
           You need to upload a resume before you can apply.
         </p>
@@ -98,10 +102,13 @@ export function ApplyPanel({ jobId }: { jobId: string }) {
 
   if (status === "applied") {
     return (
-      <div className="border-t border-[var(--color-line)] pt-5">
-        <p className="font-display text-xl text-[var(--color-ink)]">Your application is in.</p>
+      <div>
+        <p className="font-display text-lg text-[var(--color-ink)]">
+          Your application is in.
+        </p>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          The employer will be in touch if your profile is a match. In the meantime,{" "}
+          The employer will be in touch if your profile is a match. In the
+          meantime,{" "}
           <Link
             href="/jobs"
             className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
@@ -117,17 +124,20 @@ export function ApplyPanel({ jobId }: { jobId: string }) {
   return (
     <div>
       <label htmlFor="cover-note" className="mb-2 block text-sm font-medium">
-        Cover note (optional)
+        Cover note{" "}
+        <span className="font-normal text-[var(--color-muted)]">(optional)</span>
       </label>
       <textarea
         id="cover-note"
         value={coverNote}
         onChange={(e) => setCoverNote(e.target.value)}
         rows={5}
-        className="mb-3 w-full border border-[var(--color-line)] bg-[var(--color-paper)] p-2 text-sm"
+        className="mb-3 w-full border border-[var(--color-line)] bg-[var(--color-paper)] p-3 text-sm"
         placeholder="Briefly say why you're a fit for this role"
       />
-      {error && <p className="mb-2 text-sm text-[var(--color-rust)]">{error}</p>}
+      {error && (
+        <p className="mb-2 text-sm text-[var(--color-rust)]">{error}</p>
+      )}
       <Button
         onClick={submitApplication}
         disabled={status === "submitting"}

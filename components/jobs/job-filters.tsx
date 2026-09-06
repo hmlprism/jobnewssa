@@ -1,7 +1,11 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { SA_PROVINCES, CONTRACT_TYPE_LABELS, type ContractType } from "@/types/database";
+import {
+  SA_PROVINCES,
+  CONTRACT_TYPE_LABELS,
+  type ContractType,
+} from "@/types/database";
 import type { Sector } from "@/types/database";
 import { slugify } from "@/lib/slug";
 
@@ -28,14 +32,19 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
   const activeContract = searchParams.get("contract");
   const remoteOnly = searchParams.get("remote") === "true";
 
+  const hasFilters =
+    activeProvince || activeSector || activeSalary || activeContract || remoteOnly;
+
   return (
-    <aside className="w-full shrink-0 md:w-64">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-sm font-semibold">Refine your search</h2>
-        {(activeProvince || activeSector || activeSalary || activeContract || remoteOnly) && (
+    <aside className="w-full shrink-0 md:w-60 lg:w-64">
+      <div className="mb-5 flex items-center justify-between">
+        <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
+          Filters
+        </h2>
+        {hasFilters && (
           <button
             onClick={() => router.push(pathname)}
-            className="cursor-pointer text-xs text-[var(--color-muted)] hover:text-[var(--color-rust)]"
+            className="cursor-pointer text-xs font-medium text-[var(--color-rust)] hover:underline"
           >
             Clear all
           </button>
@@ -43,19 +52,20 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
       </div>
 
       <FilterGroup label="Remote">
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex cursor-pointer items-center gap-2 text-sm">
           <input
             type="checkbox"
             checked={remoteOnly}
-            onChange={(e) => setParam("remote", e.target.checked ? "true" : null)}
-            className="accent-[var(--color-rust)]"
+            onChange={(e) =>
+              setParam("remote", e.target.checked ? "true" : null)
+            }
           />
           Remote jobs only
         </label>
       </FilterGroup>
 
-      <FilterGroup label="Minimum salary per month">
-        <div className="space-y-2">
+      <FilterGroup label="Minimum salary / month">
+        <div className="space-y-1.5">
           <RadioRow
             checked={!activeSalary}
             label="Any"
@@ -104,8 +114,8 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
         </select>
       </FilterGroup>
 
-      <FilterGroup label="Contract type">
-        <div className="space-y-2">
+      <FilterGroup label="Contract type" noBorder>
+        <div className="space-y-1.5">
           <RadioRow
             checked={!activeContract}
             label="Any"
@@ -125,9 +135,21 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
   );
 }
 
-function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
+function FilterGroup({
+  label,
+  children,
+  noBorder,
+}: {
+  label: string;
+  children: React.ReactNode;
+  noBorder?: boolean;
+}) {
   return (
-    <div className="mb-6 border-b border-[var(--color-line)] pb-6">
+    <div
+      className={`mb-5 pb-5 ${
+        noBorder ? "" : "border-b border-[var(--color-line)]"
+      }`}
+    >
       <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
         {label}
       </h3>
@@ -147,12 +169,7 @@ function RadioRow({
 }) {
   return (
     <label className="flex cursor-pointer items-center gap-2 text-sm">
-      <input
-        type="radio"
-        checked={checked}
-        onChange={onSelect}
-        className="accent-[var(--color-rust)]"
-      />
+      <input type="radio" checked={checked} onChange={onSelect} />
       {label}
     </label>
   );
