@@ -2,30 +2,12 @@ import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
-import { SendMessageForm } from "@/components/messaging/send-message-form";
+import { MessageThread, type MsgRow } from "@/components/messaging/message-thread";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
 import Link from "next/link";
 
-// ── helpers ────────────────────────────────────────────────────────────────
-
-function formatMsgTime(iso: string): string {
-  const d = new Date(iso);
-  const today = new Date();
-  const isToday =
-    d.getFullYear() === today.getFullYear() &&
-    d.getMonth() === today.getMonth() &&
-    d.getDate() === today.getDate();
-  const timeStr = d.toLocaleTimeString("en-ZA", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  if (isToday) return `Today at ${timeStr}`;
-  return d.toLocaleDateString("en-ZA", {
-    day: "numeric",
-    month: "short",
-    year: d.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
-  }) + ` at ${timeStr}`;
-}
+// Never cache this page — router.refresh() must always get fresh messages.
+export const dynamic = "force-dynamic";
 
 // ── suspended content (auth + queries + mark-read) ─────────────────────────
 
@@ -81,14 +63,6 @@ async function ThreadContent({ applicationId }: { applicationId: string }) {
     .eq("application_id", applicationId)
     .order("created_at", { ascending: true });
 
-  type MsgRow = {
-    id: string;
-    sender_id: string;
-    body: string;
-    created_at: string;
-    senderName: string | null;
-  };
-
   const messages: MsgRow[] = (rawMessages ?? []).map((m) => ({
     id: m.id,
     sender_id: m.sender_id,
@@ -120,43 +94,13 @@ async function ThreadContent({ applicationId }: { applicationId: string }) {
         </p>
       </div>
 
-      {/* Message list */}
-      <div className="mb-6 min-h-[8rem]">
-        {messages.length === 0 ? (
-          <p className="py-10 text-center text-sm text-[var(--color-muted)]">
-            No messages yet. Send one to get the conversation started.
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {messages.map((msg) => {
-              const isMine = msg.sender_id === user.id;
-              return (
-                <div
-                  key={msg.id}
-                  className={`flex flex-col ${isMine ? "items-end" : "items-start"}`}
-                >
-                  <div
-                    className={`max-w-[75%] px-4 py-3 text-sm ${
-                      isMine
-                        ? "bg-[var(--color-ink)] text-[var(--color-paper)]"
-                        : "bg-[var(--color-line)] text-[var(--color-ink)]"
-                    }`}
-                  >
-                    <p className="whitespace-pre-wrap">{msg.body}</p>
-                  </div>
-                  <p className="mt-1 text-xs text-[var(--color-muted)]">
-                    {isMine ? "You" : (msg.senderName ?? otherPartyName)}{" "}
-                    · {formatMsgTime(msg.created_at)}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Send form */}
-      <SendMessageForm applicationId={applicationId} userId={user.id} />
+      {/* Client component: renders message list + send form with optimistic updates */}
+      <MessageThread
+        applicationId={applicationId}
+        currentUserId={user.id}
+        otherPartyName={otherPartyName}
+        initialMessages={messages}
+      />
     </>
   );
 }
