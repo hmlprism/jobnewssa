@@ -52,8 +52,8 @@ test.describe("Apply confirmation", () => {
       if (route.request().method() === "GET") {
         await route.fulfill({
           status: 200,
-          contentType: "application/json",
-          body: JSON.stringify([{ resume_url: "test/placeholder-resume.pdf" }]),
+          contentType: "application/vnd.pgrst.object+json",
+          body: JSON.stringify({ resume_url: "test/placeholder-resume.pdf" }),
         });
       } else {
         await route.continue();
