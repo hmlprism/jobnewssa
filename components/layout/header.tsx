@@ -1,11 +1,29 @@
 import Link from "next/link";
 import { LinkButton } from "@/components/ui/button";
-import { getAuthUser, getAuthProfile } from "@/lib/supabase/server";
+import { getAuthUser, getAuthProfile, createClient } from "@/lib/supabase/server";
 import { UserMenu } from "@/components/layout/user-menu";
+
+// Counts messages in the user's threads that were sent by someone else and
+// haven't been opened yet. Runs in parallel with getAuthProfile() so it adds
+// no extra serial latency to the header render.
+async function getUnreadCount(userId: string): Promise<number> {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("messages")
+    .select("*", { count: "exact", head: true })
+    .neq("sender_id", userId)
+    .is("read_at", null);
+  return count ?? 0;
+}
 
 export async function SiteHeader() {
   const user = await getAuthUser();
-  const profile = user ? await getAuthProfile() : null;
+
+  const [profile, unreadCount] = await Promise.all([
+    user ? getAuthProfile() : Promise.resolve(null),
+    user ? getUnreadCount(user.id) : Promise.resolve(0),
+  ]);
+
   const role = profile?.role ?? null;
 
   return (
@@ -25,6 +43,19 @@ export async function SiteHeader() {
           <Link href="/employer/post" className="hover:text-[var(--color-rust)]">
             Post a job
           </Link>
+          {user && (
+            <Link
+              href="/messages"
+              className="flex items-center gap-1 hover:text-[var(--color-rust)]"
+            >
+              Messages
+              {unreadCount > 0 && (
+                <span className="inline-flex items-center justify-center bg-[var(--color-rust)] px-1.5 py-px text-[10px] font-bold leading-none text-[var(--color-paper)]">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
+            </Link>
+          )}
         </nav>
 
         <div className="flex items-center gap-3">
