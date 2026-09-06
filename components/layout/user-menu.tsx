@@ -42,6 +42,12 @@ export function UserMenu({ email, name, role }: { email: string; name?: string; 
       >
         My Profile
       </Link>
+      <Link
+        href="/account/settings"
+        className="hidden text-sm font-medium hover:text-[var(--color-rust)] sm:block"
+      >
+        Account settings
+      </Link>
       <Button variant="ghost" size="sm" onClick={handleSignOut}>
         Sign out
       </Button>

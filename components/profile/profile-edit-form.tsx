@@ -516,60 +516,62 @@ export function ProfileEditForm({
         </div>
       </div>
 
-      {/* ── Job preferences ── */}
-      <div className="space-y-4">
-        <SectionHeading>Job preferences</SectionHeading>
+      {/* ── Job preferences (job seekers only) ── */}
+      {!isEmployer && (
+        <div className="space-y-4">
+          <SectionHeading>Job preferences</SectionHeading>
 
-        <div>
-          <label htmlFor="pref-province" className="mb-1.5 block text-sm font-medium">
-            Preferred province
-          </label>
-          <select
-            id="pref-province"
-            value={preferredProvince}
-            onChange={(e) => setPreferredProvince(e.target.value)}
-            className={inputClass}
-          >
-            <option value="">No preference</option>
-            {SA_PROVINCES.map((p) => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
-        </div>
+          <div>
+            <label htmlFor="pref-province" className="mb-1.5 block text-sm font-medium">
+              Preferred province
+            </label>
+            <select
+              id="pref-province"
+              value={preferredProvince}
+              onChange={(e) => setPreferredProvince(e.target.value)}
+              className={inputClass}
+            >
+              <option value="">No preference</option>
+              {SA_PROVINCES.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+          </div>
 
-        <div>
-          <label htmlFor="pref-contract" className="mb-1.5 block text-sm font-medium">
-            Preferred contract type
-          </label>
-          <select
-            id="pref-contract"
-            value={preferredContractType}
-            onChange={(e) => setPreferredContractType(e.target.value)}
-            className={inputClass}
-          >
-            <option value="">No preference</option>
-            {(Object.entries(CONTRACT_TYPE_LABELS) as [ContractType, string][]).map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
-            ))}
-          </select>
-        </div>
+          <div>
+            <label htmlFor="pref-contract" className="mb-1.5 block text-sm font-medium">
+              Preferred contract type
+            </label>
+            <select
+              id="pref-contract"
+              value={preferredContractType}
+              onChange={(e) => setPreferredContractType(e.target.value)}
+              className={inputClass}
+            >
+              <option value="">No preference</option>
+              {(Object.entries(CONTRACT_TYPE_LABELS) as [ContractType, string][]).map(([value, label]) => (
+                <option key={value} value={value}>{label}</option>
+              ))}
+            </select>
+          </div>
 
-        <div>
-          <label htmlFor="salary-min" className="mb-1.5 block text-sm font-medium">
-            Minimum desired salary (ZAR / month)
-          </label>
-          <input
-            id="salary-min"
-            type="number"
-            min="0"
-            step="500"
-            value={desiredSalaryMin}
-            onChange={(e) => setDesiredSalaryMin(e.target.value)}
-            placeholder="e.g. 25000"
-            className={inputClass}
-          />
+          <div>
+            <label htmlFor="salary-min" className="mb-1.5 block text-sm font-medium">
+              Minimum desired salary (ZAR / month)
+            </label>
+            <input
+              id="salary-min"
+              type="number"
+              min="0"
+              step="500"
+              value={desiredSalaryMin}
+              onChange={(e) => setDesiredSalaryMin(e.target.value)}
+              placeholder="e.g. 25000"
+              className={inputClass}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── Employment equity (private) ── */}
       <div className="space-y-4">
