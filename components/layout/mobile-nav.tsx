@@ -3,13 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import { UnreadBadge } from "@/components/layout/unread-badge";
 
 export function MobileNav({
   isLoggedIn,
-  unreadCount,
 }: {
   isLoggedIn: boolean;
-  unreadCount: number;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -57,11 +56,7 @@ export function MobileNav({
               {isLoggedIn && (
                 <MobileLink href="/messages" onClick={() => setOpen(false)}>
                   Messages
-                  {unreadCount > 0 && (
-                    <span className="ml-2 inline-flex items-center justify-center bg-[var(--color-rust)] px-1.5 py-px text-[10px] font-bold leading-none text-[var(--color-paper)]">
-                      {unreadCount > 99 ? "99+" : unreadCount}
-                    </span>
-                  )}
+                  <UnreadBadge />
                 </MobileLink>
               )}
 

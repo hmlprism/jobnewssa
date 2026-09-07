@@ -1,29 +1,12 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { LinkButton } from "@/components/ui/button";
-import { getAuthUser, getAuthProfile, createClient } from "@/lib/supabase/server";
+import { getAuthUser, getAuthProfile } from "@/lib/supabase/server";
 import { UserMenu } from "@/components/layout/user-menu";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { UnreadBadge } from "@/components/layout/unread-badge";
 
-async function getUnreadCount(userId: string): Promise<number> {
-  const supabase = await createClient();
-  const { count } = await supabase
-    .from("messages")
-    .select("*", { count: "exact", head: true })
-    .neq("sender_id", userId)
-    .is("read_at", null);
-  return count ?? 0;
-}
-
-export async function SiteHeader() {
-  const user = await getAuthUser();
-
-  const [profile, unreadCount] = await Promise.all([
-    user ? getAuthProfile() : Promise.resolve(null),
-    user ? getUnreadCount(user.id) : Promise.resolve(0),
-  ]);
-
-  const role = profile?.role ?? null;
-
+export function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--color-line)] bg-[var(--color-paper)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
@@ -42,43 +25,76 @@ export async function SiteHeader() {
           <NavLink href="/jobs">Find jobs</NavLink>
           <NavLink href="/news">News</NavLink>
           <NavLink href="/employer/post">Post a job</NavLink>
-          {user && (
-            <NavLink href="/messages">
-              Messages
-              {unreadCount > 0 && (
-                <span className="ml-1.5 inline-flex items-center justify-center bg-[var(--color-rust)] px-1.5 py-px text-[10px] font-bold leading-none text-[var(--color-paper)]">
-                  {unreadCount > 99 ? "99+" : unreadCount}
-                </span>
-              )}
-            </NavLink>
-          )}
+          <Suspense>
+            <AuthNavItems />
+          </Suspense>
         </nav>
 
         {/* Right side: auth controls + mobile hamburger */}
         <div className="flex items-center gap-3">
-          {user ? (
-            <UserMenu
-              email={user.email ?? ""}
-              name={user.user_metadata?.full_name}
-              role={role}
-            />
-          ) : (
-            <div className="hidden items-center gap-3 sm:flex">
-              <Link
-                href="/auth/login"
-                className="text-sm font-medium text-[var(--color-ink)] hover:text-[var(--color-rust)]"
-              >
-                Sign in
-              </Link>
-              <LinkButton href="/auth/signup" size="sm">
-                Create free account
-              </LinkButton>
-            </div>
-          )}
-          <MobileNav isLoggedIn={!!user} unreadCount={unreadCount} />
+          <Suspense fallback={<AuthControlsSkeleton />}>
+            <AuthControls />
+          </Suspense>
         </div>
       </div>
     </header>
+  );
+}
+
+async function AuthNavItems() {
+  const user = await getAuthUser();
+  if (!user) return null;
+  return (
+    <NavLink href="/messages">
+      Messages
+      <UnreadBadge />
+    </NavLink>
+  );
+}
+
+async function AuthControls() {
+  const user = await getAuthUser();
+  const profile = user ? await getAuthProfile() : null;
+  const role = profile?.role ?? null;
+
+  return (
+    <>
+      {user ? (
+        <UserMenu
+          email={user.email ?? ""}
+          name={user.user_metadata?.full_name}
+          role={role}
+        />
+      ) : (
+        <div className="hidden items-center gap-3 sm:flex">
+          <Link
+            href="/auth/login"
+            className="text-sm font-medium text-[var(--color-ink)] hover:text-[var(--color-rust)]"
+          >
+            Sign in
+          </Link>
+          <LinkButton href="/auth/signup" size="sm">
+            Create free account
+          </LinkButton>
+        </div>
+      )}
+      <MobileNav isLoggedIn={!!user} />
+    </>
+  );
+}
+
+function AuthControlsSkeleton() {
+  return (
+    <>
+      {/* Placeholder matching UserMenu approximate size */}
+      <div className="hidden sm:block">
+        <div className="h-8 w-20 animate-pulse bg-[var(--color-line)]" />
+      </div>
+      {/* Mobile hamburger placeholder */}
+      <div className="md:hidden">
+        <div className="h-6 w-6 animate-pulse bg-[var(--color-line)]" />
+      </div>
+    </>
   );
 }
 
