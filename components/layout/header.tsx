@@ -10,7 +10,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-30 border-b border-[var(--color-line)] bg-[var(--color-paper)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" prefetch={false} className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center bg-[var(--color-ink)] font-display text-sm font-bold text-[var(--color-paper)]">
             JN
           </span>
@@ -138,6 +138,7 @@ function NavLink({
   return (
     <Link
       href={href}
+      prefetch={false}
       className="flex items-center px-3 py-2 text-sm font-medium text-[var(--color-ink)] hover:text-[var(--color-rust)]"
     >
       {children}

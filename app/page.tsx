@@ -91,6 +91,7 @@ export default async function Home() {
             </h2>
             <Link
               href="/jobs"
+              prefetch={false}
               className="flex items-center gap-1 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
             >
               All sectors <ArrowRight size={14} />
@@ -119,6 +120,7 @@ export default async function Home() {
               </h2>
               <Link
                 href="/jobs"
+                prefetch={false}
                 className="flex items-center gap-1 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
               >
                 View all jobs <ArrowRight size={14} />
@@ -143,6 +145,7 @@ export default async function Home() {
             </p>
             <Link
               href="/employer/post"
+              prefetch={false}
               className="mt-7 inline-flex bg-[var(--color-rust)] px-7 py-3 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
             >
               Post a job

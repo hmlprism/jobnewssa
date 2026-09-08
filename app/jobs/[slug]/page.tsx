@@ -45,6 +45,7 @@ export default async function JobDetailPage({
         {/* Back link */}
         <Link
           href="/jobs"
+          prefetch={false}
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
         >
           <ArrowLeft size={14} />
