@@ -152,6 +152,7 @@ function PageLink({
   return (
     <Link
       href={`/jobs?${params.toString()}`}
+      prefetch={false}
       className="font-medium text-[var(--color-rust)] hover:underline"
     >
       {label}

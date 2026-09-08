@@ -1,10 +1,9 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { LinkButton } from "@/components/ui/button";
-import { getAuthUser, getAuthProfile } from "@/lib/supabase/server";
+import { getAuthUser, getAuthProfile, createClient } from "@/lib/supabase/server";
 import { UserMenu } from "@/components/layout/user-menu";
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { UnreadBadge } from "@/components/layout/unread-badge";
 
 export function SiteHeader() {
   return (
@@ -44,10 +43,24 @@ export function SiteHeader() {
 async function AuthNavItems() {
   const user = await getAuthUser();
   if (!user) return null;
+
+  // Fetch unread count server-side — piggybacks on the already-resolved auth
+  // session. Eliminates the client-side fetch + its middleware auth round-trip.
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("messages")
+    .select("*", { count: "exact", head: true })
+    .neq("sender_id", user.id)
+    .is("read_at", null);
+
   return (
     <NavLink href="/messages">
       Messages
-      <UnreadBadge />
+      {count != null && count > 0 && (
+        <span className="ml-1.5 inline-flex items-center justify-center bg-[var(--color-rust)] px-1.5 py-px text-[10px] font-bold leading-none text-[var(--color-paper)]">
+          {count > 99 ? "99+" : count}
+        </span>
+      )}
     </NavLink>
   );
 }
@@ -56,6 +69,18 @@ async function AuthControls() {
   const user = await getAuthUser();
   const profile = user ? await getAuthProfile() : null;
   const role = profile?.role ?? null;
+
+  // Pass unread count to MobileNav so it can show badge without client fetch
+  let unreadCount = 0;
+  if (user) {
+    const supabase = await createClient();
+    const { count } = await supabase
+      .from("messages")
+      .select("*", { count: "exact", head: true })
+      .neq("sender_id", user.id)
+      .is("read_at", null);
+    unreadCount = count ?? 0;
+  }
 
   return (
     <>
@@ -78,16 +103,13 @@ async function AuthControls() {
           </LinkButton>
         </div>
       )}
-      <MobileNav isLoggedIn={!!user} />
+      <MobileNav isLoggedIn={!!user} unreadCount={unreadCount} />
     </>
   );
 }
 
 function AuthNavItemsSkeleton() {
   // Reserve space matching the "Messages" NavLink so the nav doesn't shift.
-  // Uses min-w so the container doesn't collapse — content replaces it either
-  // with the real link (signed in) or nothing (signed out, near-instant with
-  // the getSession()-based auth read from fix #1).
   return <span className="inline-block min-w-[86px] px-3 py-2" aria-hidden />;
 }
 

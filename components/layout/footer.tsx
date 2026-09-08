@@ -34,6 +34,7 @@ export function SiteFooter() {
                 <li key={p}>
                   <Link
                     href={`/jobs?province=${slugify(p)}`}
+                    prefetch={false}
                     className="hover:text-[var(--color-rust)]"
                   >
                     {p}
@@ -48,17 +49,17 @@ export function SiteFooter() {
             </h3>
             <ul className="space-y-2 text-sm text-[var(--color-ink)]">
               <li>
-                <Link href="/jobs" className="hover:text-[var(--color-rust)]">
+                <Link href="/jobs" prefetch={false} className="hover:text-[var(--color-rust)]">
                   Browse all jobs
                 </Link>
               </li>
               <li>
-                <Link href="/auth/signup" className="hover:text-[var(--color-rust)]">
+                <Link href="/auth/signup" prefetch={false} className="hover:text-[var(--color-rust)]">
                   Create a profile
                 </Link>
               </li>
               <li>
-                <Link href="/news" className="hover:text-[var(--color-rust)]">
+                <Link href="/news" prefetch={false} className="hover:text-[var(--color-rust)]">
                   Job market news
                 </Link>
               </li>
@@ -70,12 +71,12 @@ export function SiteFooter() {
             </h3>
             <ul className="space-y-2 text-sm text-[var(--color-ink)]">
               <li>
-                <Link href="/employer/post" className="hover:text-[var(--color-rust)]">
+                <Link href="/employer/post" prefetch={false} className="hover:text-[var(--color-rust)]">
                   Post a vacancy
                 </Link>
               </li>
               <li>
-                <Link href="/auth/signup" className="hover:text-[var(--color-rust)]">
+                <Link href="/auth/signup" prefetch={false} className="hover:text-[var(--color-rust)]">
                   Create employer account
                 </Link>
               </li>

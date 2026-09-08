@@ -72,6 +72,7 @@ export default async function Home() {
                   <Link
                     key={term}
                     href={`/jobs?q=${encodeURIComponent(term)}`}
+                    prefetch={false}
                     className="text-[var(--color-ink)] underline decoration-[var(--color-line)] underline-offset-2 hover:text-[var(--color-rust)] hover:decoration-[var(--color-rust)]"
                   >
                     {term}
@@ -100,6 +101,7 @@ export default async function Home() {
               <Link
                 key={s.id}
                 href={`/jobs?sector=${s.slug}`}
+                prefetch={false}
                 className="bg-[var(--color-paper)] px-4 py-3.5 text-sm font-medium text-[var(--color-ink)] transition-colors hover:bg-[var(--color-paper-dim)] hover:text-[var(--color-rust)]"
               >
                 {s.name}

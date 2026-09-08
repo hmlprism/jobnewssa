@@ -143,11 +143,13 @@ async function main() {
   const loginCtx = await browser.newContext({ ignoreHTTPSErrors: true });
   const loginPage = await loginCtx.newPage();
   try {
-    await loginPage.goto(`${BASE_URL}/auth/login`, { waitUntil: 'domcontentloaded', timeout: 15000 });
-    await loginPage.getByLabel('Email').fill(TEST_EMAIL);
-    await loginPage.locator('#login-password').fill(TEST_PASSWORD);
-    await loginPage.getByRole('button', { name: 'Sign in' }).click();
-    await loginPage.waitForTimeout(10000);
+    await loginPage.goto(`${BASE_URL}/auth/login`, { waitUntil: 'load', timeout: 15000 });
+    await loginPage.waitForTimeout(3000); // wait for hydration
+    await loginPage.fill('input[type="email"]', TEST_EMAIL);
+    await loginPage.fill('#login-password', TEST_PASSWORD);
+    await loginPage.waitForTimeout(500);
+    await loginPage.click('button:has-text("Sign in")');
+    await loginPage.waitForTimeout(8000);
     const finalUrl = loginPage.url();
     console.log(`  Post-login URL: ${finalUrl}`);
     if (!finalUrl.includes('/jobs')) {

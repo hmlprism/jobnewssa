@@ -13,6 +13,7 @@ export function JobCard({ job }: { job: Job }) {
   return (
     <Link
       href={`/jobs/${job.slug}`}
+      prefetch={false}
       className="group relative block border-b border-[var(--color-line)] py-4 transition-colors duration-75 hover:bg-[var(--color-paper-dim)] hover:border-[var(--color-line-hover)] before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-[var(--color-rust)] before:opacity-0 before:transition-opacity before:duration-75 hover:before:opacity-100"
     >
       <div className="pl-3">
