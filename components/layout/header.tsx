@@ -67,30 +67,10 @@ async function AuthNavItems() {
 
 async function AuthControls() {
   const user = await getAuthUser();
-  const profile = user ? await getAuthProfile() : null;
-  const role = profile?.role ?? null;
 
-  // Pass unread count to MobileNav so it can show badge without client fetch
-  let unreadCount = 0;
-  if (user) {
-    const supabase = await createClient();
-    const { count } = await supabase
-      .from("messages")
-      .select("*", { count: "exact", head: true })
-      .neq("sender_id", user.id)
-      .is("read_at", null);
-    unreadCount = count ?? 0;
-  }
-
-  return (
-    <>
-      {user ? (
-        <UserMenu
-          email={user.email ?? ""}
-          name={user.user_metadata?.full_name}
-          role={role}
-        />
-      ) : (
+  if (!user) {
+    return (
+      <>
         <div className="hidden items-center gap-3 sm:flex">
           <Link
             href="/auth/login"
@@ -102,8 +82,31 @@ async function AuthControls() {
             Create free account
           </LinkButton>
         </div>
-      )}
-      <MobileNav isLoggedIn={!!user} unreadCount={unreadCount} />
+        <MobileNav isLoggedIn={false} unreadCount={0} />
+      </>
+    );
+  }
+
+  // Run profile and unread-count queries in parallel — previously sequential,
+  // costing profiles_time + messages_time ≈ 200ms; now max of the two ≈ 100ms.
+  const supabase = await createClient();
+  const [profile, { count }] = await Promise.all([
+    getAuthProfile(),
+    supabase
+      .from("messages")
+      .select("*", { count: "exact", head: true })
+      .neq("sender_id", user.id)
+      .is("read_at", null),
+  ]);
+
+  return (
+    <>
+      <UserMenu
+        email={user.email ?? ""}
+        name={user.user_metadata?.full_name}
+        role={profile?.role ?? null}
+      />
+      <MobileNav isLoggedIn={true} unreadCount={count ?? 0} />
     </>
   );
 }

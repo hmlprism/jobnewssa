@@ -42,6 +42,7 @@ async function DashboardContent() {
             badge.{" "}
             <Link
               href="/employer/verify"
+              prefetch={false}
               className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
             >
               Verify your account →
@@ -83,6 +84,7 @@ async function DashboardContent() {
                   <div className="flex items-center gap-2">
                     <Link
                       href={`/jobs/${job.slug}`}
+                      prefetch={false}
                       className="truncate font-medium hover:text-[var(--color-rust)]"
                     >
                       {job.title}
@@ -104,6 +106,7 @@ async function DashboardContent() {
                 <div className="flex shrink-0 items-center gap-4">
                   <Link
                     href={`/employer/dashboard/${job.id}/applicants`}
+                    prefetch={false}
                     className="flex items-center gap-1.5 text-sm font-medium text-[var(--color-rust)] hover:underline"
                   >
                     <Users size={14} />
@@ -111,6 +114,7 @@ async function DashboardContent() {
                   </Link>
                   <Link
                     href={`/jobs/${job.slug}`}
+                    prefetch={false}
                     className="hidden text-[var(--color-muted)] hover:text-[var(--color-ink)] sm:block"
                     aria-label="View listing"
                   >
