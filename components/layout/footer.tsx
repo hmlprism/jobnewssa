@@ -9,7 +9,7 @@ export function SiteFooter() {
         {/* Brand + tagline */}
         <div className="mb-10 flex items-start justify-between gap-8">
           <div>
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" prefetch={false} className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center bg-[var(--color-ink)] font-display text-xs font-bold text-[var(--color-paper)]">
                 JN
               </span>

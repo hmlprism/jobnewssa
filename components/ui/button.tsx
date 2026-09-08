@@ -58,6 +58,7 @@ export function LinkButton({
   return (
     <Link
       href={href}
+      prefetch={false}
       className={cn(base, variants[variant], sizes[size], className)}
     >
       {children}
