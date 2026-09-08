@@ -1,59 +1,32 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export function ApplyPanel({ jobId }: { jobId: string }) {
-  const [status, setStatus] = useState<
-    "loading" | "signed_out" | "no_resume" | "ready" | "applied" | "submitting"
-  >("loading");
+type ApplyStatus = "signed_out" | "no_resume" | "ready" | "applied" | "submitting";
+
+export function ApplyPanel({
+  jobId,
+  userId,
+  initialStatus,
+}: {
+  jobId: string;
+  userId: string | null;
+  initialStatus: Exclude<ApplyStatus, "submitting">;
+}) {
+  const [status, setStatus] = useState<ApplyStatus>(initialStatus);
   const [coverNote, setCoverNote] = useState("");
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) {
-        setStatus("signed_out");
-        return;
-      }
-      const [{ data: profile }, { data: existing }] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select("resume_url")
-          .eq("id", user.id)
-          .single(),
-        supabase
-          .from("applications")
-          .select("id")
-          .eq("job_id", jobId)
-          .eq("applicant_id", user.id)
-          .maybeSingle(),
-      ]);
-      if (!profile?.resume_url) {
-        setStatus("no_resume");
-        return;
-      }
-      setStatus(existing ? "applied" : "ready");
-    });
-  }, [jobId]);
 
   async function submitApplication() {
     setStatus("submitting");
     setError(null);
     const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      setStatus("signed_out");
-      return;
-    }
     const { error: insertError } = await supabase.from("applications").insert({
       job_id: jobId,
-      applicant_id: user.id,
+      applicant_id: userId,
       cover_note: coverNote || null,
     });
     if (insertError) {
@@ -62,10 +35,6 @@ export function ApplyPanel({ jobId }: { jobId: string }) {
       return;
     }
     setStatus("applied");
-  }
-
-  if (status === "loading") {
-    return <div className="h-24 animate-pulse bg-[var(--color-paper-dim)]" />;
   }
 
   if (status === "signed_out") {
@@ -143,7 +112,7 @@ export function ApplyPanel({ jobId }: { jobId: string }) {
         disabled={status === "submitting"}
         className="w-full justify-center"
       >
-        {status === "submitting" ? "Submitting…" : "Submit application"}
+        {status === "submitting" ? "Submitting\u2026" : "Submit application"}
       </Button>
     </div>
   );

@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
-  // 1. Auth check using the session cookie
+  // 1. Auth check — middleware already validated + refreshed the session,
+  //    so getSession() (cookie read, no network call) is sufficient here.
   const supabase = await createClient();
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
+  const user = session?.user;
 
   if (!user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

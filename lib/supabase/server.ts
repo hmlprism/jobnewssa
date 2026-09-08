@@ -35,12 +35,18 @@ export async function createClient() {
 
 // Deduplicated auth helpers — memoised per request via react.cache so that
 // every server component in the same render tree (e.g. page + SiteHeader)
-// shares one Supabase Auth round-trip instead of making independent ones.
+// shares a single cookie read instead of independent network calls.
+//
+// Safe to use getSession() here (reads JWT from cookies, no network call)
+// because middleware already called auth.getUser() which validates the JWT
+// with the Supabase Auth server and refreshes expired tokens. By the time
+// a server component renders, the forwarded request cookies are guaranteed
+// fresh and verified.
 
 export const getAuthUser = cache(async () => {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.user ?? null;
 });
 
 export const getAuthProfile = cache(async () => {

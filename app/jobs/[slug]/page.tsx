@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { getJobBySlug } from "@/lib/jobs-query";
@@ -5,7 +6,7 @@ import { CONTRACT_TYPE_LABELS } from "@/types/database";
 import { formatSalary, daysLeft, timeAgo } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { LinkButton } from "@/components/ui/button";
-import { ApplyPanel } from "@/components/jobs/apply-panel";
+import { ApplyPanelServer } from "@/components/jobs/apply-panel-server";
 import Link from "next/link";
 import { MapPin, Clock, Wifi, ArrowLeft } from "lucide-react";
 
@@ -135,7 +136,13 @@ export default async function JobDetailPage({
                 </LinkButton>
               </>
             ) : (
-              <ApplyPanel jobId={job.id} />
+              <Suspense
+                fallback={
+                  <div className="h-24 animate-pulse bg-[var(--color-paper-dim)]" />
+                }
+              >
+                <ApplyPanelServer jobId={job.id} />
+              </Suspense>
             )}
           </aside>
         </div>

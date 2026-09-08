@@ -25,7 +25,7 @@ export function SiteHeader() {
           <NavLink href="/jobs">Find jobs</NavLink>
           <NavLink href="/news">News</NavLink>
           <NavLink href="/employer/post">Post a job</NavLink>
-          <Suspense>
+          <Suspense fallback={<AuthNavItemsSkeleton />}>
             <AuthNavItems />
           </Suspense>
         </nav>
@@ -81,6 +81,14 @@ async function AuthControls() {
       <MobileNav isLoggedIn={!!user} />
     </>
   );
+}
+
+function AuthNavItemsSkeleton() {
+  // Reserve space matching the "Messages" NavLink so the nav doesn't shift.
+  // Uses min-w so the container doesn't collapse — content replaces it either
+  // with the real link (signed in) or nothing (signed out, near-instant with
+  // the getSession()-based auth read from fix #1).
+  return <span className="inline-block min-w-[86px] px-3 py-2" aria-hidden />;
 }
 
 function AuthControlsSkeleton() {
