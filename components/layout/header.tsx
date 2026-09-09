@@ -20,10 +20,14 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 md:flex">
-          <NavLink href="/jobs">Find jobs</NavLink>
+        <nav className="hidden items-center gap-0.5 lg:flex">
+          <NavLink href="/">Home</NavLink>
+          <NavLink href="/jobs">Find Jobs</NavLink>
+          <NavLink href="/tools">Tools</NavLink>
+          <NavLink href="/saved">Saved</NavLink>
+          <NavLink href="/applications">Applications</NavLink>
           <NavLink href="/news">News</NavLink>
-          <NavLink href="/employer/post">Post a job</NavLink>
+          <NavLink href="/employer/post">Post a Job</NavLink>
           <Suspense fallback={<AuthNavItemsSkeleton />}>
             <AuthNavItems />
           </Suspense>
@@ -79,7 +83,7 @@ async function AuthControls() {
             Sign in
           </Link>
           <LinkButton href="/auth/signup" size="sm">
-            Create free account
+            Create account
           </LinkButton>
         </div>
         <MobileNav isLoggedIn={false} unreadCount={0} />
@@ -112,18 +116,15 @@ async function AuthControls() {
 }
 
 function AuthNavItemsSkeleton() {
-  // Reserve space matching the "Messages" NavLink so the nav doesn't shift.
   return <span className="inline-block min-w-[86px] px-3 py-2" aria-hidden />;
 }
 
 function AuthControlsSkeleton() {
   return (
     <>
-      {/* Placeholder matching UserMenu approximate size */}
       <div className="hidden sm:block">
         <div className="h-8 w-20 animate-pulse bg-[var(--color-line)]" />
       </div>
-      {/* Mobile hamburger placeholder */}
       <div className="md:hidden">
         <div className="h-6 w-6 animate-pulse bg-[var(--color-line)]" />
       </div>
@@ -142,7 +143,7 @@ function NavLink({
     <Link
       href={href}
       prefetch={false}
-      className="flex items-center px-3 py-2 text-sm font-medium text-[var(--color-ink)] hover:text-[var(--color-rust)]"
+      className="flex items-center px-2.5 py-2 text-sm font-medium text-[var(--color-ink)] hover:text-[var(--color-rust)]"
     >
       {children}
     </Link>

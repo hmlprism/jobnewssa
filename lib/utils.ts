@@ -29,6 +29,15 @@ export function daysLeft(expiresAt: string | null): string | null {
   return `${diff} day${diff === 1 ? "" : "s"} left`;
 }
 
+// Returns raw number of days remaining (negative = expired).
+// Used by JobCard to drive badge logic without re-parsing the string.
+export function getDaysLeftNum(expiresAt: string | null): number | null {
+  if (!expiresAt) return null;
+  return Math.ceil(
+    (new Date(expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+  );
+}
+
 export function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));

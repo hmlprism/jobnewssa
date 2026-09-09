@@ -18,6 +18,28 @@
   --color-muted: #6b6558;
   --color-line: #ddd8ca;
   --color-line-hover: #c4bfb2;
+
+  /* ── Ink tonal scale ─────────────────────────────────────────
+     Same warm dark-forest hue as --color-ink (#12211a).
+     Use for text hierarchy, subtle backgrounds, borders.
+     ink-900 == --color-ink. */
+  --color-ink-50:  #edf2ee;
+  --color-ink-100: #c8d9cc;
+  --color-ink-200: #9dbda4;
+  --color-ink-300: #6f977b;
+  --color-ink-400: #4e7859;
+  --color-ink-500: #3a5e43;
+  --color-ink-600: #2c4933;
+  --color-ink-700: #203527;
+  --color-ink-800: #18281f;
+  --color-ink-900: #12211a;
+
+  /* ── Amber ───────────────────────────────────────────────────
+     Muted warm gold for secondary category badges/tags.
+     Distinct from clay (#b8804a = orange-brown used for urgency)
+     and rust (CTA-only). Not for primary actions. */
+  --color-amber: #7c5b1c;
+  --color-amber-dim: #f7f0db;
 }
 
 html {

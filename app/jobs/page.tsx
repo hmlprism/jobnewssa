@@ -9,7 +9,7 @@ import {
   type JobSearchFilters,
 } from "@/lib/jobs-query";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, MapPin } from "lucide-react";
 
 export const metadata = { title: "Find jobs in South Africa" };
 
@@ -28,11 +28,11 @@ export default async function JobsPage({
     <>
       <SiteHeader />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        {/* Search bar */}
-        <form action="/jobs" className="mb-8 flex gap-0">
+        {/* Two-field search bar */}
+        <form action="/jobs" className="mb-8 flex">
           <div className="relative flex-1">
             <Search
-              size={18}
+              size={16}
               className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
             />
             <input
@@ -40,7 +40,20 @@ export default async function JobsPage({
               name="q"
               defaultValue={filters.q}
               placeholder="Job title, keyword, or company"
-              className="w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3 pl-11 pr-4 text-sm"
+              className="w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3 pl-10 pr-3 text-sm"
+            />
+          </div>
+          <div className="relative w-44 shrink-0">
+            <MapPin
+              size={14}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
+            />
+            <input
+              type="text"
+              name="location"
+              defaultValue={filters.location}
+              placeholder="City or province"
+              className="w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3 pl-8 pr-3 text-sm"
             />
           </div>
           <button

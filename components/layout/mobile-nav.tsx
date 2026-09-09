@@ -14,7 +14,7 @@ export function MobileNav({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <button
         onClick={() => setOpen(true)}
         className="flex cursor-pointer items-center justify-center p-1 text-[var(--color-ink)]"
@@ -45,14 +45,26 @@ export function MobileNav({
             </div>
 
             <div className="flex flex-col px-5 py-4">
+              <MobileLink href="/" onClick={() => setOpen(false)}>
+                Home
+              </MobileLink>
               <MobileLink href="/jobs" onClick={() => setOpen(false)}>
-                Find jobs
+                Find Jobs
+              </MobileLink>
+              <MobileLink href="/tools" onClick={() => setOpen(false)}>
+                Tools
+              </MobileLink>
+              <MobileLink href="/saved" onClick={() => setOpen(false)}>
+                Saved
+              </MobileLink>
+              <MobileLink href="/applications" onClick={() => setOpen(false)}>
+                Applications
               </MobileLink>
               <MobileLink href="/news" onClick={() => setOpen(false)}>
                 Job market news
               </MobileLink>
               <MobileLink href="/employer/post" onClick={() => setOpen(false)}>
-                Post a job
+                Post a Job
               </MobileLink>
               {isLoggedIn && (
                 <MobileLink href="/messages" onClick={() => setOpen(false)}>

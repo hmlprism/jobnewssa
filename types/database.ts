@@ -90,6 +90,8 @@ export interface Job {
   status: JobStatus;
   posted_at: string;
   expires_at: string | null;
+  // Added by migration 0013 — run that migration before deploying code that reads this.
+  is_urgent: boolean;
   views_count: number;
   created_at: string;
   updated_at: string;

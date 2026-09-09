@@ -5,6 +5,7 @@ import type { Job } from "@/types/database";
 
 export interface JobSearchFilters {
   q?: string;
+  location?: string;
   province?: string;
   sector?: string;
   contract?: string;
@@ -18,10 +19,11 @@ const PAGE_SIZE = 20;
 
 // Fields needed by JobCard — omits description (potentially huge) and other
 // columns not rendered in the listing view. getJobBySlug keeps full select.
+// NOTE: is_urgent requires migration 0013 to be applied first.
 const LISTING_SELECT =
   "id, title, slug, company_name_raw, province, city, is_remote, " +
   "contract_type, salary_min, salary_max, salary_is_market_related, " +
-  "source, posted_at, expires_at, " +
+  "source, posted_at, expires_at, is_urgent, " +
   "company:companies(id, name, slug, verified)";
 
 // Cached job search — public data, no auth context needed.
@@ -61,6 +63,11 @@ async function _searchJobsImpl(filterJson: string) {
   }
   if (filters.min_salary) {
     query = query.gte("salary_min", parseInt(filters.min_salary, 10));
+  }
+  if (filters.location) {
+    query = query.or(
+      `city.ilike.%${filters.location}%,province.ilike.%${filters.location}%`
+    );
   }
   if (filters.remote === "true") {
     query = query.eq("is_remote", true);
@@ -194,3 +201,94 @@ const _cachedJobBySlug = unstable_cache(
 export const getJobBySlug = cache(async (slug: string) => {
   return _cachedJobBySlug(slug);
 });
+
+// ── Category sections (homepage) ─────────────────────────────────────────────
+// Each returns up to 6 most-recent published jobs matching the category.
+// Uses raw anon client (no cookies) + unstable_cache so results are shared
+// across requests (same caching pattern as _cachedRecentJobs).
+
+// Shared select for category cards — uses !inner on sectors so the sector
+// filter eliminates non-matching parent rows (same pattern as _searchJobsImpl).
+const GOVT_SELECT = `${LISTING_SELECT}, sector:sectors!inner(id, name, slug)`;
+const CATEGORY_SELECT = `${LISTING_SELECT}, sector:sectors(id, name, slug)`;
+
+const _cachedGovtJobs = unstable_cache(
+  async () => {
+    const supabase = createRawClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data } = await supabase
+      .from("jobs")
+      .select(GOVT_SELECT)
+      .eq("status", "published")
+      .eq("sector.slug", "government-parastatals")
+      .order("posted_at", { ascending: false })
+      .range(0, 5);
+    return (data ?? []) as unknown as Job[];
+  },
+  ["category-govt-jobs"],
+  { revalidate: 120, tags: ["jobs"] }
+);
+
+const _cachedInternshipJobs = unstable_cache(
+  async () => {
+    const supabase = createRawClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data } = await supabase
+      .from("jobs")
+      .select(CATEGORY_SELECT)
+      .eq("status", "published")
+      .eq("contract_type", "internship")
+      .order("posted_at", { ascending: false })
+      .range(0, 5);
+    return (data ?? []) as unknown as Job[];
+  },
+  ["category-internship-jobs"],
+  { revalidate: 120, tags: ["jobs"] }
+);
+
+const _cachedLearnershipJobs = unstable_cache(
+  async () => {
+    const supabase = createRawClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data } = await supabase
+      .from("jobs")
+      .select(CATEGORY_SELECT)
+      .eq("status", "published")
+      .textSearch("search_vector", "learnership", { type: "websearch" })
+      .order("posted_at", { ascending: false })
+      .range(0, 5);
+    return (data ?? []) as unknown as Job[];
+  },
+  ["category-learnership-jobs"],
+  { revalidate: 120, tags: ["jobs"] }
+);
+
+const _cachedGraduateJobs = unstable_cache(
+  async () => {
+    const supabase = createRawClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data } = await supabase
+      .from("jobs")
+      .select(CATEGORY_SELECT)
+      .eq("status", "published")
+      .textSearch("search_vector", "graduate", { type: "websearch" })
+      .order("posted_at", { ascending: false })
+      .range(0, 5);
+    return (data ?? []) as unknown as Job[];
+  },
+  ["category-graduate-jobs"],
+  { revalidate: 120, tags: ["jobs"] }
+);
+
+export async function getCachedGovtJobs() { return _cachedGovtJobs(); }
+export async function getCachedInternshipJobs() { return _cachedInternshipJobs(); }
+export async function getCachedLearnershipJobs() { return _cachedLearnershipJobs(); }
+export async function getCachedGraduateJobs() { return _cachedGraduateJobs(); }
