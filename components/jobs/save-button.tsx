@@ -28,7 +28,9 @@ export function SaveButton({
       });
 
       if (res.status === 401) {
-        router.push("/auth/login");
+        router.push(
+          `/auth/login?next=${encodeURIComponent(window.location.pathname)}`
+        );
         return;
       }
 

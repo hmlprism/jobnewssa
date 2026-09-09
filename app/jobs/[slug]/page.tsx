@@ -7,6 +7,9 @@ import { formatSalary, daysLeft, timeAgo } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { LinkButton } from "@/components/ui/button";
 import { ApplyPanelServer } from "@/components/jobs/apply-panel-server";
+import { SaveButton } from "@/components/jobs/save-button";
+import { LogAppliedButton } from "@/components/jobs/log-applied-button";
+import { getAuthUser, createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { MapPin, Clock, Wifi, ArrowLeft } from "lucide-react";
 
@@ -30,13 +33,36 @@ export default async function JobDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const job = await getJobBySlug(slug);
+  const [job, user] = await Promise.all([getJobBySlug(slug), getAuthUser()]);
   if (!job) notFound();
 
   const companyName =
     job.company?.name ?? job.company_name_raw ?? "Confidential company";
   const left = daysLeft(job.expires_at);
   const location = job.city || job.province || null;
+
+  let isSaved = false;
+  let isApplied = false;
+
+  if (user) {
+    const supabase = await createClient();
+    const [savedRow, appRow] = await Promise.all([
+      supabase
+        .from("saved_jobs")
+        .select("job_id")
+        .eq("user_id", user.id)
+        .eq("job_id", job.id)
+        .maybeSingle(),
+      supabase
+        .from("applications")
+        .select("id")
+        .eq("job_id", job.id)
+        .eq("applicant_id", user.id)
+        .maybeSingle(),
+    ]);
+    isSaved = !!savedRow.data;
+    isApplied = !!appRow.data;
+  }
 
   return (
     <>
@@ -83,9 +109,12 @@ export default async function JobDetailPage({
               ))}
           </div>
 
-          <h1 className="mt-2 font-display text-3xl font-semibold leading-tight sm:text-[2.25rem]">
-            {job.title}
-          </h1>
+          <div className="mt-2 flex items-start justify-between gap-4">
+            <h1 className="font-display text-3xl font-semibold leading-tight sm:text-[2.25rem]">
+              {job.title}
+            </h1>
+            <SaveButton jobId={job.id} initialSaved={isSaved} />
+          </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
             <span className="border border-[var(--color-line)] px-2.5 py-1">
@@ -122,29 +151,66 @@ export default async function JobDetailPage({
             {job.description}
           </article>
 
-          <aside className="h-fit border border-[var(--color-line)] bg-[var(--color-paper)] p-5">
-            {job.source === "adzuna" && job.external_url ? (
-              <>
-                <p className="mb-3 text-sm text-[var(--color-muted)]">
-                  This listing is sourced from an external job feed. Apply on
-                  the original site.
-                </p>
-                <LinkButton
-                  href={job.external_url}
-                  className="w-full justify-center"
+          <aside className="space-y-4">
+            {/* Apply / external panel */}
+            <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-5">
+              {job.source === "adzuna" && job.external_url ? (
+                <>
+                  <p className="mb-3 text-sm text-[var(--color-muted)]">
+                    This listing is sourced from an external job feed. Apply on
+                    the original site.
+                  </p>
+                  <LinkButton
+                    href={job.external_url}
+                    className="w-full justify-center"
+                  >
+                    Apply on original site
+                  </LinkButton>
+                  <div className="mt-4 border-t border-[var(--color-line)] pt-4">
+                    <p className="mb-2 text-xs text-[var(--color-muted)]">
+                      Already applied?
+                    </p>
+                    <LogAppliedButton
+                      jobId={job.id}
+                      userId={user?.id ?? null}
+                      initialApplied={isApplied}
+                    />
+                  </div>
+                </>
+              ) : (
+                <Suspense
+                  fallback={
+                    <div className="h-24 animate-pulse bg-[var(--color-paper-dim)]" />
+                  }
                 >
-                  Apply on original site
-                </LinkButton>
-              </>
-            ) : (
-              <Suspense
-                fallback={
-                  <div className="h-24 animate-pulse bg-[var(--color-paper-dim)]" />
-                }
-              >
-                <ApplyPanelServer jobId={job.id} />
-              </Suspense>
-            )}
+                  <ApplyPanelServer jobId={job.id} />
+                </Suspense>
+              )}
+            </div>
+
+            {/* Application tips */}
+            <div className="border border-[var(--color-line)] p-5">
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+                Application tips
+              </h3>
+              <ul className="space-y-2.5 text-sm text-[var(--color-ink)]">
+                <li className="flex gap-2">
+                  <span className="mt-0.5 shrink-0 text-[var(--color-muted)]">—</span>
+                  Tailor your CV to the job title and key requirements — SA
+                  employers often screen by keyword.
+                </li>
+                <li className="flex gap-2">
+                  <span className="mt-0.5 shrink-0 text-[var(--color-muted)]">—</span>
+                  Include your ID number or work-permit status if the ad
+                  requests it; omitting it is a common rejection reason.
+                </li>
+                <li className="flex gap-2">
+                  <span className="mt-0.5 shrink-0 text-[var(--color-muted)]">—</span>
+                  Keep your cover letter under one page and open with a
+                  sentence on why this specific role, not a generic greeting.
+                </li>
+              </ul>
+            </div>
           </aside>
         </div>
       </main>

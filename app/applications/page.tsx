@@ -28,7 +28,7 @@ const STATUS_COLOURS: Record<ApplicationStatus, string> = {
 
 async function ApplicationsContent() {
   const user = await getAuthUser();
-  if (!user) redirect("/auth/login");
+  if (!user) redirect("/auth/login?next=%2Fapplications");
 
   const supabase = await createClient();
 

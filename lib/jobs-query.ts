@@ -11,6 +11,7 @@ export interface JobSearchFilters {
   contract?: string;
   min_salary?: string;
   remote?: string;
+  sort?: string; // "newest" (default) | "closing"
   page?: string;
   limit?: number;
 }
@@ -49,7 +50,6 @@ async function _searchJobsImpl(filterJson: string) {
     .from("jobs")
     .select(`${LISTING_SELECT}, ${sectorJoin}`, { count: "exact" })
     .eq("status", "published")
-    .order("posted_at", { ascending: false })
     .range(from, to);
 
   if (filters.q) {
@@ -74,6 +74,19 @@ async function _searchJobsImpl(filterJson: string) {
   }
   if (filters.sector) {
     query = query.eq("sector.slug", filters.sector);
+  }
+
+  // Sort order — "closing" shows jobs with upcoming expiry first (soonest
+  // first), nulls last; expired jobs are excluded so they don't top the list.
+  // "newest" (default) sorts by posted_at descending.
+  if (filters.sort === "closing") {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    query = query
+      .or(`expires_at.gte.${today.toISOString()},expires_at.is.null`)
+      .order("expires_at", { ascending: true, nullsFirst: false });
+  } else {
+    query = query.order("posted_at", { ascending: false });
   }
 
   const { data, error, count } = await query;

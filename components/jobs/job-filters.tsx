@@ -51,19 +51,6 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
         )}
       </div>
 
-      <FilterGroup label="Remote">
-        <label className="flex cursor-pointer items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={remoteOnly}
-            onChange={(e) =>
-              setParam("remote", e.target.checked ? "true" : null)
-            }
-          />
-          Remote jobs only
-        </label>
-      </FilterGroup>
-
       <FilterGroup label="Minimum salary / month">
         <div className="space-y-1.5">
           <RadioRow
