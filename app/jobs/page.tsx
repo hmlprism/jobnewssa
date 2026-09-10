@@ -121,7 +121,7 @@ export default async function JobsPage({
           <div className="min-w-0 flex-1">
             {/* Results header + sort tabs */}
             <div className="mb-4 flex items-baseline justify-between border-b border-[var(--color-line)] pb-4">
-              <h1 className="font-display text-xl font-semibold">
+              <h1 className="text-base font-semibold text-[var(--color-ink)]">
                 {count.toLocaleString()} South Africa job
                 {count === 1 ? "" : "s"}
               </h1>

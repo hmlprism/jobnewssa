@@ -11,7 +11,7 @@ import { SaveButton } from "@/components/jobs/save-button";
 import { LogAppliedButton } from "@/components/jobs/log-applied-button";
 import { getAuthUser } from "@/lib/supabase/server";
 import Link from "next/link";
-import { MapPin, Clock, Wifi, ArrowLeft } from "lucide-react";
+import { MapPin, Clock, Wifi } from "lucide-react";
 
 export async function generateMetadata({
   params,
@@ -50,10 +50,9 @@ export default async function JobDetailPage({
         <Link
           href="/jobs"
           prefetch={false}
-          className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
+          className="mb-6 inline-block text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
         >
-          <ArrowLeft size={14} />
-          Back to search
+          ← Back to search
         </Link>
 
         {/* Job header */}
@@ -168,7 +167,7 @@ export default async function JobDetailPage({
 
             {/* Application tips */}
             <div className="border border-[var(--color-line)] p-5">
-              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+              <h3 className="mb-3 text-xs font-semibold text-[var(--color-muted)]">
                 Application tips
               </h3>
               <ul className="space-y-2.5 text-sm text-[var(--color-ink)]">
