@@ -40,6 +40,15 @@
      and rust (CTA-only). Not for primary actions. */
   --color-amber: #7c5b1c;
   --color-amber-dim: #f7f0db;
+
+  /* ── Violet — rebrand-final accent ──────────────────────────
+     Primary CTA / active-state color (hero search button, focus
+     rings). Replaces rust in the hero; rust stays for employer
+     CTA and secondary actions outside the hero.
+     White on violet = 5.83:1 (WCAG AA ✓ body text).
+     Do NOT use at any opacity below 100% — fails AA. */
+  --color-violet: #7342e2;
+  --color-violet-dark: #5c34b8;
 }
 
 html {
@@ -59,7 +68,7 @@ h1, h2, h3, .font-display {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-rust);
+  outline: 2px solid var(--color-violet);
   outline-offset: 2px;
 }
 
@@ -148,11 +157,38 @@ input[type="radio"] {
 .job-list-results > article:nth-child(8) { animation: card-in 400ms cubic-bezier(0.16,1,0.3,1) 280ms both; }
 
 /* ── Search bar focus state ──────────────────────────────────────────────────
-   Rust border replaces the global ink-on-focus rule for the main search form.
-   Connects visually with the rust Search button — the form feels activated
+   Violet border replaces the global ink-on-focus rule for the main search form.
+   Connects visually with the violet Search button — the form feels activated
    as a single unit when the user clicks in. */
 .search-form input[type="text"]:focus {
-  border-color: var(--color-rust);
+  border-color: var(--color-violet);
+}
+
+/* ── Scanner paper rise ───────────────────────────────────────
+   Continuous upward translateY only — compositor thread,
+   zero layout thrash. Three sheets staggered at -1s / -2s so
+   they are offset at load with no synchronised pop.
+   Travel: 375px (sheet fully below machine → fully above).
+   prefers-reduced-motion: freeze each sheet at its snapshot
+   position (entering / mid-machine / exiting) so the
+   illustration still reads as a scanner mid-process. The
+   `animation: none !important` on the class selector beats
+   the universal `animation-duration: 0.01ms !important` from
+   the global block above (higher specificity). */
+@keyframes scan-rise {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-375px); }
+}
+.scanner-paper   { animation: scan-rise 3s linear infinite; }
+.scanner-paper-2 { animation-delay: -1s; }
+.scanner-paper-3 { animation-delay: -2s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scanner-paper,
+  .scanner-paper-2,
+  .scanner-paper-3 { animation: none !important; }
+  .scanner-paper-2  { transform: translateY(-125px) !important; }
+  .scanner-paper-3  { transform: translateY(-250px) !important; }
 }
 
 /* Job description prose */
