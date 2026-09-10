@@ -9,6 +9,8 @@ import {
   getCachedLearnershipJobs,
   getCachedGraduateJobs,
 } from "@/lib/jobs-query";
+import { SA_PROVINCES } from "@/types/database";
+import { slugify } from "@/lib/slug";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -61,8 +63,8 @@ export default async function Home() {
             {/* Two-column masthead: stat left, search right */}
             <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr]">
 
-              {/* Left — the editorial statistic */}
-              <div className="border-b border-[var(--color-line)] py-10 md:border-b-0 md:border-r md:py-16 md:pr-12">
+              {/* Left — the editorial statistic; ink-50 tint zones it from the search column */}
+              <div className="border-b border-[var(--color-line)] bg-[var(--color-ink-50)] py-10 md:border-b-0 md:border-r md:py-16 md:pr-12">
                 <h1 className="masthead-number font-display text-[76px] font-semibold leading-[0.88] text-[var(--color-ink)] sm:text-[92px] lg:text-[108px]">
                   {count.toLocaleString()}
                   <span className="sr-only"> job vacancies in South Africa</span>
@@ -103,6 +105,25 @@ export default async function Home() {
                       {pill.label}
                     </Link>
                   ))}
+                </div>
+
+                {/* Province register — editorial index, fills dead space below pills */}
+                <div className="mt-8 border-t border-[var(--color-line)] pt-5">
+                  <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-amber)]">
+                    Browse by province
+                  </p>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
+                    {SA_PROVINCES.map((province) => (
+                      <Link
+                        key={province}
+                        href={`/jobs?province=${slugify(province)}`}
+                        prefetch={false}
+                        className="text-sm text-[var(--color-muted)] transition-colors duration-100 hover:text-[var(--color-ink)]"
+                      >
+                        {province}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
