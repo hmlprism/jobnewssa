@@ -61,10 +61,12 @@ export default async function Home() {
             </div>
 
             {/* Two-column masthead: stat left, search right */}
-            <div className="grid grid-cols-1 md:grid-cols-[5fr_7fr]">
+            {/* ink-50 on the grid container fills the full row height; transparent left column
+                lets it show through; right column explicitly covers with paper */}
+            <div className="grid grid-cols-1 bg-[var(--color-ink-50)] md:grid-cols-[5fr_7fr]">
 
-              {/* Left — the editorial statistic; ink-50 tint zones it from the search column */}
-              <div className="border-b border-[var(--color-line)] bg-[var(--color-ink-50)] py-10 md:border-b-0 md:border-r md:py-16 md:pr-12">
+              {/* Left — the editorial statistic */}
+              <div className="border-b border-[var(--color-line)] py-10 md:border-b-0 md:border-r md:py-16 md:pr-12">
                 <h1 className="masthead-number font-display text-[76px] font-semibold leading-[0.88] text-[var(--color-ink)] sm:text-[92px] lg:text-[108px]">
                   {count.toLocaleString()}
                   <span className="sr-only"> job vacancies in South Africa</span>
@@ -77,8 +79,8 @@ export default async function Home() {
                 </p>
               </div>
 
-              {/* Right — search utility */}
-              <div className="py-10 md:py-16 md:pl-12">
+              {/* Right — search utility; paper bg covers the grid container's ink-50 */}
+              <div className="bg-[var(--color-paper)] py-10 md:py-16 md:pl-12">
                 <form action="/jobs" className="flex">
                   <input
                     type="text"
