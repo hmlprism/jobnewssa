@@ -173,7 +173,7 @@ export default async function JobDetailPage({
               <ul className="space-y-2.5 text-sm text-[var(--color-ink)]">
                 <li className="flex gap-2">
                   <span className="mt-0.5 shrink-0 text-[var(--color-muted)]">—</span>
-                  Tailor your CV to the job title and key requirements — SA
+                  Tailor your CV to the job title and key requirements. SA
                   employers often screen by keyword.
                 </li>
                 <li className="flex gap-2">

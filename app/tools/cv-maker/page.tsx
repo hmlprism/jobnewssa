@@ -21,7 +21,7 @@ export default function CvMakerPage() {
         <h1 className="mt-6 font-display text-3xl font-semibold">CV Maker</h1>
         <p className="mt-4 max-w-md text-[var(--color-muted)]">
           We&apos;re building this. A clean, ATS-friendly CV builder tailored
-          for South African employers — no account required, download as PDF.
+          for South African employers, no account required. Download as PDF.
         </p>
         <p className="mt-6 text-sm text-[var(--color-muted)]">Check back soon.</p>
       </main>

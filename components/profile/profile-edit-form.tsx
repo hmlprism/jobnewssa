@@ -11,16 +11,16 @@ import {
 } from "@/types/database";
 
 const NQF_LEVELS = [
-  { value: "1", label: "Level 1 — Grade 9" },
-  { value: "2", label: "Level 2 — Grade 10" },
-  { value: "3", label: "Level 3 — Grade 11" },
-  { value: "4", label: "Level 4 — National Senior Certificate (Matric)" },
-  { value: "5", label: "Level 5 — Higher Certificate" },
-  { value: "6", label: "Level 6 — Diploma / Advanced Certificate" },
-  { value: "7", label: "Level 7 — Bachelor's Degree / Advanced Diploma" },
-  { value: "8", label: "Level 8 — Honours / Postgraduate Diploma" },
-  { value: "9", label: "Level 9 — Master's Degree" },
-  { value: "10", label: "Level 10 — Doctoral Degree" },
+  { value: "1", label: "Level 1: Grade 9" },
+  { value: "2", label: "Level 2: Grade 10" },
+  { value: "3", label: "Level 3: Grade 11" },
+  { value: "4", label: "Level 4: National Senior Certificate (Matric)" },
+  { value: "5", label: "Level 5: Higher Certificate" },
+  { value: "6", label: "Level 6: Diploma / Advanced Certificate" },
+  { value: "7", label: "Level 7: Bachelor's Degree / Advanced Diploma" },
+  { value: "8", label: "Level 8: Honours / Postgraduate Diploma" },
+  { value: "9", label: "Level 9: Master's Degree" },
+  { value: "10", label: "Level 10: Doctoral Degree" },
 ];
 
 const QUALIFICATION_TYPES = [
@@ -69,7 +69,7 @@ function validatePhone(value: string): string | null {
   const stripped = value.replace(/[\s\-().]/g, "");
   if (/^\+27[0-9]{9}$/.test(stripped)) return null;
   if (/^0[0-9]{9}$/.test(stripped)) return null;
-  return "Enter a valid South African phone number — 10 digits starting with 0 (e.g. 082 123 4567), or international format (e.g. +27 82 123 4567).";
+  return "Enter a valid South African phone number. Use 10 digits starting with 0 (e.g. 082 123 4567) or international format (e.g. +27 82 123 4567).";
 }
 
 function validateProfReg(value: string): string | null {
@@ -117,7 +117,7 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 function PrivateBadge() {
   return (
     <span className="ml-2 text-xs font-normal normal-case tracking-normal text-[var(--color-muted)]">
-      Private — only visible to you
+      Private (only visible to you)
     </span>
   );
 }
@@ -509,7 +509,7 @@ export function ProfileEditForm({
             Include the registering body prefix (HPCSA, SAICA, ECSA, SACAP,
             etc.).{" "}
             <span className="font-medium">
-              Self-reported — not independently verified.
+              Self-reported, not independently verified.
             </span>
           </p>
         </div>
