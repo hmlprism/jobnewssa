@@ -27,10 +27,12 @@ export function SiteHeader() {
           <NavLink href="/saved">Saved</NavLink>
           <NavLink href="/applications">Applications</NavLink>
           <NavLink href="/news">News</NavLink>
-          <NavLink href="/employer/post">Post a Job</NavLink>
           <Suspense fallback={<AuthNavItemsSkeleton />}>
             <AuthNavItems />
           </Suspense>
+          {/* Hairline — seeker nav / employer CTA */}
+          <span className="mx-1.5 h-3.5 w-px bg-[var(--color-line)]" aria-hidden />
+          <NavLink href="/employer/post">Post a Job</NavLink>
         </nav>
 
         {/* Right side: auth controls + mobile hamburger */}
@@ -79,7 +81,7 @@ async function AuthControls() {
           <Link
             href="/auth/login"
             prefetch={false}
-            className="text-sm font-medium text-[var(--color-ink)] hover:text-[var(--color-rust)]"
+            className="text-sm font-medium text-[var(--color-muted)] transition-colors duration-100 hover:text-[var(--color-ink)]"
           >
             Sign in
           </Link>
@@ -144,7 +146,7 @@ function NavLink({
     <Link
       href={href}
       prefetch={false}
-      className="flex items-center px-2.5 py-2 text-sm font-medium text-[var(--color-ink)] hover:text-[var(--color-rust)]"
+      className="flex items-center px-2.5 py-2 text-sm font-medium text-[var(--color-muted)] transition-colors duration-100 hover:text-[var(--color-ink)]"
     >
       {children}
     </Link>
