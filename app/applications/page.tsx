@@ -92,7 +92,7 @@ async function ApplicationsContent() {
           >
             Browse vacancies
           </Link>{" "}
-          and apply — your applications will appear here.
+          and apply. Your applications will appear here.
         </p>
       </div>
     );

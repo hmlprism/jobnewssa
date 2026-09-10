@@ -47,9 +47,16 @@ The visual language is editorial/print, not SaaS. Think newspaper, not dashboard
 | `--color-indigo-dim` | `#eaecf3` | Verified badge backgrounds |
 | `--color-clay` | `#b8804a` | Closing-soon urgency (days left on a listing) |
 | `--color-clay-dim` | `#f5ede0` | Urgency backgrounds |
+| `--color-amber` | `#7c5b1c` | Secondary category labels/index headings — muted warm gold. Not for primary actions. |
+| `--color-amber-dim` | `#f7f0db` | Amber tint backgrounds |
 | `--color-muted` | `#6b6558` | Secondary text, metadata |
 | `--color-line` | `#ddd8ca` | Borders, dividers |
 | `--color-line-hover` | `#c4bfb2` | Border hover state |
+
+**Ink tonal scale** (`--color-ink-50` through `--color-ink-900`): same warm dark-forest hue as
+`--color-ink`. Use for text hierarchy and subtle surface variation (e.g. hero column backgrounds).
+`ink-900` equals `--color-ink`. `ink-50` (#edf2ee) is the lightest — barely perceptible against
+paper, used for zone tinting rather than color change.
 
 ### The rust rule
 Rust (`--color-rust`) is reserved for exactly three uses:

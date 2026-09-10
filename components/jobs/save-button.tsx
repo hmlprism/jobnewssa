@@ -7,9 +7,12 @@ import { useRouter } from "next/navigation";
 export function SaveButton({
   jobId,
   initialSaved = false,
+  glyph = false,
 }: {
   jobId: string;
   initialSaved?: boolean;
+  /** Use typographic ◆/◇ marker instead of the Bookmark icon */
+  glyph?: boolean;
 }) {
   const [saved, setSaved] = useState(initialSaved);
   const [loading, setLoading] = useState(false);
@@ -47,6 +50,21 @@ export function SaveButton({
     } finally {
       setLoading(false);
     }
+  }
+
+  if (glyph) {
+    return (
+      <button
+        onClick={toggle}
+        disabled={loading}
+        aria-label={saved ? "Unsave this job" : "Save this job"}
+        title={saved ? "Unsave" : "Save"}
+        className="relative z-10 shrink-0 cursor-pointer select-none px-1 py-1 text-[11px] leading-none transition-colors disabled:pointer-events-none disabled:opacity-40"
+        style={{ color: saved ? "var(--color-rust)" : "var(--color-muted)" }}
+      >
+        {saved ? "◆" : "◇"}
+      </button>
+    );
   }
 
   return (

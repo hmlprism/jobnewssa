@@ -14,16 +14,16 @@ import {
 } from "@/types/database";
 
 const NQF_LEVELS = [
-  { value: "1", label: "Level 1 — Grade 9" },
-  { value: "2", label: "Level 2 — Grade 10" },
-  { value: "3", label: "Level 3 — Grade 11" },
-  { value: "4", label: "Level 4 — National Senior Certificate (Matric)" },
-  { value: "5", label: "Level 5 — Higher Certificate" },
-  { value: "6", label: "Level 6 — Diploma / Advanced Certificate" },
-  { value: "7", label: "Level 7 — Bachelor's Degree / Advanced Diploma" },
-  { value: "8", label: "Level 8 — Honours / Postgraduate Diploma" },
-  { value: "9", label: "Level 9 — Master's Degree" },
-  { value: "10", label: "Level 10 — Doctoral Degree" },
+  { value: "1", label: "Level 1: Grade 9" },
+  { value: "2", label: "Level 2: Grade 10" },
+  { value: "3", label: "Level 3: Grade 11" },
+  { value: "4", label: "Level 4: National Senior Certificate (Matric)" },
+  { value: "5", label: "Level 5: Higher Certificate" },
+  { value: "6", label: "Level 6: Diploma / Advanced Certificate" },
+  { value: "7", label: "Level 7: Bachelor's Degree / Advanced Diploma" },
+  { value: "8", label: "Level 8: Honours / Postgraduate Diploma" },
+  { value: "9", label: "Level 9: Master's Degree" },
+  { value: "10", label: "Level 10: Doctoral Degree" },
 ];
 
 const QUALIFICATION_TYPES = [

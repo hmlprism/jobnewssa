@@ -11,7 +11,31 @@ import { SaveButton } from "@/components/jobs/save-button";
 import { LogAppliedButton } from "@/components/jobs/log-applied-button";
 import { getAuthUser } from "@/lib/supabase/server";
 import Link from "next/link";
-import { MapPin, Clock, Wifi, ArrowLeft } from "lucide-react";
+import type { Job } from "@/types/database";
+
+// ── Flag derivation (mirrors job-card.tsx) ──────────────────────────────────
+// Gives visual continuity from the listing card to the detail view.
+const PROVINCE_ABBR: Record<string, string> = {
+  "Gauteng": "GP", "Western Cape": "WC", "KwaZulu-Natal": "KZN",
+  "Eastern Cape": "EC", "Free State": "FS", "Limpopo": "LP",
+  "Mpumalanga": "MP", "North West": "NW", "Northern Cape": "NC",
+};
+
+function getFlag(job: Job): { code: string; colorClass: string } {
+  const t = job.title.toLowerCase();
+  if (t.includes("learnership")) return { code: "LSHP", colorClass: "text-[var(--color-amber)]" };
+  if (t.includes("bursary"))     return { code: "BURS", colorClass: "text-[var(--color-amber)]" };
+  if (t.includes("apprenticeship")) return { code: "APPR", colorClass: "text-[var(--color-amber)]" };
+  if (job.contract_type === "internship" || t.includes("internship"))
+    return { code: "INTN", colorClass: "text-[var(--color-green)]" };
+  if (t.includes("graduate") && (t.includes("programme") || t.includes("program")))
+    return { code: "GRAD", colorClass: "text-[var(--color-green)]" };
+  if (job.sector?.slug?.includes("government"))
+    return { code: "GOVT", colorClass: "text-[var(--color-indigo)]" };
+  if (job.is_remote) return { code: "RM", colorClass: "text-[var(--color-muted)]" };
+  const abbr = job.province ? PROVINCE_ABBR[job.province] : null;
+  return { code: abbr ?? "—", colorClass: "text-[var(--color-muted)]" };
+}
 
 export async function generateMetadata({
   params,
@@ -40,103 +64,78 @@ export default async function JobDetailPage({
     job.company?.name ?? job.company_name_raw ?? "Confidential company";
   const left = daysLeft(job.expires_at);
   const location = job.city || job.province || null;
-
+  const salary = formatSalary(job.salary_min, job.salary_max, job.salary_is_market_related);
+  const flag = getFlag(job);
 
   return (
     <>
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
+
         {/* Back link */}
         <Link
           href="/jobs"
           prefetch={false}
-          className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
+          className="mb-8 inline-block text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
         >
-          <ArrowLeft size={14} />
-          Back to search
+          ← Back to search
         </Link>
 
         {/* Job header */}
-        <div className="mb-8">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--color-muted)]">
-            <span className="font-medium text-[var(--color-ink)]">
-              {companyName}
-            </span>
-            {location && (
-              <span className="flex items-center gap-1">
-                <MapPin size={13} />
-                {location}
-              </span>
-            )}
-            {job.is_remote && (
-              <span className="flex items-center gap-1">
-                <Wifi size={13} />
-                Remote
-              </span>
-            )}
-            {job.source === "employer_direct" &&
-              job.company &&
-              (job.company.verified ? (
-                <span className="badge-verified-shimmer border border-[var(--color-indigo)] px-1.5 py-0.5 text-xs font-medium text-[var(--color-indigo)]">
-                  ✓ Verified
-                </span>
-              ) : (
-                <span className="border border-[var(--color-line)] px-1.5 py-0.5 text-xs text-[var(--color-muted)]">
-                  Unverified employer
-                </span>
-              ))}
-          </div>
+        <div className="mb-6">
+          {/* Flag code — mirrors the card treatment for visual continuity */}
+          <p className={`mb-2 text-[9px] font-bold uppercase leading-none tracking-widest select-none ${flag.colorClass}`}>
+            {flag.code}
+          </p>
 
-          <div className="mt-2 flex items-start justify-between gap-4">
+          {/* Company dateline */}
+          <p className="text-sm text-[var(--color-muted)]">
+            <span className="font-medium text-[var(--color-ink)]">{companyName}</span>
+            {location && <span> · {location}</span>}
+            {job.is_remote && <span> · Remote</span>}
+            {job.source === "employer_direct" && job.company?.verified && (
+              <span className="text-[var(--color-indigo)]"> · ✓ Verified</span>
+            )}
+          </p>
+
+          {/* Title + Save */}
+          <div className="mt-3 flex items-start justify-between gap-4">
             <h1 className="font-display text-3xl font-semibold leading-tight sm:text-[2.25rem]">
               {job.title}
             </h1>
             <SaveButton jobId={job.id} />
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-            <span className="border border-[var(--color-line)] px-2.5 py-1">
-              {CONTRACT_TYPE_LABELS[job.contract_type]}
-            </span>
-            <span className="font-medium">
-              {formatSalary(
-                job.salary_min,
-                job.salary_max,
-                job.salary_is_market_related
-              )}
-            </span>
-            <span className="flex items-center gap-1 text-[var(--color-muted)]">
-              <Clock size={13} />
-              Posted {timeAgo(job.posted_at)}
-            </span>
-            {left && (
-              <span
-                className={
-                  left === "Expired"
-                    ? "text-[var(--color-muted)]"
-                    : "font-medium text-[var(--color-clay)]"
-                }
-              >
-                {left}
-              </span>
+          {/* Metadata row — plain text, no badges or icons */}
+          <p className="mt-3 text-sm text-[var(--color-muted)]">
+            <span>{CONTRACT_TYPE_LABELS[job.contract_type]}</span>
+            {salary !== "Market related" && <span> · {salary}</span>}
+            <span> · Posted {timeAgo(job.posted_at)}</span>
+            {left && left !== "Expired" && (
+              <span className="font-medium text-[var(--color-clay)]"> · {left}</span>
             )}
-          </div>
+            {left === "Expired" && <span> · Expired</span>}
+          </p>
         </div>
 
         {/* Two-column: description + apply sidebar */}
         <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_280px]">
+
+          {/* Description */}
           <article className="prose-job max-w-none border-t border-[var(--color-line)] pt-6 text-[15px] leading-relaxed whitespace-pre-line">
             {job.description}
           </article>
 
-          <aside className="space-y-4">
+          {/* Aside — top border aligns with article rule on desktop */}
+          <aside className="border-t border-[var(--color-line)] pt-6">
+
             {/* Apply / external panel */}
-            <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-5">
+            <div>
               {job.source === "adzuna" && job.external_url ? (
                 <>
                   <p className="mb-3 text-sm text-[var(--color-muted)]">
-                    This listing is sourced from an external job feed. Apply on
-                    the original site.
+                    This listing is from an external job feed. Apply on the
+                    original site.
                   </p>
                   <LinkButton
                     href={job.external_url}
@@ -144,7 +143,7 @@ export default async function JobDetailPage({
                   >
                     Apply on original site
                   </LinkButton>
-                  <div className="mt-4 border-t border-[var(--color-line)] pt-4">
+                  <div className="mt-5 border-t border-[var(--color-line)] pt-4">
                     <p className="mb-2 text-xs text-[var(--color-muted)]">
                       Already applied?
                     </p>
@@ -167,14 +166,14 @@ export default async function JobDetailPage({
             </div>
 
             {/* Application tips */}
-            <div className="border border-[var(--color-line)] p-5">
-              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+            <div className="mt-6 border-t border-[var(--color-line)] pt-6">
+              <h3 className="mb-3 text-xs font-semibold text-[var(--color-muted)]">
                 Application tips
               </h3>
               <ul className="space-y-2.5 text-sm text-[var(--color-ink)]">
                 <li className="flex gap-2">
                   <span className="mt-0.5 shrink-0 text-[var(--color-muted)]">—</span>
-                  Tailor your CV to the job title and key requirements — SA
+                  Tailor your CV to the job title and key requirements. SA
                   employers often screen by keyword.
                 </li>
                 <li className="flex gap-2">

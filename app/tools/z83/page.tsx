@@ -23,7 +23,7 @@ export default function Z83Page() {
         </h1>
         <p className="mt-4 max-w-md text-[var(--color-muted)]">
           We&apos;re building this. Fill out the 2021 revised Z83 government
-          application form online — no PDF editor needed — and download a
+          application form online, no PDF editor needed, and download a
           print-ready copy.
         </p>
         <p className="mt-6 text-sm text-[var(--color-muted)]">Check back soon.</p>

@@ -197,7 +197,7 @@ export default function EmployerVerifyPage() {
                   className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm"
                 />
                 <p className="mt-1.5 text-xs text-[var(--color-muted)]">
-                  Must match your account email domain — e.g. if your email is{" "}
+                  Must match your account email domain. For example, if your email is{" "}
                   <em>you@acme.co.za</em>, enter <em>acme.co.za</em>.
                 </p>
               </label>

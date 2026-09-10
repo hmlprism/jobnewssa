@@ -52,7 +52,7 @@ async function DashboardContent() {
       )}
       {company?.verified && (
         <div className="mb-6 border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-5 py-4 text-sm text-[var(--color-indigo)]">
-          <span className="font-semibold">✓ Verified employer</span> — your
+          <span className="font-semibold">✓ Verified employer.</span> Your
           jobs display a verified badge.
         </div>
       )}
