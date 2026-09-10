@@ -93,8 +93,15 @@ export function JobCard({
         </span>
       </div>
 
-      {/* Vertical hairline — transitions to rust on card hover */}
-      <div className="relative z-10 my-3.5 w-px shrink-0 self-stretch bg-[var(--color-line)] transition-colors duration-150 group-hover:bg-[var(--color-rust)] group-hover:opacity-50" />
+      {/* Vertical hairline — encodes urgency state at rest; turns rust on hover for normal cards */}
+      <div className={[
+        "relative z-10 my-3.5 w-px shrink-0 self-stretch transition-colors duration-150",
+        isExpired
+          ? "bg-[var(--color-line)]"
+          : (isClosingSoon || isUrgent)
+          ? "bg-[var(--color-rust)] group-hover:bg-[var(--color-rust-dark)]"
+          : "bg-[var(--color-line)] group-hover:bg-[var(--color-rust)]",
+      ].join(" ")} />
 
       {/* Content */}
       <div className="relative z-10 min-w-0 flex-1 py-3.5 pl-4 pr-3">
@@ -120,16 +127,15 @@ export function JobCard({
             ) : isUrgent ? (
               <span className="text-[11px] font-medium text-[var(--color-rust)]">Urgent</span>
             ) : null}
-            <SaveButton jobId={job.id} initialSaved={initialSaved} />
+            <SaveButton jobId={job.id} initialSaved={initialSaved} glyph />
           </div>
         </div>
 
         {/* Company · location · time */}
         <p className="mt-1 text-sm text-[var(--color-muted)]">
-          <span className="font-medium text-[var(--color-ink)]/80">{companyName}</span>
+          <span className="font-medium text-[var(--color-ink)]">{companyName}</span>
           {location && <span> · {location}</span>}
           {job.is_remote && !location && <span> · Remote</span>}
-          <span> · {timeAgo(job.posted_at)}</span>
         </p>
 
         {/* Contract type · salary */}
@@ -137,8 +143,9 @@ export function JobCard({
           {CONTRACT_TYPE_LABELS[job.contract_type]}
           {salary !== "Market related" && <span> · {salary}</span>}
           {!isExpired && daysNum !== null && daysNum > 3 && (
-            <span> · {daysNum} days left</span>
+            <span className="text-[var(--color-clay)]"> · {daysNum} days left</span>
           )}
+          <span> · {timeAgo(job.posted_at)}</span>
         </p>
 
         {/* Verified employer — plain text, no badge box */}
