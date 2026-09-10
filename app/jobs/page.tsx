@@ -9,7 +9,6 @@ import {
   type JobSearchFilters,
 } from "@/lib/jobs-query";
 import Link from "next/link";
-import { Search, MapPin } from "lucide-react";
 
 export const metadata = { title: "Find jobs in South Africa" };
 
@@ -53,32 +52,20 @@ export default async function JobsPage({
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         {/* ── Search bar ── */}
         <form action="/jobs" className="mb-6 flex">
-          <div className="relative flex-1">
-            <Search
-              size={16}
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
-            />
-            <input
-              type="text"
-              name="q"
-              defaultValue={filters.q}
-              placeholder="Job title, keyword, or company"
-              className="w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3 pl-10 pr-3 text-sm"
-            />
-          </div>
-          <div className="relative w-44 shrink-0">
-            <MapPin
-              size={14}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]"
-            />
-            <input
-              type="text"
-              name="location"
-              defaultValue={filters.location}
-              placeholder="City or province"
-              className="w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3 pl-8 pr-3 text-sm"
-            />
-          </div>
+          <input
+            type="text"
+            name="q"
+            defaultValue={filters.q}
+            placeholder="Job title, keyword, or company"
+            className="min-w-0 flex-1 border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] px-4 py-3 text-sm"
+          />
+          <input
+            type="text"
+            name="location"
+            defaultValue={filters.location}
+            placeholder="City or province"
+            className="w-44 shrink-0 border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-3 text-sm"
+          />
           <button
             type="submit"
             className="cursor-pointer bg-[var(--color-ink)] px-6 py-3 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-ink)]/90"
@@ -133,7 +120,7 @@ export default async function JobsPage({
 
             {jobs.length === 0 ? (
               <div className="pb-16 pt-10">
-                <h2 className="font-display text-2xl">
+                <h2 className="text-xl font-semibold text-[var(--color-ink)]">
                   No listings match — yet.
                 </h2>
                 <p className="mt-3 max-w-sm text-[var(--color-muted)]">

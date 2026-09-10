@@ -38,7 +38,7 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
   return (
     <aside className="w-full shrink-0 md:w-60 lg:w-64">
       <div className="mb-5 flex items-center justify-between">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
+        <h2 className="text-xs font-semibold text-[var(--color-muted)]">
           Filters
         </h2>
         {hasFilters && (
@@ -137,7 +137,7 @@ function FilterGroup({
         noBorder ? "" : "border-b border-[var(--color-line)]"
       }`}
     >
-      <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+      <h3 className="mb-3 text-xs font-semibold text-[var(--color-muted)]">
         {label}
       </h3>
       {children}
