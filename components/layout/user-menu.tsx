@@ -109,6 +109,7 @@ function MenuLink({
   return (
     <Link
       href={href}
+      prefetch={false}
       onClick={onClick}
       className="flex items-center gap-3 px-4 py-2 text-sm text-[var(--color-ink)] hover:bg-[var(--color-paper-dim)] hover:text-[var(--color-rust)]"
     >

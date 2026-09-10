@@ -111,6 +111,7 @@ export default function EmployerVerifyPage() {
           </p>
           <Link
             href="/auth/login"
+            prefetch={false}
             className="mt-6 inline-block text-sm font-medium text-[var(--color-rust)] underline underline-offset-2"
           >
             Sign in
@@ -133,6 +134,7 @@ export default function EmployerVerifyPage() {
           </p>
           <Link
             href="/employer/post"
+            prefetch={false}
             className="mt-6 inline-block text-sm font-medium text-[var(--color-rust)] underline underline-offset-2"
           >
             Post a vacancy
@@ -148,6 +150,7 @@ export default function EmployerVerifyPage() {
       <main className="mx-auto max-w-lg px-4 py-10 sm:px-6 sm:py-12">
         <Link
           href="/employer/dashboard"
+          prefetch={false}
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
         >
           <ArrowLeft size={14} />

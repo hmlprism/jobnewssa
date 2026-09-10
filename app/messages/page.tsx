@@ -136,6 +136,7 @@ function ConversationRow({ conv }: { conv: ConversationSummary }) {
   return (
     <Link
       href={`/applications/${conv.applicationId}/thread`}
+      prefetch={false}
       className={`group block border-b border-[var(--color-line)] px-5 py-4 transition-colors hover:bg-[var(--color-paper-dim)] ${
         hasUnread
           ? "border-l-3 border-l-[var(--color-rust)]"
@@ -230,6 +231,7 @@ export default async function MessagesPage() {
             <div className="mt-6 flex justify-center gap-4 text-sm">
               <Link
                 href="/jobs"
+                prefetch={false}
                 className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
               >
                 Find jobs to apply for
@@ -237,6 +239,7 @@ export default async function MessagesPage() {
               <span className="text-[var(--color-muted)]">·</span>
               <Link
                 href="/applications"
+                prefetch={false}
                 className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
               >
                 My applications

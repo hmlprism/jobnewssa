@@ -172,6 +172,7 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
                         )}
                         <Link
                           href={`/applications/${app.id}/thread?from=${jobId}`}
+                          prefetch={false}
                           className="flex items-center gap-1 text-sm font-medium text-[var(--color-indigo)] hover:underline"
                         >
                           <MessageSquare size={13} />
@@ -248,6 +249,7 @@ export default async function ApplicantsPage({
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12">
         <Link
           href="/employer/dashboard"
+          prefetch={false}
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
         >
           <ArrowLeft size={14} />

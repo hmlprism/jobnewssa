@@ -162,8 +162,12 @@ in the codebase but is no longer called.
 
 ### Link prefetching — disabled everywhere
 
-Every `<Link>` in the codebase carries `prefetch={false}`. The `LinkButton`
-component enforces this internally.
+**RULE: Every `<Link>` added to this codebase MUST include `prefetch={false}`.**
+The `LinkButton` component enforces this internally; all bare `<Link>` usages
+must carry it explicitly. This rule has been audited and enforced across the
+entire codebase. Failing to add it triggers the auth middleware for every
+visible link on a signed-in page (~340ms per link) and has caused two separate
+performance regressions.
 
 **Why:** Next.js auto-prefetches RSC payloads for every visible link after
 hydration. Each prefetch goes through middleware, which calls `auth.getUser()`

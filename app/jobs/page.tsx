@@ -144,6 +144,7 @@ export default async function JobsPage({
                   <div>
                     <Link
                       href="/jobs"
+                      prefetch={false}
                       className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
                     >
                       Clear all filters
@@ -153,6 +154,7 @@ export default async function JobsPage({
                     Want to be notified when matching roles are posted?{" "}
                     <Link
                       href="/auth/signup"
+                      prefetch={false}
                       className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
                     >
                       Create a free account

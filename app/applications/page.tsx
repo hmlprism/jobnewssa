@@ -87,6 +87,7 @@ async function ApplicationsContent() {
         <p className="mt-2 text-sm text-[var(--color-muted)]">
           <Link
             href="/jobs"
+            prefetch={false}
             className="underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
             Browse vacancies
@@ -110,6 +111,7 @@ async function ApplicationsContent() {
               {app.job ? (
                 <Link
                   href={`/jobs/${app.job.slug}`}
+                  prefetch={false}
                   className="font-medium hover:text-[var(--color-rust)]"
                 >
                   {app.job.title}
@@ -132,6 +134,7 @@ async function ApplicationsContent() {
 
             <Link
               href={`/applications/${app.id}/thread`}
+              prefetch={false}
               className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-[var(--color-rust)] hover:underline"
             >
               <MessageSquare size={14} />

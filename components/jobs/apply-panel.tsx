@@ -45,6 +45,7 @@ export function ApplyPanel({
         </p>
         <Link
           href="/auth/login"
+          prefetch={false}
           className="inline-flex w-full justify-center bg-[var(--color-rust)] px-4 py-2.5 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
         >
           Sign in to apply
@@ -61,6 +62,7 @@ export function ApplyPanel({
         </p>
         <Link
           href="/profile/edit"
+          prefetch={false}
           className="inline-flex w-full justify-center bg-[var(--color-rust)] px-4 py-2.5 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
         >
           Complete your profile
@@ -80,6 +82,7 @@ export function ApplyPanel({
           meantime,{" "}
           <Link
             href="/jobs"
+            prefetch={false}
             className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
             browse more vacancies

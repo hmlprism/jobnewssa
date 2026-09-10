@@ -91,6 +91,7 @@ async function ThreadContent({
           Re:{" "}
           <Link
             href={`/jobs/${job.slug}`}
+            prefetch={false}
             className="underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
             {job.title}
@@ -151,6 +152,7 @@ export default async function ThreadPage({
       <main className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
         <Link
           href={backHref}
+          prefetch={false}
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
         >
           <ArrowLeft size={14} />

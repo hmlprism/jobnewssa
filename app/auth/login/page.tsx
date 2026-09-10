@@ -61,6 +61,7 @@ function LoginForm() {
               </label>
               <Link
                 href="/auth/forgot-password"
+                prefetch={false}
                 className="text-xs text-[var(--color-muted)] hover:text-[var(--color-rust)]"
               >
                 Forgot password?
@@ -104,6 +105,7 @@ function LoginForm() {
           Don&apos;t have an account?{" "}
           <Link
             href="/auth/signup"
+            prefetch={false}
             className="font-medium text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
             Create one

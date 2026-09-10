@@ -136,6 +136,7 @@ export default function ResetPasswordPage() {
               {error.includes("expired") && (
                 <Link
                   href="/auth/forgot-password"
+                  prefetch={false}
                   className="mt-1 block text-sm font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
                 >
                   Request a new reset link

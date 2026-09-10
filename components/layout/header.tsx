@@ -78,6 +78,7 @@ async function AuthControls() {
         <div className="hidden items-center gap-3 sm:flex">
           <Link
             href="/auth/login"
+            prefetch={false}
             className="text-sm font-medium text-[var(--color-ink)] hover:text-[var(--color-rust)]"
           >
             Sign in

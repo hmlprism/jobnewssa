@@ -209,6 +209,7 @@ export default function PostJobPage() {
         </p>
         <Link
           href="/auth/signup"
+          prefetch={false}
           className="mt-6 inline-flex bg-[var(--color-rust)] px-6 py-3 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
         >
           Create employer account

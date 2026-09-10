@@ -9,7 +9,7 @@ import {
   getCachedLearnershipJobs,
   getCachedGraduateJobs,
 } from "@/lib/jobs-query";
-import { getAuthUser, createClient } from "@/lib/supabase/server";
+
 import Link from "next/link";
 import { Search, MapPin, ArrowRight } from "lucide-react";
 
@@ -29,7 +29,7 @@ const CATEGORY_PILLS = [
 ] as const;
 
 export default async function Home() {
-  const [recentJobs, count, govtJobs, internJobs, learnerJobs, gradJobs, user] =
+  const [recentJobs, count, govtJobs, internJobs, learnerJobs, gradJobs] =
     await Promise.all([
       getCachedRecentJobs(),
       getCachedJobCount(),
@@ -37,19 +37,7 @@ export default async function Home() {
       getCachedInternshipJobs(),
       getCachedLearnershipJobs(),
       getCachedGraduateJobs(),
-      getAuthUser(),
     ]);
-
-  // Fetch saved job IDs if logged in, so bookmark icons reflect saved state.
-  let savedJobIds = new Set<string>();
-  if (user) {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("saved_jobs")
-      .select("job_id")
-      .eq("user_id", user.id);
-    savedJobIds = new Set((data ?? []).map((r) => r.job_id as string));
-  }
 
   const categorySections = [
     { title: "Government Vacancies", viewAllHref: "/jobs?sector=government-parastatals", jobs: govtJobs },
@@ -149,7 +137,6 @@ export default async function Home() {
                 <JobCard
                   key={job.id}
                   job={job}
-                  initialSaved={savedJobIds.has(job.id)}
                 />
               ))}
             </div>
@@ -179,7 +166,6 @@ export default async function Home() {
                 <JobCard
                   key={job.id}
                   job={job}
-                  initialSaved={savedJobIds.has(job.id)}
                 />
               ))}
             </div>

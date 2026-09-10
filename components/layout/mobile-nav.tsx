@@ -81,6 +81,7 @@ export function MobileNav({
                 <div className="mt-4 space-y-2 border-t border-[var(--color-line)] pt-4">
                   <Link
                     href="/auth/login"
+                    prefetch={false}
                     onClick={() => setOpen(false)}
                     className="block py-2 text-[15px] font-medium text-[var(--color-ink)] hover:text-[var(--color-rust)]"
                   >
@@ -88,6 +89,7 @@ export function MobileNav({
                   </Link>
                   <Link
                     href="/auth/signup"
+                    prefetch={false}
                     onClick={() => setOpen(false)}
                     className="block bg-[var(--color-rust)] px-4 py-2.5 text-center text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
                   >
@@ -115,6 +117,7 @@ function MobileLink({
   return (
     <Link
       href={href}
+      prefetch={false}
       onClick={onClick}
       className="flex items-center border-b border-[var(--color-line)] py-3 text-[15px] font-medium text-[var(--color-ink)] hover:text-[var(--color-rust)]"
     >

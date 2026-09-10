@@ -9,7 +9,7 @@ import { LinkButton } from "@/components/ui/button";
 import { ApplyPanelServer } from "@/components/jobs/apply-panel-server";
 import { SaveButton } from "@/components/jobs/save-button";
 import { LogAppliedButton } from "@/components/jobs/log-applied-button";
-import { getAuthUser, createClient } from "@/lib/supabase/server";
+import { getAuthUser } from "@/lib/supabase/server";
 import Link from "next/link";
 import { MapPin, Clock, Wifi, ArrowLeft } from "lucide-react";
 
@@ -41,28 +41,6 @@ export default async function JobDetailPage({
   const left = daysLeft(job.expires_at);
   const location = job.city || job.province || null;
 
-  let isSaved = false;
-  let isApplied = false;
-
-  if (user) {
-    const supabase = await createClient();
-    const [savedRow, appRow] = await Promise.all([
-      supabase
-        .from("saved_jobs")
-        .select("job_id")
-        .eq("user_id", user.id)
-        .eq("job_id", job.id)
-        .maybeSingle(),
-      supabase
-        .from("applications")
-        .select("id")
-        .eq("job_id", job.id)
-        .eq("applicant_id", user.id)
-        .maybeSingle(),
-    ]);
-    isSaved = !!savedRow.data;
-    isApplied = !!appRow.data;
-  }
 
   return (
     <>
@@ -113,7 +91,7 @@ export default async function JobDetailPage({
             <h1 className="font-display text-3xl font-semibold leading-tight sm:text-[2.25rem]">
               {job.title}
             </h1>
-            <SaveButton jobId={job.id} initialSaved={isSaved} />
+            <SaveButton jobId={job.id} />
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
@@ -173,7 +151,7 @@ export default async function JobDetailPage({
                     <LogAppliedButton
                       jobId={job.id}
                       userId={user?.id ?? null}
-                      initialApplied={isApplied}
+                      initialApplied={false}
                     />
                   </div>
                 </>

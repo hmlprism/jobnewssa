@@ -44,6 +44,7 @@ async function SavedContent() {
         <p className="mt-2 text-sm text-[var(--color-muted)]">
           <Link
             href="/jobs"
+            prefetch={false}
             className="underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
             Browse vacancies

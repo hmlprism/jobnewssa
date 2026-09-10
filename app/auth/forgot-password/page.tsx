@@ -45,6 +45,7 @@ export default function ForgotPasswordPage() {
           <p className="mt-6 text-sm">
             <Link
               href="/auth/login"
+              prefetch={false}
               className="font-medium text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
             >
               Back to sign in
@@ -97,6 +98,7 @@ export default function ForgotPasswordPage() {
           Remembered it?{" "}
           <Link
             href="/auth/login"
+            prefetch={false}
             className="font-medium text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
             Back to sign in
