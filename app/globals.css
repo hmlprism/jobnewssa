@@ -19,6 +19,14 @@
   --color-line: #ddd8ca;
   --color-line-hover: #c4bfb2;
 
+  /* ── Gold — warm ochre, second accent ───────────────────────
+     Use ONLY for: saved bookmark active, application-submitted
+     confirmation, and progress/momentum indicators.
+     NOT for CTAs (rust is exclusive) and NOT decorative.
+     #7C6038 on #f7f5f0 paper = 5.37:1 (WCAG AA ✓ normal text). */
+  --color-gold: #7c6038;
+  --color-gold-dim: #f4e8cf;
+
   /* ── Ink tonal scale ─────────────────────────────────────────
      Same warm dark-forest hue as --color-ink (#12211a).
      Use for text hierarchy, subtle backgrounds, borders.
@@ -107,6 +115,57 @@ textarea:focus {
 input[type="checkbox"],
 input[type="radio"] {
   accent-color: var(--color-rust);
+}
+
+/* ── Paper grain texture ──────────────────────────────────────
+   Very faint noise for large background areas (hero, page bg).
+   SVG feTurbulence rendered as a rasterised tile — no asset, no
+   network cost. Opacity 0.035: barely visible, tactile not dirty. */
+.texture-paper {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ── Search bar warm focus glow ──────────────────────────────
+   Overrides the generic input:focus border-color (same specificity,
+   later declaration wins). 150ms — no bounce. */
+.search-input {
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 2px rgba(124, 96, 56, 0.14);
+}
+
+/* ── Bookmark fill animation ─────────────────────────────────
+   Quick, restrained scale pulse on save — not a celebration. */
+@keyframes bookmark-fill {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.bookmark-fill {
+  animation: bookmark-fill 180ms ease-out;
+}
+
+/* ── Verified employer badge shimmer ─────────────────────────
+   One-shot shimmer on page load; makes the trust mark feel earned.
+   animation-fill-mode:both — clean start/end, no flash.
+   Plays once, 0.5s after page settles. */
+@keyframes badge-shimmer {
+  from { background-position: -200% center; }
+  to   { background-position: 200% center; }
+}
+.badge-verified-shimmer {
+  background-image: linear-gradient(
+    105deg,
+    var(--color-indigo-dim) 25%,
+    rgba(255, 255, 255, 0.65) 50%,
+    var(--color-indigo-dim) 75%
+  );
+  background-size: 300% 100%;
+  animation: badge-shimmer 1s ease-out 0.5s 1 both;
 }
 
 /* Job description prose */

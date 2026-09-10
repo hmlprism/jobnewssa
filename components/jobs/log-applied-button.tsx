@@ -32,7 +32,7 @@ export function LogAppliedButton({
 
   if (applied) {
     return (
-      <div className="flex items-center gap-1.5 text-sm font-medium text-[var(--color-sage,#6B7A5E)]">
+      <div className="flex items-center gap-1.5 text-sm font-medium text-[var(--color-gold)]">
         <Check size={14} />
         Marked as applied
       </div>

@@ -74,7 +74,7 @@ export function ApplyPanel({
   if (status === "applied") {
     return (
       <div>
-        <p className="font-display text-lg text-[var(--color-ink)]">
+        <p className="font-display text-lg text-[var(--color-gold)]">
           Your application is in.
         </p>
         <p className="mt-2 text-sm text-[var(--color-muted)]">

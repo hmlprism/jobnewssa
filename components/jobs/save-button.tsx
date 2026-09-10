@@ -13,6 +13,7 @@ export function SaveButton({
 }) {
   const [saved, setSaved] = useState(initialSaved);
   const [loading, setLoading] = useState(false);
+  const [animating, setAnimating] = useState(false);
   const router = useRouter();
 
   async function toggle(e: React.MouseEvent) {
@@ -36,6 +37,11 @@ export function SaveButton({
 
       if (res.ok) {
         const { saved: next } = await res.json();
+        if (next) {
+          // play fill animation only on the save action, not on initial render
+          setAnimating(true);
+          setTimeout(() => setAnimating(false), 200);
+        }
         setSaved(next);
       }
     } finally {
@@ -49,15 +55,11 @@ export function SaveButton({
       disabled={loading}
       aria-label={saved ? "Unsave this job" : "Save this job"}
       title={saved ? "Unsave" : "Save"}
-      className="relative z-10 shrink-0 cursor-pointer p-1 text-[var(--color-muted)] transition-colors hover:text-[var(--color-rust)] disabled:pointer-events-none disabled:opacity-40"
+      className="relative z-10 shrink-0 cursor-pointer p-1 text-[var(--color-muted)] transition-colors hover:text-[var(--color-gold)] disabled:pointer-events-none disabled:opacity-40"
     >
       <Bookmark
         size={16}
-        className={
-          saved
-            ? "fill-[var(--color-rust)] text-[var(--color-rust)]"
-            : ""
-        }
+        className={`transition-colors duration-150${animating ? " bookmark-fill" : ""}${saved ? " fill-[var(--color-gold)] text-[var(--color-gold)]" : ""}`}
       />
     </button>
   );

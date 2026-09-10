@@ -63,7 +63,7 @@ export default async function JobsPage({
               name="q"
               defaultValue={filters.q}
               placeholder="Job title, keyword, or company"
-              className="w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3 pl-10 pr-3 text-sm"
+              className="search-input w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3 pl-10 pr-3 text-sm"
             />
           </div>
           <div className="relative w-44 shrink-0">
@@ -76,7 +76,7 @@ export default async function JobsPage({
               name="location"
               defaultValue={filters.location}
               placeholder="City or province"
-              className="w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3 pl-8 pr-3 text-sm"
+              className="search-input w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3 pl-8 pr-3 text-sm"
             />
           </div>
           <button

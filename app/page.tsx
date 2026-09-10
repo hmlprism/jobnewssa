@@ -52,7 +52,7 @@ export default async function Home() {
 
       <main>
         {/* ── Hero ── */}
-        <section className="border-b border-[var(--color-line)] bg-[var(--color-paper)]">
+        <section className="texture-paper border-b border-[var(--color-line)] bg-[var(--color-paper)]">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24 lg:py-28">
             <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
               {count.toLocaleString()} vacancies across South Africa
@@ -77,7 +77,7 @@ export default async function Home() {
                   type="text"
                   name="q"
                   placeholder="Job title, keyword or company"
-                  className="w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3.5 pl-10 pr-3 text-sm placeholder:text-[var(--color-muted)]"
+                  className="search-input w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3.5 pl-10 pr-3 text-sm placeholder:text-[var(--color-muted)]"
                 />
               </div>
               {/* Location field */}
@@ -90,7 +90,7 @@ export default async function Home() {
                   type="text"
                   name="location"
                   placeholder="City or province"
-                  className="w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3.5 pl-8 pr-3 text-sm placeholder:text-[var(--color-muted)]"
+                  className="search-input w-full border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3.5 pl-8 pr-3 text-sm placeholder:text-[var(--color-muted)]"
                 />
               </div>
               <button

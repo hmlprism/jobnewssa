@@ -31,7 +31,7 @@ export function JobCard({
         "hover:bg-[var(--color-paper-dim)] hover:border-b-[var(--color-line-hover)]",
         "before:absolute before:inset-y-0 before:left-0 before:w-[3px]",
         "before:bg-[var(--color-rust)] before:opacity-0 before:transition-opacity before:duration-75",
-        "hover:before:opacity-75",
+        "hover:before:opacity-100",
         isExpired ? "opacity-60" : "",
       ]
         .filter(Boolean)
@@ -123,7 +123,7 @@ export function JobCard({
           {job.source === "employer_direct" &&
             job.company &&
             (job.company.verified ? (
-              <span className="border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-1.5 py-0.5 font-medium text-[var(--color-indigo)]">
+              <span className="badge-verified-shimmer border border-[var(--color-indigo)] px-1.5 py-0.5 font-medium text-[var(--color-indigo)]">
                 ✓ Verified
               </span>
             ) : (

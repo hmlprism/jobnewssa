@@ -77,7 +77,7 @@ export default async function JobDetailPage({
             {job.source === "employer_direct" &&
               job.company &&
               (job.company.verified ? (
-                <span className="border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-1.5 py-0.5 text-xs font-medium text-[var(--color-indigo)]">
+                <span className="badge-verified-shimmer border border-[var(--color-indigo)] px-1.5 py-0.5 text-xs font-medium text-[var(--color-indigo)]">
                   ✓ Verified
                 </span>
               ) : (
