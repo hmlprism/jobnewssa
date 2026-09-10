@@ -82,7 +82,11 @@ export default async function Home() {
               {/* Right — search utility; paper bg covers the grid container's ink-50 */}
               <div className="bg-[var(--color-paper)] py-10 md:py-16 md:pl-12">
                 <form action="/jobs" className="flex">
+                  <label htmlFor="hero-q" className="sr-only">
+                    Job title, keyword, or company
+                  </label>
                   <input
+                    id="hero-q"
                     type="text"
                     name="q"
                     placeholder="Job title, keyword, or company"
@@ -102,7 +106,7 @@ export default async function Home() {
                       key={pill.label}
                       href={pill.href}
                       prefetch={false}
-                      className="border border-[var(--color-line)] px-3 py-1.5 text-xs font-medium text-[var(--color-ink)] transition-colors duration-75 hover:border-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)]"
+                      className="border border-[var(--color-line)] px-3 py-3.5 text-xs font-medium text-[var(--color-ink)] transition-colors duration-75 hover:border-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)]"
                     >
                       {pill.label}
                     </Link>
@@ -120,7 +124,7 @@ export default async function Home() {
                         key={province}
                         href={`/jobs?province=${slugify(province)}`}
                         prefetch={false}
-                        className="text-sm text-[var(--color-muted)] transition-colors duration-100 hover:text-[var(--color-ink)]"
+                        className="py-3 text-sm text-[var(--color-muted)] transition-colors duration-100 hover:text-[var(--color-ink)]"
                       >
                         {province}
                       </Link>

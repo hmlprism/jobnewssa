@@ -69,14 +69,22 @@ export default async function JobsPage({
 
             {/* Search bar — .search-form triggers the rust-on-focus CSS rule */}
             <form action="/jobs" className="search-form flex py-5">
+              <label htmlFor="jobs-q" className="sr-only">
+                Job title, keyword, or company
+              </label>
               <input
+                id="jobs-q"
                 type="text"
                 name="q"
                 defaultValue={filters.q}
                 placeholder="Job title, keyword, or company"
                 className="min-w-0 flex-1 border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] px-4 py-3 text-sm"
               />
+              <label htmlFor="jobs-location" className="sr-only">
+                City or province
+              </label>
               <input
+                id="jobs-location"
                 type="text"
                 name="location"
                 defaultValue={filters.location}
@@ -101,11 +109,11 @@ export default async function JobsPage({
                     key={chip.label}
                     href={chipHref(filters, chip)}
                     prefetch={false}
-                    className={
+                    className={`py-3 ${
                       isActive
                         ? "text-sm font-semibold text-[var(--color-rust)] underline underline-offset-2"
                         : "text-sm text-[var(--color-muted)] transition-colors duration-75 hover:text-[var(--color-ink)]"
-                    }
+                    }`}
                   >
                     {chip.label}
                   </Link>
@@ -234,7 +242,7 @@ function SortLink({
     <Link
       href={href}
       prefetch={false}
-      className={`text-xs ${
+      className={`text-xs py-3.5 ${
         isActive
           ? "font-semibold text-[var(--color-ink)] underline underline-offset-2"
           : "text-[var(--color-muted)] hover:text-[var(--color-ink)]"
