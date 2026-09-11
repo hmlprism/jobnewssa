@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -39,6 +40,13 @@ function LoginForm() {
   return (
     <main className="w-full max-w-md px-4 py-16 sm:px-6">
       <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 sm:p-10">
+        <Image
+          src="/logo-mark.png"
+          alt="Job News SA"
+          width={455}
+          height={450}
+          className="mb-5 h-10 w-auto"
+        />
         <h1 className="font-display text-2xl font-semibold">Sign in</h1>
         <p className="mt-1.5 text-sm text-[var(--color-muted)]">
           Welcome back. Search and apply for jobs across South Africa.

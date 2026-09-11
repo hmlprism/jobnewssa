@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { LinkButton } from "@/components/ui/button";
 import { getAuthUser, getAuthProfile, createClient } from "@/lib/supabase/server";
@@ -10,13 +11,23 @@ export function SiteHeader() {
     <header className="sticky top-0 z-30 border-b border-[var(--color-line)] bg-[var(--color-paper)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         {/* Logo */}
-        <Link href="/" prefetch={false} className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center bg-[var(--color-ink)] font-display text-sm font-bold text-[var(--color-paper)]">
-            JN
-          </span>
-          <span className="font-display text-lg font-semibold tracking-tight sm:text-xl">
-            Job News SA
-          </span>
+        <Link href="/" prefetch={false} className="flex items-center gap-2.5">
+          <Image
+            src="/logo-mark.png"
+            alt="Job News SA"
+            width={455}
+            height={450}
+            className="h-8 w-auto"
+            priority
+          />
+          <Image
+            src="/logo-wordmark.png"
+            alt=""
+            width={1445}
+            height={260}
+            className="hidden sm:block h-6 w-auto"
+            priority
+          />
         </Link>
 
         {/* Desktop nav */}

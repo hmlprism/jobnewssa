@@ -19,7 +19,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Job News SA — South Africa Jobs & Employment News",
+    default: "South Africa Job Vacancies | Job News SA",
     template: "%s | Job News SA",
   },
   description:

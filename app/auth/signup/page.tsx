@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -108,6 +109,13 @@ export default function SignupPage() {
   return (
     <main className="w-full max-w-md px-4 py-16 sm:px-6">
       <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 sm:p-10">
+        <Image
+          src="/logo-mark.png"
+          alt="Job News SA"
+          width={455}
+          height={450}
+          className="mb-5 h-10 w-auto"
+        />
         <h1 className="font-display text-2xl font-semibold">
           Create your account
         </h1>

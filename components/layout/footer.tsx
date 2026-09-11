@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SA_PROVINCES } from "@/types/database";
 import { slugify } from "@/lib/slug";
@@ -9,13 +10,21 @@ export function SiteFooter() {
         {/* Brand + tagline */}
         <div className="mb-10 flex items-start justify-between gap-8">
           <div>
-            <Link href="/" prefetch={false} className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center bg-[var(--color-ink)] font-display text-xs font-bold text-[var(--color-paper)]">
-                JN
-              </span>
-              <span className="font-display text-lg font-semibold tracking-tight">
-                Job News SA
-              </span>
+            <Link href="/" prefetch={false} className="flex items-center gap-2.5">
+              <Image
+                src="/logo-mark.png"
+                alt="Job News SA"
+                width={455}
+                height={450}
+                className="h-7 w-auto"
+              />
+              <Image
+                src="/logo-wordmark.png"
+                alt=""
+                width={1445}
+                height={260}
+                className="h-5 w-auto"
+              />
             </Link>
             <p className="mt-2 max-w-xs text-sm text-[var(--color-muted)]">
               A free, independent job board for South Africa. Listings sourced
