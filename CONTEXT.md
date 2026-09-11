@@ -45,7 +45,7 @@ The visual language is editorial/print, not SaaS. Think newspaper, not dashboard
 | `--color-green-dim` | `#eaede8` | Success backgrounds |
 | `--color-indigo` | `#2a3d66` | Verified employer badges — informational accent, nowhere else |
 | `--color-indigo-dim` | `#eaecf3` | Verified badge backgrounds |
-| `--color-clay` | `#b8804a` | Closing-soon urgency (days left on a listing) |
+| `--color-clay` | `#96612e` | Closing-soon urgency (days left on a listing — WCAG AA ✓ on paper) |
 | `--color-clay-dim` | `#f5ede0` | Urgency backgrounds |
 | `--color-amber` | `#7c5b1c` | Secondary category labels/index headings — muted warm gold. Not for primary actions. |
 | `--color-amber-dim` | `#f7f0db` | Amber tint backgrounds |
