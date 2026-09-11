@@ -88,9 +88,10 @@ export default function SignupPage() {
       setLoading(false);
       return;
     }
-    if (!data.user) {
-      // Supabase returns user: null (no error) when the email already belongs to a
-      // confirmed account — anti-enumeration behaviour. No confirmation email is sent.
+    if (!data.user || data.user.identities?.length === 0) {
+      // Supabase returns either user: null OR a fake user with identities: [] when the
+      // email already belongs to a confirmed account (anti-enumeration). No confirmation
+      // email is sent in either case.
       setAccountExists(true);
       setLoading(false);
       return;
