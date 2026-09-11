@@ -61,6 +61,7 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [accountExists, setAccountExists] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -74,7 +75,7 @@ export default function SignupPage() {
 
     setLoading(true);
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -84,6 +85,13 @@ export default function SignupPage() {
     });
     if (error) {
       setError(error.message);
+      setLoading(false);
+      return;
+    }
+    if (!data.user) {
+      // Supabase returns user: null (no error) when the email already belongs to a
+      // confirmed account — anti-enumeration behaviour. No confirmation email is sent.
+      setAccountExists(true);
       setLoading(false);
       return;
     }
@@ -102,6 +110,37 @@ export default function SignupPage() {
             We&apos;ve sent a confirmation link to {email}. Click it to
             activate your account.
           </p>
+        </div>
+      </main>
+    );
+  }
+
+  if (accountExists) {
+    return (
+      <main className="w-full max-w-md px-4 py-16 sm:px-6">
+        <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 text-center sm:p-10">
+          <h1 className="font-display text-2xl font-semibold">
+            Account already exists
+          </h1>
+          <p className="mt-2 text-sm text-[var(--color-muted)]">
+            An account already exists with <strong className="font-medium text-[var(--color-ink)]">{email}</strong>.
+          </p>
+          <div className="mt-6 flex flex-col gap-3">
+            <Link
+              href="/auth/login"
+              prefetch={false}
+              className="block border border-[var(--color-ink)] bg-[var(--color-ink)] px-4 py-2.5 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-ink)]/90"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/auth/forgot-password"
+              prefetch={false}
+              className="text-sm text-[var(--color-muted)] underline underline-offset-2 hover:text-[var(--color-rust)]"
+            >
+              Forgot your password?
+            </Link>
+          </div>
         </div>
       </main>
     );
