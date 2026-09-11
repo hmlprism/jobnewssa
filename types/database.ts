@@ -136,13 +136,14 @@ export interface JobAlert {
 export interface NewsArticle {
   id: string;
   title: string;
-  slug: string;
+  slug: string | null;  // nullable after migration 0016 — RSS items have no slug
   summary: string;
   source_name: string;
   source_url: string;
   image_url: string | null;
   published_at: string;
   category: string | null;
+  ingested_at: string;  // added by migration 0016
   created_at: string;
 }
 
