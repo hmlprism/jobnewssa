@@ -1,0 +1,12 @@
+-- Grant SELECT on desired_salary_min to authenticated.
+-- This column was present in migration 0006_profile_sa_fields.sql but was
+-- accidentally omitted from the explicit column list in the GRANT statement
+-- in 0014_fix_profile_column_security.sql, making it write-only from the
+-- app's perspective.
+--
+-- Standalone additive GRANT — no REVOKE, no other columns named, does not
+-- touch disability_status or ee_designation (protected separately via
+-- column-level REVOKE in 0006 + security-definer function).
+-- anon excluded intentionally: salary expectation is personal data, readable
+-- only by the owner via getAuthProfile() (authenticated role).
+grant select (desired_salary_min) on profiles to authenticated;

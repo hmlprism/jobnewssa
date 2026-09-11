@@ -55,7 +55,7 @@ export const getAuthProfile = cache(async () => {
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
-    .select("id, role, full_name, phone, province, city, headline, resume_url, avatar_url, created_at, updated_at, nqf_level, qualification_title, qualification_type, professional_registration, work_authorization, preferred_province, preferred_contract_type")
+    .select("id, role, full_name, phone, province, city, headline, resume_url, avatar_url, created_at, updated_at, nqf_level, qualification_title, qualification_type, professional_registration, work_authorization, preferred_province, preferred_contract_type, desired_salary_min")
     .eq("id", user.id)
     .single();
   return data as Profile | null;
