@@ -41,7 +41,7 @@ The visual language is editorial/print, not SaaS. Think newspaper, not dashboard
 | `--color-paper-dim` | `#efece3` | Subtle section background, hover states |
 | `--color-rust` | `#be421c` | **Primary CTA only** (see rule below) |
 | `--color-rust-dark` | `#a53c19` | Rust hover/active state |
-| `--color-green` | `#6b7a5e` | Saved / success states (sage green) |
+| `--color-green` | `#3a5e43` | Saved / success states (forest green — WCAG AA ✓ on paper) |
 | `--color-green-dim` | `#eaede8` | Success backgrounds |
 | `--color-indigo` | `#2a3d66` | Verified employer badges — informational accent, nowhere else |
 | `--color-indigo-dim` | `#eaecf3` | Verified badge backgrounds |
