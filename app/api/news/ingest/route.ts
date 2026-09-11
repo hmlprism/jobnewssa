@@ -7,7 +7,7 @@ function isAuthorized(request: Request): boolean {
   return auth === `Bearer ${process.env.CRON_SECRET}`;
 }
 
-async function runIngestion() {
+export async function runNewsIngestion() {
   const supabase = createServiceClient();
 
   let totalIngested = 0;
@@ -88,7 +88,7 @@ export async function POST(request: Request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  return runIngestion();
+  return runNewsIngestion();
 }
 
 // Allow unauthenticated GET in development only.
@@ -98,5 +98,5 @@ export async function GET(request: Request) {
   if (process.env.NODE_ENV === "production") {
     return NextResponse.json({ error: "Use POST with cron secret" }, { status: 405 });
   }
-  return runIngestion();
+  return runNewsIngestion();
 }

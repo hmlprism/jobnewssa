@@ -1,12 +1,12 @@
 {
   "crons": [
     {
-      "path": "/api/jobs/ingest",
+      "path": "/api/ingest",
       "schedule": "0 3 * * *"
     },
     {
-      "path": "/api/news/ingest",
-      "schedule": "0 3 * * *"
+      "path": "/api/dpsa/ingest",
+      "schedule": "0 6 * * 5"
     }
   ]
 }

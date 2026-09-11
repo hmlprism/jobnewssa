@@ -62,11 +62,7 @@ async function upsertAdzunaJob(supabase: ReturnType<typeof createServiceClient>,
   if (error) throw error;
 }
 
-export async function POST(request: Request) {
-  if (!isAuthorized(request)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export async function runAdzunaIngestion() {
   const supabase = createServiceClient();
   let totalIngested = 0;
   const errors: string[] = [];
@@ -87,11 +83,18 @@ export async function POST(request: Request) {
     }
   }
 
-  return NextResponse.json({
+  return {
     ingested: totalIngested,
     locations_processed: SEARCH_LOCATIONS.length,
     errors: errors.length ? errors : undefined,
-  });
+  };
+}
+
+export async function POST(request: Request) {
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return NextResponse.json(await runAdzunaIngestion());
 }
 
 // Allow manual GET trigger in development only
