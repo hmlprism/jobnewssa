@@ -15,7 +15,7 @@ export interface FeedConfig {
 // 404/dead: TimesLive, EWN
 export const RSS_FEEDS: FeedConfig[] = [
   { url: "https://www.dailymaverick.co.za/dmrss/", sourceName: "Daily Maverick" },
-  { url: "https://www.moneyweb.co.za/feed/", sourceName: "Moneyweb" },
+  { url: "https://www.moneyweb.co.za/category/news/feed/", sourceName: "Moneyweb" },
   { url: "https://www.iol.co.za/rss", sourceName: "IOL" },
 ];
 
