@@ -159,6 +159,7 @@ export function MessageThread({
             onChange={(e) => setBody(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Write your message…"
+            aria-label="Message"
             rows={3}
             disabled={sending}
             className="w-full resize-none border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-3 pr-12 text-sm placeholder:text-[var(--color-muted)] disabled:opacity-50"
