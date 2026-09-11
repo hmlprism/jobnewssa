@@ -57,6 +57,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmError, setConfirmError] = useState<string | null>(null);
+  const [consented, setConsented] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
@@ -77,7 +78,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        data: { full_name: fullName, role },
+        data: { full_name: fullName, role, consented_at: new Date().toISOString() },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
@@ -178,6 +179,39 @@ export default function SignupPage() {
                 {confirmError}
               </p>
             )}
+          </div>
+
+          <div className="flex items-start gap-2.5 pt-1">
+            <input
+              type="checkbox"
+              id="consent"
+              checked={consented}
+              onChange={(e) => setConsented(e.target.checked)}
+              required
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[var(--color-ink)]"
+            />
+            <label
+              htmlFor="consent"
+              className="text-sm text-[var(--color-ink)]"
+            >
+              I agree to the{" "}
+              <Link
+                href="/terms"
+                prefetch={false}
+                className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
+              >
+                Terms &amp; Conditions
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/privacy"
+                prefetch={false}
+                className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </label>
           </div>
 
           {error && (

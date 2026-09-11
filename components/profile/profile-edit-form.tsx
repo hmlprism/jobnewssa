@@ -670,7 +670,7 @@ export function ProfileEditForm({
             <option value="Not specified">Not specified</option>
           </select>
           <p className="mt-1 text-xs text-[var(--color-muted)]">
-            As defined under the Employment Equity Act, 1998.
+            We encourage you to complete this section.
           </p>
         </div>
       </div>
