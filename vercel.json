@@ -3,6 +3,10 @@
     {
       "path": "/api/jobs/ingest",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/news/ingest",
+      "schedule": "0 3 * * *"
     }
   ]
 }
