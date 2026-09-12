@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
+import { useTranslations } from "next-intl";
 import { ChevronDown, LogOut, User, Briefcase, FileText, Settings } from "lucide-react";
 
 export function UserMenu({
@@ -18,6 +19,7 @@ export function UserMenu({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const t = useTranslations("Header");
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -64,19 +66,19 @@ export function UserMenu({
           <div className="py-1">
             {role === "employer" && (
               <MenuLink href="/employer/dashboard" icon={<Briefcase size={15} />} onClick={() => setOpen(false)}>
-                Employer dashboard
+                {t("userMenu.employerDashboard")}
               </MenuLink>
             )}
             {role === "job_seeker" && (
               <MenuLink href="/applications" icon={<FileText size={15} />} onClick={() => setOpen(false)}>
-                My applications
+                {t("userMenu.myApplications")}
               </MenuLink>
             )}
             <MenuLink href="/profile/edit" icon={<User size={15} />} onClick={() => setOpen(false)}>
-              My profile
+              {t("userMenu.myProfile")}
             </MenuLink>
             <MenuLink href="/account/settings" icon={<Settings size={15} />} onClick={() => setOpen(false)}>
-              Account settings
+              {t("userMenu.accountSettings")}
             </MenuLink>
           </div>
 
@@ -86,7 +88,7 @@ export function UserMenu({
               className="flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-left text-sm text-[var(--color-muted)] hover:bg-[var(--color-paper-dim)] hover:text-[var(--color-ink)]"
             >
               <LogOut size={15} />
-              Sign out
+              {t("auth.signOut")}
             </button>
           </div>
         </div>

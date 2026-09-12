@@ -1,10 +1,11 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import createIntlMiddleware from "next-intl/middleware";
+import { locales, defaultLocale } from "@/lib/i18n-config";
 
 const intlMiddleware = createIntlMiddleware({
-  locales: ["en", "af"],
-  defaultLocale: "en",
+  locales,
+  defaultLocale,
   // Every locale gets a URL prefix — /en/... and /af/...
   // Requests without a prefix are redirected to /en/...
   localePrefix: "always",

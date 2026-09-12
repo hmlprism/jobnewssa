@@ -1,1 +1,33 @@
-{}
+{
+  "Header": {
+    "logoAlt": "Job News SA",
+    "nav": {
+      "home": "Home",
+      "findJobs": "Find Jobs",
+      "tools": "Tools",
+      "saved": "Saved",
+      "applications": "Applications",
+      "news": "News",
+      "newsLong": "Job market news",
+      "messages": "Messages",
+      "postJob": "Post a Job"
+    },
+    "auth": {
+      "signIn": "Sign in",
+      "createAccount": "Create account",
+      "createAccountFree": "Create free account",
+      "signOut": "Sign out"
+    },
+    "userMenu": {
+      "employerDashboard": "Employer dashboard",
+      "myApplications": "My applications",
+      "myProfile": "My profile",
+      "accountSettings": "Account settings"
+    },
+    "mobileNav": {
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "panelTitle": "Menu"
+    }
+  }
+}

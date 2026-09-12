@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/lib/navigation";
 
 export function MobileNav({
   isLoggedIn,
@@ -12,13 +13,14 @@ export function MobileNav({
   unreadCount?: number;
 }) {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("Header");
 
   return (
     <div className="lg:hidden">
       <button
         onClick={() => setOpen(true)}
         className="flex cursor-pointer items-center justify-center p-1 text-[var(--color-ink)]"
-        aria-label="Open menu"
+        aria-label={t("mobileNav.openMenu")}
       >
         <Menu size={22} />
       </button>
@@ -34,11 +36,11 @@ export function MobileNav({
           {/* Panel */}
           <nav className="fixed inset-y-0 right-0 z-50 w-72 bg-[var(--color-paper)] shadow-lg">
             <div className="flex items-center justify-between border-b border-[var(--color-line)] px-5 py-4">
-              <span className="font-display text-lg font-semibold">Menu</span>
+              <span className="font-display text-lg font-semibold">{t("mobileNav.panelTitle")}</span>
               <button
                 onClick={() => setOpen(false)}
                 className="flex cursor-pointer items-center justify-center p-1 text-[var(--color-ink)]"
-                aria-label="Close menu"
+                aria-label={t("mobileNav.closeMenu")}
               >
                 <X size={20} />
               </button>
@@ -46,29 +48,29 @@ export function MobileNav({
 
             <div className="flex flex-col px-5 py-4">
               <MobileLink href="/" onClick={() => setOpen(false)}>
-                Home
+                {t("nav.home")}
               </MobileLink>
               <MobileLink href="/jobs" onClick={() => setOpen(false)}>
-                Find Jobs
+                {t("nav.findJobs")}
               </MobileLink>
               <MobileLink href="/tools" onClick={() => setOpen(false)}>
-                Tools
+                {t("nav.tools")}
               </MobileLink>
               <MobileLink href="/saved" onClick={() => setOpen(false)}>
-                Saved
+                {t("nav.saved")}
               </MobileLink>
               <MobileLink href="/applications" onClick={() => setOpen(false)}>
-                Applications
+                {t("nav.applications")}
               </MobileLink>
               <MobileLink href="/news" onClick={() => setOpen(false)}>
-                Job market news
+                {t("nav.newsLong")}
               </MobileLink>
               <MobileLink href="/employer/post" onClick={() => setOpen(false)}>
-                Post a Job
+                {t("nav.postJob")}
               </MobileLink>
               {isLoggedIn && (
                 <MobileLink href="/messages" onClick={() => setOpen(false)}>
-                  Messages
+                  {t("nav.messages")}
                   {unreadCount > 0 && (
                     <span className="ml-1.5 inline-flex items-center justify-center bg-[var(--color-rust)] px-1.5 py-px text-[10px] font-bold leading-none text-[var(--color-paper)]">
                       {unreadCount > 99 ? "99+" : unreadCount}
@@ -85,7 +87,7 @@ export function MobileNav({
                     onClick={() => setOpen(false)}
                     className="block py-2 text-[15px] font-medium text-[var(--color-ink)] hover:text-[var(--color-rust)]"
                   >
-                    Sign in
+                    {t("auth.signIn")}
                   </Link>
                   <Link
                     href="/auth/signup"
@@ -93,7 +95,7 @@ export function MobileNav({
                     onClick={() => setOpen(false)}
                     className="block bg-[var(--color-rust)] px-4 py-2.5 text-center text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
                   >
-                    Create free account
+                    {t("auth.createAccountFree")}
                   </Link>
                 </div>
               )}

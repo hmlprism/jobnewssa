@@ -1,1 +1,33 @@
-{}
+{
+  "Header": {
+    "logoAlt": "Job News SA",
+    "nav": {
+      "home": "Tuis",
+      "findJobs": "Soek Werk",
+      "tools": "Gereedskap",
+      "saved": "Gestoor",
+      "applications": "Aansoeke",
+      "news": "Nuus",
+      "newsLong": "Werksmark nuus",
+      "messages": "Boodskappe",
+      "postJob": "Plaas 'n Pos"
+    },
+    "auth": {
+      "signIn": "Teken in",
+      "createAccount": "Skep rekening",
+      "createAccountFree": "Skep gratis rekening",
+      "signOut": "Teken uit"
+    },
+    "userMenu": {
+      "employerDashboard": "Werkgewer-dashboard",
+      "myApplications": "My aansoeke",
+      "myProfile": "My profiel",
+      "accountSettings": "Rekening-instellings"
+    },
+    "mobileNav": {
+      "openMenu": "Maak kieslys oop",
+      "closeMenu": "Maak kieslys toe",
+      "panelTitle": "Kieslys"
+    }
+  }
+}
