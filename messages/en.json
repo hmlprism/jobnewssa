@@ -98,5 +98,41 @@
       "notSignedInBody": "Your account is active. Sign in to start browsing jobs across South Africa.",
       "signIn": "Sign in to your account"
     }
+  },
+  "Home": {
+    "dateline": "South Africa Employment Listings",
+    "hero": {
+      "statSrOnly": " job vacancies in South Africa",
+      "vacanciesListed": "vacancies listed",
+      "acrossProvinces": "across all nine provinces",
+      "tagline": "Real opportunities. A stronger South Africa.",
+      "searchInput": "Job title, keyword, or company",
+      "searchButton": "Search",
+      "browseByProvince": "Browse by province"
+    },
+    "pills": {
+      "government": "Government",
+      "learnerships": "Learnerships",
+      "internships": "Internships",
+      "graduate": "Graduate",
+      "apprenticeships": "Apprenticeships",
+      "bursaries": "Bursaries",
+      "partTime": "Part-Time",
+      "remote": "Remote"
+    },
+    "sections": {
+      "latestListings": "Latest listings",
+      "vacanciesCount": "{count} vacancies",
+      "govVacancies": "Government vacancies",
+      "learnerships": "Learnerships",
+      "internships": "Internships",
+      "gradProgrammes": "Graduate programmes",
+      "viewAll": "All {title}"
+    },
+    "cta": {
+      "heading": "Hiring in South Africa?",
+      "body": "Post a vacancy and reach job seekers across every province, free.",
+      "button": "Post a job"
+    }
   }
 }

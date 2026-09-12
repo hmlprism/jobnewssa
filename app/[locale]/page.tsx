@@ -11,23 +11,13 @@ import {
 } from "@/lib/jobs-query";
 import { SA_PROVINCES } from "@/types/database";
 import { slugify } from "@/lib/slug";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
-const CATEGORY_PILLS = [
-  { label: "Government",         href: "/jobs?sector=government-parastatals" },
-  { label: "Learnerships",       href: "/jobs?q=learnership" },
-  { label: "Internships",        href: "/jobs?contract=internship" },
-  { label: "Graduate",           href: "/jobs?q=graduate+programme" },
-  { label: "Apprenticeships",    href: "/jobs?q=apprenticeship" },
-  { label: "Bursaries",          href: "/jobs?q=bursary" },
-  { label: "Part-Time",          href: "/jobs?contract=part_time" },
-  { label: "Remote",             href: "/jobs?remote=true" },
-] as const;
-
 export default async function Home() {
-  const [recentJobs, count, govtJobs, internJobs, learnerJobs, gradJobs] =
+  const [recentJobs, count, govtJobs, internJobs, learnerJobs, gradJobs, t] =
     await Promise.all([
       getCachedRecentJobs(),
       getCachedJobCount(),
@@ -35,13 +25,25 @@ export default async function Home() {
       getCachedInternshipJobs(),
       getCachedLearnershipJobs(),
       getCachedGraduateJobs(),
+      getTranslations("Home"),
     ]);
 
+  const categoryPills = [
+    { label: t("pills.government"),       href: "/jobs?sector=government-parastatals" },
+    { label: t("pills.learnerships"),     href: "/jobs?q=learnership" },
+    { label: t("pills.internships"),      href: "/jobs?contract=internship" },
+    { label: t("pills.graduate"),         href: "/jobs?q=graduate+programme" },
+    { label: t("pills.apprenticeships"),  href: "/jobs?q=apprenticeship" },
+    { label: t("pills.bursaries"),        href: "/jobs?q=bursary" },
+    { label: t("pills.partTime"),         href: "/jobs?contract=part_time" },
+    { label: t("pills.remote"),           href: "/jobs?remote=true" },
+  ];
+
   const categorySections = [
-    { title: "Government vacancies",  viewAllHref: "/jobs?sector=government-parastatals", jobs: govtJobs },
-    { title: "Learnerships",          viewAllHref: "/jobs?q=learnership",                  jobs: learnerJobs },
-    { title: "Internships",           viewAllHref: "/jobs?contract=internship",             jobs: internJobs },
-    { title: "Graduate programmes",   viewAllHref: "/jobs?q=graduate+programme",            jobs: gradJobs },
+    { title: t("sections.govVacancies"),  viewAllHref: "/jobs?sector=government-parastatals", jobs: govtJobs },
+    { title: t("sections.learnerships"),  viewAllHref: "/jobs?q=learnership",                  jobs: learnerJobs },
+    { title: t("sections.internships"),   viewAllHref: "/jobs?contract=internship",             jobs: internJobs },
+    { title: t("sections.gradProgrammes"),viewAllHref: "/jobs?q=graduate+programme",            jobs: gradJobs },
   ].filter((s) => s.jobs.length > 0);
 
   return (
@@ -56,7 +58,7 @@ export default async function Home() {
             {/* Dateline strip */}
             <div className="border-b border-[var(--color-line)] py-2.5">
               <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted)] select-none">
-                South Africa Employment Listings
+                {t("dateline")}
               </p>
             </div>
 
@@ -69,16 +71,16 @@ export default async function Home() {
               <div className="border-b border-[var(--color-line)] py-10 md:border-b-0 md:border-r md:py-16 md:pr-12">
                 <h1 className="masthead-number font-display text-[76px] font-semibold leading-[0.88] text-[var(--color-ink)] sm:text-[92px] lg:text-[108px]">
                   {count.toLocaleString()}
-                  <span className="sr-only"> job vacancies in South Africa</span>
+                  <span className="sr-only">{t("hero.statSrOnly")}</span>
                 </h1>
                 <p className="mt-5 font-display text-xl font-normal leading-snug text-[var(--color-ink)]">
-                  vacancies listed
+                  {t("hero.vacanciesListed")}
                 </p>
                 <p className="mt-1 text-sm text-[var(--color-muted)]">
-                  across all nine provinces
+                  {t("hero.acrossProvinces")}
                 </p>
                 <p className="mt-5 font-display text-base font-normal text-[var(--color-muted)]">
-                  Real opportunities. A stronger South Africa.
+                  {t("hero.tagline")}
                 </p>
 
                 {/* Scanner illustration — broadsheet graphic below the stat.
@@ -196,27 +198,27 @@ export default async function Home() {
               <div className="bg-[var(--color-paper)] py-10 md:py-16 md:pl-12">
                 <form action="/jobs" className="flex">
                   <label htmlFor="hero-q" className="sr-only">
-                    Job title, keyword, or company
+                    {t("hero.searchInput")}
                   </label>
                   <input
                     id="hero-q"
                     type="text"
                     name="q"
-                    placeholder="Job title, keyword, or company"
+                    placeholder={t("hero.searchInput")}
                     className="min-w-0 flex-1 border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] py-3.5 px-4 text-sm placeholder:text-[var(--color-muted)]"
                   />
                   <button
                     type="submit"
                     className="shrink-0 cursor-pointer bg-[var(--color-violet)] px-6 py-3.5 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-violet-dark)]"
                   >
-                    Search
+                    {t("hero.searchButton")}
                   </button>
                 </form>
 
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {CATEGORY_PILLS.map((pill) => (
+                  {categoryPills.map((pill) => (
                     <Link
-                      key={pill.label}
+                      key={pill.href}
                       href={pill.href}
                       prefetch={false}
                       className="border border-[var(--color-line)] px-3 py-3.5 text-xs font-medium text-[var(--color-ink)] transition-colors duration-75 hover:border-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)]"
@@ -229,7 +231,7 @@ export default async function Home() {
                 {/* Province register — editorial index, fills dead space below pills */}
                 <div className="mt-8 border-t border-[var(--color-line)] pt-5">
                   <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-amber)]">
-                    Browse by province
+                    {t("hero.browseByProvince")}
                   </p>
                   <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
                     {SA_PROVINCES.map((province) => (
@@ -253,9 +255,9 @@ export default async function Home() {
         {recentJobs.length > 0 && (
           <section className="mx-auto max-w-6xl px-4 sm:px-6">
             <SectionRule
-              label="Latest listings"
+              label={t("sections.latestListings")}
               linkHref="/jobs"
-              linkLabel={`${count.toLocaleString()} vacancies`}
+              linkLabel={t("sections.vacanciesCount", { count: count.toLocaleString() })}
             />
             <div className="border-t border-[var(--color-line)]">
               {recentJobs.map((job) => (
@@ -274,7 +276,7 @@ export default async function Home() {
             <SectionRule
               label={section.title}
               linkHref={section.viewAllHref}
-              linkLabel={`All ${section.title}`}
+              linkLabel={t("sections.viewAll", { title: section.title })}
             />
             <div className="border-t border-[var(--color-line)]">
               {section.jobs.map((job) => (
@@ -288,17 +290,17 @@ export default async function Home() {
         <section className="border-t border-[var(--color-line)] bg-[var(--color-paper-dim)]">
           <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
             <h2 className="text-base font-semibold text-[var(--color-ink)]">
-              Hiring in South Africa?
+              {t("cta.heading")}
             </h2>
             <p className="mt-2 max-w-sm text-sm text-[var(--color-muted)]">
-              Post a vacancy and reach job seekers across every province, free.
+              {t("cta.body")}
             </p>
             <Link
               href="/employer/post"
               prefetch={false}
               className="mt-5 inline-block bg-[var(--color-rust)] px-6 py-3 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
             >
-              Post a job
+              {t("cta.button")}
             </Link>
           </div>
         </section>

@@ -98,5 +98,41 @@
       "notSignedInBody": "Jou rekening is aktief. Teken in om werk regoor Suid-Afrika te blaai.",
       "signIn": "Teken in tot jou rekening"
     }
+  },
+  "Home": {
+    "dateline": "Suid-Afrika Werksgeleenthede",
+    "hero": {
+      "statSrOnly": " werksvakatures in Suid-Afrika",
+      "vacanciesListed": "vakatures gelys",
+      "acrossProvinces": "oor al nege provinsies",
+      "tagline": "Ware geleenthede. \u2019n Sterker Suid-Afrika.",
+      "searchInput": "Poststitel, sleutelwoord of maatskappy",
+      "searchButton": "Soek",
+      "browseByProvince": "Blaai per provinsie"
+    },
+    "pills": {
+      "government": "Staatsdiens",
+      "learnerships": "Leerlingskappe",
+      "internships": "Internskappe",
+      "graduate": "Gegradueerd",
+      "apprenticeships": "Vakleerlingskap",
+      "bursaries": "Beurse",
+      "partTime": "Deeltyds",
+      "remote": "Afstandswerk"
+    },
+    "sections": {
+      "latestListings": "Jongste plasings",
+      "vacanciesCount": "{count} vakatures",
+      "govVacancies": "Staatsdiensposte",
+      "learnerships": "Leerlingskappe",
+      "internships": "Internskappe",
+      "gradProgrammes": "Gegradueerde programme",
+      "viewAll": "Alle {title}"
+    },
+    "cta": {
+      "heading": "Huur jy in Suid-Afrika?",
+      "body": "Plaas \u2019n vakature en bereik werksoekers oor elke provinsie, gratis.",
+      "button": "Plaas \u2019n pos"
+    }
   }
 }
