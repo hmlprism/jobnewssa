@@ -26,6 +26,9 @@ export function SiteFooter() {
                 className="h-5 w-auto"
               />
             </Link>
+            <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--color-muted)]">
+              People. Jobs. A stronger tomorrow.
+            </p>
             <p className="mt-2 max-w-xs text-sm text-[var(--color-muted)]">
               A free, independent job board for South Africa. Listings sourced
               from public feeds and direct employer submissions.

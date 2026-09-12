@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s | Job News SA",
   },
   description:
-    "Find real job vacancies across South Africa. Search by sector, province, salary and contract type. Free for job seekers.",
+    "Job News SA connects people with opportunities, keeps South Africans informed, and contributes to a brighter, more inclusive future. Real vacancies across all nine provinces, free for job seekers.",
 };
 
 export default function RootLayout({

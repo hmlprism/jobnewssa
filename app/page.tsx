@@ -77,6 +77,9 @@ export default async function Home() {
                 <p className="mt-1 text-sm text-[var(--color-muted)]">
                   across all nine provinces
                 </p>
+                <p className="mt-5 font-display text-base font-normal text-[var(--color-muted)]">
+                  Real opportunities. A stronger South Africa.
+                </p>
 
                 {/* Scanner illustration — broadsheet graphic below the stat.
                     Hidden on mobile (single-column stacks tall enough already).
