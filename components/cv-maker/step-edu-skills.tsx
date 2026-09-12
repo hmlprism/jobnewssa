@@ -3,14 +3,21 @@
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { CvEducationEntry, CvSkills } from "@/types/cv";
+import { validateEduEntry } from "@/lib/cv-validation";
 
 interface Props {
   education: CvEducationEntry[];
   skills: CvSkills;
   refsOnRequest: boolean;
+  attempted: boolean;
   onEducationChange: (entries: CvEducationEntry[]) => void;
   onSkillsChange: (skills: CvSkills) => void;
   onRefsChange: (val: boolean) => void;
+}
+
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null;
+  return <p className="mt-1 text-xs text-[var(--color-rust)]">{msg}</p>;
 }
 
 const EMPTY_EDU: CvEducationEntry = {
@@ -32,11 +39,14 @@ const NQF = [
 
 const input =
   "w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:border-[var(--color-ink)] focus:outline-none";
+const inputErr =
+  "w-full border border-[var(--color-rust)] bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:border-[var(--color-rust)] focus:outline-none";
 
 export function StepEduSkills({
   education,
   skills,
   refsOnRequest,
+  attempted,
   onEducationChange,
   onSkillsChange,
   onRefsChange,
@@ -68,92 +78,97 @@ export function StepEduSkills({
           </p>
         )}
 
-        {education.map((entry, i) => (
-          <div
-            key={i}
-            className="mb-4 border border-[var(--color-line)] p-5 space-y-4"
-          >
-            <div className="flex items-center justify-between gap-4">
-              <h3 className="text-sm font-medium text-[var(--color-ink)]">
-                Qualification {i + 1}
-              </h3>
-              <button
-                type="button"
-                onClick={() => removeEdu(i)}
-                className="text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors"
-                aria-label="Remove qualification"
-              >
-                <Trash2 size={15} />
-              </button>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="sm:col-span-2">
-                <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                  Qualification name
-                </label>
-                <input
-                  type="text"
-                  className={input}
-                  placeholder="Bachelor of Commerce (Accounting)"
-                  value={entry.qualification}
-                  onChange={(e) => updateEdu(i, { qualification: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                  Institution
-                </label>
-                <input
-                  type="text"
-                  className={input}
-                  placeholder="University of the Witwatersrand"
-                  value={entry.institution}
-                  onChange={(e) => updateEdu(i, { institution: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                  Year completed
-                </label>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={4}
-                  className={input}
-                  placeholder="2020"
-                  value={entry.year}
-                  onChange={(e) =>
-                    updateEdu(i, { year: e.target.value.replace(/\D/g, "") })
-                  }
-                />
-              </div>
-
-              <div>
-                <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                  NQF level{" "}
-                  <span className="font-normal text-[var(--color-muted)]">
-                    (optional)
-                  </span>
-                </label>
-                <select
-                  className={input}
-                  value={entry.nqf_level}
-                  onChange={(e) => updateEdu(i, { nqf_level: e.target.value })}
+        {education.map((entry, i) => {
+          const errs = attempted ? validateEduEntry(entry) : {};
+          return (
+            <div
+              key={i}
+              className="mb-4 border border-[var(--color-line)] p-5 space-y-4"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <h3 className="text-sm font-medium text-[var(--color-ink)]">
+                  Qualification {i + 1}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => removeEdu(i)}
+                  className="text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors"
+                  aria-label="Remove qualification"
                 >
-                  <option value="">— Select —</option>
-                  {NQF.map((n) => (
-                    <option key={n.value} value={n.value}>
-                      {n.label}
-                    </option>
-                  ))}
-                </select>
+                  <Trash2 size={15} />
+                </button>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
+                    Qualification name
+                  </label>
+                  <input
+                    type="text"
+                    className={errs.qualification ? inputErr : input}
+                    placeholder="Bachelor of Commerce (Accounting)"
+                    value={entry.qualification}
+                    onChange={(e) => updateEdu(i, { qualification: e.target.value })}
+                  />
+                  <FieldError msg={errs.qualification} />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
+                    Institution
+                  </label>
+                  <input
+                    type="text"
+                    className={input}
+                    placeholder="University of the Witwatersrand"
+                    value={entry.institution}
+                    onChange={(e) => updateEdu(i, { institution: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
+                    Year completed
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={4}
+                    className={errs.year ? inputErr : input}
+                    placeholder="2020"
+                    value={entry.year}
+                    onChange={(e) =>
+                      updateEdu(i, { year: e.target.value.replace(/\D/g, "") })
+                    }
+                  />
+                  <FieldError msg={errs.year} />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
+                    NQF level{" "}
+                    <span className="font-normal text-[var(--color-muted)]">
+                      (optional)
+                    </span>
+                  </label>
+                  <select
+                    className={input}
+                    value={entry.nqf_level}
+                    onChange={(e) => updateEdu(i, { nqf_level: e.target.value })}
+                  >
+                    <option value="">— Select —</option>
+                    {NQF.map((n) => (
+                      <option key={n.value} value={n.value}>
+                        {n.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {education.length < 5 && (
           <Button

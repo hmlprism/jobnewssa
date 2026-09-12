@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { StepContact } from "./step-contact";
 import { StepSummary } from "./step-summary";
@@ -8,6 +8,12 @@ import { StepWork } from "./step-work";
 import { StepEduSkills } from "./step-edu-skills";
 import { StepPreview } from "./step-preview";
 import type { CvData } from "@/types/cv";
+import {
+  isContactValid,
+  isSummaryValid,
+  isWorkValid,
+  isEduValid,
+} from "@/lib/cv-validation";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -85,6 +91,7 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
   });
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [attempted, setAttempted] = useState(false);
 
   // Anonymous users: persist to localStorage on every change.
   useEffect(() => {
@@ -92,6 +99,11 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
       lsSave(data, idNumber);
     }
   }, [data, idNumber, isLoggedIn]);
+
+  // Reset attempted state whenever the user moves to a different step.
+  useEffect(() => {
+    setAttempted(false);
+  }, [step]);
 
   // Logged-in users: auto-save to cv_drafts on step navigation.
   // Fired after the step state updates so we always save the data for the
@@ -111,10 +123,13 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
   // ---------------------------------------------------------------------------
   // Validation — gate "Next" per step
   // ---------------------------------------------------------------------------
-  const canProceed = useCallback((): boolean => {
-    if (step === 1) return !!(data.contact.name.trim() && data.contact.email.trim());
-    return true; // steps 2–4 are optional content; no hard gate
-  }, [step, data.contact.name, data.contact.email]);
+  const stepIsValid = useMemo(() => {
+    if (step === 1) return isContactValid(data.contact);
+    if (step === 2) return isSummaryValid(data.summary);
+    if (step === 3) return isWorkValid(data.work_experience);
+    if (step === 4) return isEduValid(data.education);
+    return true;
+  }, [step, data.contact, data.summary, data.work_experience, data.education]);
 
   // ---------------------------------------------------------------------------
   // PDF download
@@ -154,7 +169,11 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
   // Navigation
   // ---------------------------------------------------------------------------
   const goNext = () => {
-    if (canProceed() && step < TOTAL_STEPS) {
+    if (!stepIsValid) {
+      setAttempted(true);
+      return;
+    }
+    if (step < TOTAL_STEPS) {
       if (isLoggedIn) saveDraft(data);
       setStep((s) => s + 1);
     }
@@ -184,7 +203,7 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
                   type="button"
                   onClick={() => {
                     // Allow jumping back; jumping forward requires passing current step
-                    if (n < step || (n === step + 1 && canProceed())) {
+                    if (n < step || (n === step + 1 && stepIsValid)) {
                       setStep(n);
                     }
                   }}
@@ -197,7 +216,7 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
                       : "text-[var(--color-muted)] cursor-default",
                   ].join(" ")}
                   aria-current={isCurrent ? "step" : undefined}
-                  disabled={n > step + 1 || (n === step + 1 && !canProceed())}
+                  disabled={n > step + 1 || (n === step + 1 && !stepIsValid)}
                 >
                   <span
                     className={[
@@ -232,6 +251,7 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
             idNumber={idNumber}
             includePhoto={data.include_photo}
             hasAvatar={isLoggedIn && !!avatarUrl}
+            attempted={attempted}
             onChange={(contact) => setData((d) => ({ ...d, contact }))}
             onIdNumberChange={setIdNumber}
             onIncludePhotoChange={(include_photo) =>
@@ -242,12 +262,14 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
         {step === 2 && (
           <StepSummary
             summary={data.summary}
+            attempted={attempted}
             onChange={(summary) => setData((d) => ({ ...d, summary }))}
           />
         )}
         {step === 3 && (
           <StepWork
             entries={data.work_experience}
+            attempted={attempted}
             onChange={(work_experience) =>
               setData((d) => ({ ...d, work_experience }))
             }
@@ -258,6 +280,7 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
             education={data.education}
             skills={data.skills}
             refsOnRequest={data.references_on_request}
+            attempted={attempted}
             onEducationChange={(education) =>
               setData((d) => ({ ...d, education }))
             }
@@ -301,7 +324,6 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
             <Button
               type="button"
               onClick={goNext}
-              disabled={!canProceed()}
             >
               {step === TOTAL_STEPS - 1 ? "Preview" : "Next"}
             </Button>

@@ -1,40 +1,31 @@
 "use client";
 
+import { useMemo } from "react";
 import { SA_PROVINCES } from "@/types/database";
 import type { CvContact } from "@/types/cv";
+import { validateContact } from "@/lib/cv-validation";
 
 interface Props {
   contact: CvContact;
   idNumber: string;
   includePhoto: boolean;
   hasAvatar: boolean;
+  attempted: boolean;
   onChange: (contact: CvContact) => void;
   onIdNumberChange: (val: string) => void;
   onIncludePhotoChange: (val: boolean) => void;
 }
 
-const field =
-  "w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:border-[var(--color-ink)] focus:outline-none";
+const fieldBase =
+  "w-full border bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:outline-none";
+const fieldOk = `${fieldBase} border-[var(--color-line)] focus:border-[var(--color-ink)]`;
+const fieldErr = `${fieldBase} border-[var(--color-rust)] focus:border-[var(--color-rust)]`;
 
-const label = "block text-sm font-medium text-[var(--color-ink)] mb-1";
+const lbl = "block text-sm font-medium text-[var(--color-ink)] mb-1";
 
-function Field({
-  id,
-  children,
-  hint,
-}: {
-  id: string;
-  children: React.ReactNode;
-  hint?: string;
-}) {
-  return (
-    <div>
-      {children}
-      {hint && (
-        <p className="mt-1 text-xs text-[var(--color-muted)]">{hint}</p>
-      )}
-    </div>
-  );
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null;
+  return <p className="mt-1 text-xs text-[var(--color-rust)]">{msg}</p>;
 }
 
 export function StepContact({
@@ -42,85 +33,95 @@ export function StepContact({
   idNumber,
   includePhoto,
   hasAvatar,
+  attempted,
   onChange,
   onIdNumberChange,
   onIncludePhotoChange,
 }: Props) {
-  const set = (key: keyof CvContact) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    onChange({ ...contact, [key]: e.target.value });
+  const errors = useMemo(
+    () => (attempted ? validateContact(contact) : {}),
+    [attempted, contact]
+  );
+
+  const set =
+    (key: keyof CvContact) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+      onChange({ ...contact, [key]: e.target.value });
 
   return (
     <div className="space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field id="name">
-          <label htmlFor="cv-name" className={label}>
+        <div>
+          <label htmlFor="cv-name" className={lbl}>
             Full name <span className="text-[var(--color-rust)]">*</span>
           </label>
           <input
             id="cv-name"
             type="text"
-            required
             autoComplete="name"
-            className={field}
+            className={errors.name ? fieldErr : fieldOk}
             placeholder="Thandi Mokoena"
             value={contact.name}
             onChange={set("name")}
           />
-        </Field>
+          <FieldError msg={errors.name} />
+        </div>
 
-        <Field id="email">
-          <label htmlFor="cv-email" className={label}>
+        <div>
+          <label htmlFor="cv-email" className={lbl}>
             Email <span className="text-[var(--color-rust)]">*</span>
           </label>
           <input
             id="cv-email"
             type="email"
-            required
             autoComplete="email"
-            className={field}
+            className={errors.email ? fieldErr : fieldOk}
             placeholder="you@email.co.za"
             value={contact.email}
             onChange={set("email")}
           />
-        </Field>
+          <FieldError msg={errors.email} />
+        </div>
 
-        <Field id="phone">
-          <label htmlFor="cv-phone" className={label}>
+        <div>
+          <label htmlFor="cv-phone" className={lbl}>
             Phone number
           </label>
           <input
             id="cv-phone"
             type="tel"
             autoComplete="tel"
-            className={field}
+            className={errors.phone ? fieldErr : fieldOk}
             placeholder="071 234 5678"
             value={contact.phone}
             onChange={set("phone")}
           />
-        </Field>
+          <FieldError msg={errors.phone} />
+        </div>
 
-        <Field id="city">
-          <label htmlFor="cv-city" className={label}>
-            City
+        <div>
+          <label htmlFor="cv-city" className={lbl}>
+            City <span className="text-[var(--color-rust)]">*</span>
           </label>
           <input
             id="cv-city"
             type="text"
             autoComplete="address-level2"
-            className={field}
+            className={errors.city ? fieldErr : fieldOk}
             placeholder="Johannesburg"
             value={contact.city}
             onChange={set("city")}
           />
-        </Field>
+          <FieldError msg={errors.city} />
+        </div>
 
-        <Field id="province">
-          <label htmlFor="cv-province" className={label}>
+        <div>
+          <label htmlFor="cv-province" className={lbl}>
             Province
           </label>
           <select
             id="cv-province"
-            className={field}
+            className={fieldOk}
             value={contact.province}
             onChange={set("province")}
           >
@@ -131,24 +132,24 @@ export function StepContact({
               </option>
             ))}
           </select>
-        </Field>
+        </div>
 
-        <Field
-          id="linkedin"
-          hint="Enter your full LinkedIn URL or just your handle (e.g. thandi-mokoena)"
-        >
-          <label htmlFor="cv-linkedin" className={label}>
+        <div>
+          <label htmlFor="cv-linkedin" className={lbl}>
             LinkedIn
           </label>
           <input
             id="cv-linkedin"
             type="text"
-            className={field}
+            className={fieldOk}
             placeholder="thandi-mokoena"
             value={contact.linkedin}
             onChange={set("linkedin")}
           />
-        </Field>
+          <p className="mt-1 text-xs text-[var(--color-muted)]">
+            Enter your full LinkedIn URL or just your handle (e.g. thandi-mokoena)
+          </p>
+        </div>
       </div>
 
       {/* SA ID number — display-only, never saved */}
@@ -161,7 +162,7 @@ export function StepContact({
           type="text"
           inputMode="numeric"
           maxLength={13}
-          className={field}
+          className={fieldOk}
           placeholder="8001015009087"
           value={idNumber}
           onChange={(e) => onIdNumberChange(e.target.value.replace(/\D/g, ""))}
