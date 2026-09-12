@@ -29,5 +29,74 @@
       "closeMenu": "Close menu",
       "panelTitle": "Menu"
     }
+  },
+  "Auth": {
+    "logoAlt": "Job News SA",
+    "fields": {
+      "email": "Email",
+      "emailAddress": "Email address",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "fullName": "Full name",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Welcome back. Search and apply for jobs across South Africa.",
+      "forgotPassword": "Forgot password?",
+      "signingIn": "Signing in\u2026",
+      "submit": "Sign in",
+      "noAccount": "Don\u2019t have an account?",
+      "createOne": "Create one"
+    },
+    "signup": {
+      "title": "Create your account",
+      "subtitle": "Free for job seekers and employers.",
+      "roleSeeker": "I\u2019m looking for work",
+      "roleEmployer": "I\u2019m hiring",
+      "passwordsMismatch": "Passwords don\u2019t match.",
+      "consent": "I agree to the <terms>Terms & Conditions</terms> and <privacy>Privacy Policy</privacy>.",
+      "creating": "Creating account\u2026",
+      "submit": "Create account",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "emailSentTitle": "Check your email",
+      "emailSentBody": "We\u2019ve sent a confirmation link to {email}. Click it to activate your account.",
+      "accountExistsTitle": "Account already exists",
+      "accountExistsBody": "An account already exists with <bold>{email}</bold>.",
+      "forgotPassword": "Forgot your password?"
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter your email address and we\u2019ll send you a reset link.",
+      "sending": "Sending\u2026",
+      "submit": "Send reset link",
+      "remembered": "Remembered it?",
+      "backToSignIn": "Back to sign in",
+      "emailSentTitle": "Check your email",
+      "emailSentBody": "If an account exists for <bold>{email}</bold>, we\u2019ve sent a password reset link. Check your inbox (and spam folder)."
+    },
+    "resetPassword": {
+      "title": "Set a new password",
+      "subtitle": "Choose a new password for your account.",
+      "newPassword": "New password",
+      "confirmNewPassword": "Confirm new password",
+      "updating": "Updating\u2026",
+      "submit": "Set new password",
+      "updatedTitle": "Password updated",
+      "updatedBody": "Your password has been changed. Redirecting you to sign in\u2026",
+      "passwordsMismatch": "Passwords don\u2019t match.",
+      "passwordTooShort": "Password must be at least 6 characters.",
+      "expiredError": "This reset link has expired or already been used. Request a new one.",
+      "requestNewLink": "Request a new reset link"
+    },
+    "confirmed": {
+      "title": "Email confirmed",
+      "signedInBody": "You\u2019re signed in. Start browsing jobs across South Africa.",
+      "browseJobs": "Browse jobs",
+      "notSignedInBody": "Your account is active. Sign in to start browsing jobs across South Africa.",
+      "signIn": "Sign in to your account"
+    }
   }
 }

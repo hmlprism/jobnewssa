@@ -4,14 +4,16 @@ import { Suspense, useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 import { Eye, EyeOff } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/jobs";
+  const t = useTranslations("Auth");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,19 +44,19 @@ function LoginForm() {
       <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 sm:p-10">
         <Image
           src="/logo-mark.png"
-          alt="Job News SA"
+          alt={t("logoAlt")}
           width={455}
           height={450}
           className="mb-5 h-10 w-auto"
         />
-        <h1 className="font-display text-2xl font-semibold">Sign in</h1>
+        <h1 className="font-display text-2xl font-semibold">{t("login.title")}</h1>
         <p className="mt-1.5 text-sm text-[var(--color-muted)]">
-          Welcome back. Search and apply for jobs across South Africa.
+          {t("login.subtitle")}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <Field
-            label="Email"
+            label={t("fields.email")}
             type="email"
             value={email}
             onChange={setEmail}
@@ -65,14 +67,14 @@ function LoginForm() {
           <div>
             <div className="mb-1.5 flex items-center justify-between">
               <label htmlFor="login-password" className="text-sm font-medium">
-                Password
+                {t("fields.password")}
               </label>
               <Link
                 href="/auth/forgot-password"
                 prefetch={false}
                 className="text-xs text-[var(--color-muted)] hover:text-[var(--color-rust)]"
               >
-                Forgot password?
+                {t("login.forgotPassword")}
               </Link>
             </div>
             <div className="relative">
@@ -89,7 +91,7 @@ function LoginForm() {
                 type="button"
                 onClick={() => setShowPassword((s) => !s)}
                 className="absolute inset-y-0 right-0 flex cursor-pointer items-center px-3 text-[var(--color-muted)] hover:text-[var(--color-ink)]"
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? t("fields.hidePassword") : t("fields.showPassword")}
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -105,18 +107,18 @@ function LoginForm() {
             disabled={loading}
             className="w-full justify-center"
           >
-            {loading ? "Signing in…" : "Sign in"}
+            {loading ? t("login.signingIn") : t("login.submit")}
           </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-[var(--color-muted)]">
-          Don&apos;t have an account?{" "}
+          {t("login.noAccount")}{" "}
           <Link
             href="/auth/signup"
             prefetch={false}
             className="font-medium text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
-            Create one
+            {t("login.createOne")}
           </Link>
         </p>
       </div>

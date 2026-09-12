@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
+import { useTranslations } from "next-intl";
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations("Auth");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
@@ -36,11 +38,13 @@ export default function ForgotPasswordPage() {
       <main className="w-full max-w-md px-4 py-16 sm:px-6">
         <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 text-center sm:p-10">
           <h1 className="font-display text-2xl font-semibold">
-            Check your email
+            {t("forgotPassword.emailSentTitle")}
           </h1>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
-            If an account exists for <strong>{email}</strong>, we&apos;ve sent a
-            password reset link. Check your inbox (and spam folder).
+            {t.rich("forgotPassword.emailSentBody", {
+              bold: (chunks) => <strong>{chunks}</strong>,
+              email,
+            })}
           </p>
           <p className="mt-6 text-sm">
             <Link
@@ -48,7 +52,7 @@ export default function ForgotPasswordPage() {
               prefetch={false}
               className="font-medium text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
             >
-              Back to sign in
+              {t("forgotPassword.backToSignIn")}
             </Link>
           </p>
         </div>
@@ -60,16 +64,16 @@ export default function ForgotPasswordPage() {
     <main className="w-full max-w-md px-4 py-16 sm:px-6">
       <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 sm:p-10">
         <h1 className="font-display text-2xl font-semibold">
-          Forgot your password?
+          {t("forgotPassword.title")}
         </h1>
         <p className="mt-1.5 text-sm text-[var(--color-muted)]">
-          Enter your email address and we&apos;ll send you a reset link.
+          {t("forgotPassword.subtitle")}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <label className="block">
             <span className="mb-1.5 block text-sm font-medium">
-              Email address
+              {t("fields.emailAddress")}
             </span>
             <input
               type="email"
@@ -90,18 +94,18 @@ export default function ForgotPasswordPage() {
             disabled={loading}
             className="w-full justify-center"
           >
-            {loading ? "Sending…" : "Send reset link"}
+            {loading ? t("forgotPassword.sending") : t("forgotPassword.submit")}
           </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-[var(--color-muted)]">
-          Remembered it?{" "}
+          {t("forgotPassword.remembered")}{" "}
           <Link
             href="/auth/login"
             prefetch={false}
             className="font-medium text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
-            Back to sign in
+            {t("forgotPassword.backToSignIn")}
           </Link>
         </p>
       </div>

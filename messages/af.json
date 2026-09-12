@@ -10,7 +10,7 @@
       "news": "Nuus",
       "newsLong": "Werksmark nuus",
       "messages": "Boodskappe",
-      "postJob": "Plaas 'n Pos"
+      "postJob": "Plaas \u2019n Pos"
     },
     "auth": {
       "signIn": "Teken in",
@@ -28,6 +28,75 @@
       "openMenu": "Maak kieslys oop",
       "closeMenu": "Maak kieslys toe",
       "panelTitle": "Kieslys"
+    }
+  },
+  "Auth": {
+    "logoAlt": "Job News SA",
+    "fields": {
+      "email": "E-pos",
+      "emailAddress": "E-posadres",
+      "password": "Wagwoord",
+      "confirmPassword": "Bevestig wagwoord",
+      "fullName": "Volle naam",
+      "showPassword": "Wys wagwoord",
+      "hidePassword": "Verberg wagwoord"
+    },
+    "login": {
+      "title": "Teken in",
+      "subtitle": "Welkom terug. Soek en doen aansoek vir werk regoor Suid-Afrika.",
+      "forgotPassword": "Wagwoord vergeet?",
+      "signingIn": "Besig om in te teken\u2026",
+      "submit": "Teken in",
+      "noAccount": "Het jy nie \u2019n rekening nie?",
+      "createOne": "Skep een"
+    },
+    "signup": {
+      "title": "Skep jou rekening",
+      "subtitle": "Gratis vir werksoekers en werkgewers.",
+      "roleSeeker": "Ek soek werk",
+      "roleEmployer": "Ek is op soek na werknemers",
+      "passwordsMismatch": "Wagwoorde stem nie ooreen nie.",
+      "consent": "Ek stem in tot die <terms>Bepalings en Voorwaardes</terms> en die <privacy>Privaatheidsbeleid</privacy>.",
+      "creating": "Besig om rekening te skep\u2026",
+      "submit": "Skep rekening",
+      "alreadyHaveAccount": "Het jy reeds \u2019n rekening?",
+      "signIn": "Teken in",
+      "emailSentTitle": "Gaan kyk jou e-pos",
+      "emailSentBody": "Ons het \u2019n bevestigingsskakel na {email} gestuur. Klik daarop om jou rekening te aktiveer.",
+      "accountExistsTitle": "Rekening bestaan reeds",
+      "accountExistsBody": "\u2019n Rekening met <bold>{email}</bold> bestaan reeds.",
+      "forgotPassword": "Wagwoord vergeet?"
+    },
+    "forgotPassword": {
+      "title": "Wagwoord vergeet?",
+      "subtitle": "Voer jou e-posadres in en ons stuur vir jou \u2019n herstelskakel.",
+      "sending": "Besig om te stuur\u2026",
+      "submit": "Stuur herstelskakel",
+      "remembered": "Het jy dit onthou?",
+      "backToSignIn": "Terug na Teken in",
+      "emailSentTitle": "Gaan kyk jou e-pos",
+      "emailSentBody": "As \u2019n rekening vir <bold>{email}</bold> bestaan, het ons \u2019n wagwoordherstelskakel gestuur. Gaan kyk jou inkassie (en strooipos-vouer)."
+    },
+    "resetPassword": {
+      "title": "Stel \u2019n nuwe wagwoord in",
+      "subtitle": "Kies \u2019n nuwe wagwoord vir jou rekening.",
+      "newPassword": "Nuwe wagwoord",
+      "confirmNewPassword": "Bevestig nuwe wagwoord",
+      "updating": "Besig om op te dateer\u2026",
+      "submit": "Stel nuwe wagwoord in",
+      "updatedTitle": "Wagwoord opgedateer",
+      "updatedBody": "Jou wagwoord is verander. Jy word aangestuur na Teken in\u2026",
+      "passwordsMismatch": "Wagwoorde stem nie ooreen nie.",
+      "passwordTooShort": "Wagwoord moet ten minste 6 karakters wees.",
+      "expiredError": "Hierdie herstelskakel het verval of is reeds gebruik. Versoek \u2019n nuwe een.",
+      "requestNewLink": "Versoek \u2019n nuwe herstelskakel"
+    },
+    "confirmed": {
+      "title": "E-pos bevestig",
+      "signedInBody": "Jy is ingeteken. Begin om werk regoor Suid-Afrika te blaai.",
+      "browseJobs": "Blaai werk",
+      "notSignedInBody": "Jou rekening is aktief. Teken in om werk regoor Suid-Afrika te blaai.",
+      "signIn": "Teken in tot jou rekening"
     }
   }
 }

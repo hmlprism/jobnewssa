@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link } from "@/lib/navigation";
+import { useRouter } from "@/lib/navigation";
+import { useTranslations } from "next-intl";
 import { Eye, EyeOff } from "lucide-react";
 
 function PasswordField({
@@ -20,6 +21,7 @@ function PasswordField({
   onChange: (v: string) => void;
   required?: boolean;
 }) {
+  const t = useTranslations("Auth");
   const [show, setShow] = useState(false);
   return (
     <label className="block">
@@ -38,7 +40,7 @@ function PasswordField({
           type="button"
           onClick={() => setShow((s) => !s)}
           className="absolute inset-y-0 right-0 flex cursor-pointer items-center px-3 text-[var(--color-muted)] hover:text-[var(--color-ink)]"
-          aria-label={show ? "Hide password" : "Show password"}
+          aria-label={show ? t("fields.hidePassword") : t("fields.showPassword")}
         >
           {show ? <EyeOff size={16} /> : <Eye size={16} />}
         </button>
@@ -48,23 +50,26 @@ function PasswordField({
 }
 
 export default function ResetPasswordPage() {
+  const t = useTranslations("Auth");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isExpiredError, setIsExpiredError] = useState(false);
   const [done, setDone] = useState(false);
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setIsExpiredError(false);
 
     if (newPassword !== confirmPassword) {
-      setError("Passwords don't match.");
+      setError(t("resetPassword.passwordsMismatch"));
       return;
     }
     if (newPassword.length < 6) {
-      setError("Password must be at least 6 characters.");
+      setError(t("resetPassword.passwordTooShort"));
       return;
     }
 
@@ -75,11 +80,12 @@ export default function ResetPasswordPage() {
     });
 
     if (error) {
-      setError(
-        error.message.includes("session")
-          ? "This reset link has expired or already been used. Request a new one."
-          : error.message
-      );
+      if (error.message.includes("session")) {
+        setError(t("resetPassword.expiredError"));
+        setIsExpiredError(true);
+      } else {
+        setError(error.message);
+      }
       setLoading(false);
       return;
     }
@@ -94,10 +100,10 @@ export default function ResetPasswordPage() {
       <main className="w-full max-w-md px-4 py-16 sm:px-6">
         <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 text-center sm:p-10">
           <h1 className="font-display text-2xl font-semibold">
-            Password updated
+            {t("resetPassword.updatedTitle")}
           </h1>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
-            Your password has been changed. Redirecting you to sign in…
+            {t("resetPassword.updatedBody")}
           </p>
         </div>
       </main>
@@ -108,23 +114,23 @@ export default function ResetPasswordPage() {
     <main className="w-full max-w-md px-4 py-16 sm:px-6">
       <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 sm:p-10">
         <h1 className="font-display text-2xl font-semibold">
-          Set a new password
+          {t("resetPassword.title")}
         </h1>
         <p className="mt-1.5 text-sm text-[var(--color-muted)]">
-          Choose a new password for your account.
+          {t("resetPassword.subtitle")}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <PasswordField
             id="new-password"
-            label="New password"
+            label={t("resetPassword.newPassword")}
             value={newPassword}
             onChange={setNewPassword}
             required
           />
           <PasswordField
             id="confirm-password"
-            label="Confirm new password"
+            label={t("resetPassword.confirmNewPassword")}
             value={confirmPassword}
             onChange={setConfirmPassword}
             required
@@ -133,13 +139,13 @@ export default function ResetPasswordPage() {
           {error && (
             <div>
               <p className="text-sm text-[var(--color-rust)]">{error}</p>
-              {error.includes("expired") && (
+              {isExpiredError && (
                 <Link
                   href="/auth/forgot-password"
                   prefetch={false}
                   className="mt-1 block text-sm font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
                 >
-                  Request a new reset link
+                  {t("resetPassword.requestNewLink")}
                 </Link>
               )}
             </div>
@@ -150,7 +156,7 @@ export default function ResetPasswordPage() {
             disabled={loading}
             className="w-full justify-center"
           >
-            {loading ? "Updating…" : "Set new password"}
+            {loading ? t("resetPassword.updating") : t("resetPassword.submit")}
           </Button>
         </form>
       </div>

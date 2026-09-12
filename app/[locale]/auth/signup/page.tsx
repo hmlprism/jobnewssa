@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 import { Eye, EyeOff } from "lucide-react";
 import type { UserRole } from "@/types/database";
 
@@ -24,6 +25,7 @@ function PasswordField({
   autoComplete?: string;
 }) {
   const [show, setShow] = useState(false);
+  const t = useTranslations("Auth");
   return (
     <label className="block">
       <span className="mb-1.5 block text-sm font-medium">{label}</span>
@@ -41,7 +43,7 @@ function PasswordField({
           type="button"
           onClick={() => setShow((s) => !s)}
           className="absolute inset-y-0 right-0 flex cursor-pointer items-center px-3 text-[var(--color-muted)] hover:text-[var(--color-ink)]"
-          aria-label={show ? "Hide password" : "Show password"}
+          aria-label={show ? t("fields.hidePassword") : t("fields.showPassword")}
         >
           {show ? <EyeOff size={16} /> : <Eye size={16} />}
         </button>
@@ -51,6 +53,7 @@ function PasswordField({
 }
 
 export default function SignupPage() {
+  const t = useTranslations("Auth");
   const [role, setRole] = useState<UserRole>("job_seeker");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -68,7 +71,7 @@ export default function SignupPage() {
     setError(null);
 
     if (password !== confirmPassword) {
-      setConfirmError("Passwords don't match.");
+      setConfirmError(t("signup.passwordsMismatch"));
       return;
     }
     setConfirmError(null);
@@ -105,11 +108,10 @@ export default function SignupPage() {
       <main className="w-full max-w-md px-4 py-16 sm:px-6">
         <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 text-center sm:p-10">
           <h1 className="font-display text-2xl font-semibold">
-            Check your email
+            {t("signup.emailSentTitle")}
           </h1>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
-            We&apos;ve sent a confirmation link to {email}. Click it to
-            activate your account.
+            {t("signup.emailSentBody", { email })}
           </p>
         </div>
       </main>
@@ -121,10 +123,15 @@ export default function SignupPage() {
       <main className="w-full max-w-md px-4 py-16 sm:px-6">
         <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 text-center sm:p-10">
           <h1 className="font-display text-2xl font-semibold">
-            Account already exists
+            {t("signup.accountExistsTitle")}
           </h1>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
-            An account already exists with <strong className="font-medium text-[var(--color-ink)]">{email}</strong>.
+            {t.rich("signup.accountExistsBody", {
+              bold: (chunks) => (
+                <strong className="font-medium text-[var(--color-ink)]">{chunks}</strong>
+              ),
+              email,
+            })}
           </p>
           <div className="mt-6 flex flex-col gap-3">
             <Link
@@ -132,14 +139,14 @@ export default function SignupPage() {
               prefetch={false}
               className="block border border-[var(--color-ink)] bg-[var(--color-ink)] px-4 py-2.5 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-ink)]/90"
             >
-              Sign in
+              {t("signup.signIn")}
             </Link>
             <Link
               href="/auth/forgot-password"
               prefetch={false}
               className="text-sm text-[var(--color-muted)] underline underline-offset-2 hover:text-[var(--color-rust)]"
             >
-              Forgot your password?
+              {t("signup.forgotPassword")}
             </Link>
           </div>
         </div>
@@ -152,16 +159,16 @@ export default function SignupPage() {
       <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 sm:p-10">
         <Image
           src="/logo-mark.png"
-          alt="Job News SA"
+          alt={t("logoAlt")}
           width={455}
           height={450}
           className="mb-5 h-10 w-auto"
         />
         <h1 className="font-display text-2xl font-semibold">
-          Create your account
+          {t("signup.title")}
         </h1>
         <p className="mt-1.5 text-sm text-[var(--color-muted)]">
-          Free for job seekers and employers.
+          {t("signup.subtitle")}
         </p>
 
         {/* Role selector */}
@@ -169,18 +176,18 @@ export default function SignupPage() {
           <RoleButton
             active={role === "job_seeker"}
             onClick={() => setRole("job_seeker")}
-            label="I'm looking for work"
+            label={t("signup.roleSeeker")}
           />
           <RoleButton
             active={role === "employer"}
             onClick={() => setRole("employer")}
-            label="I'm hiring"
+            label={t("signup.roleEmployer")}
           />
         </div>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <Field
-            label="Full name"
+            label={t("fields.fullName")}
             type="text"
             value={fullName}
             onChange={setFullName}
@@ -188,7 +195,7 @@ export default function SignupPage() {
             autoComplete="name"
           />
           <Field
-            label="Email"
+            label={t("fields.email")}
             type="email"
             value={email}
             onChange={setEmail}
@@ -196,7 +203,7 @@ export default function SignupPage() {
             autoComplete="email"
           />
           <PasswordField
-            label="Password"
+            label={t("fields.password")}
             value={password}
             onChange={setPassword}
             required
@@ -205,7 +212,7 @@ export default function SignupPage() {
           />
           <div>
             <PasswordField
-              label="Confirm password"
+              label={t("fields.confirmPassword")}
               value={confirmPassword}
               onChange={(v) => {
                 setConfirmPassword(v);
@@ -234,23 +241,26 @@ export default function SignupPage() {
               htmlFor="consent"
               className="text-sm text-[var(--color-ink)]"
             >
-              I agree to the{" "}
-              <Link
-                href="/terms"
-                prefetch={false}
-                className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
-              >
-                Terms &amp; Conditions
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="/privacy"
-                prefetch={false}
-                className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
-              >
-                Privacy Policy
-              </Link>
-              .
+              {t.rich("signup.consent", {
+                terms: (chunks) => (
+                  <Link
+                    href="/terms"
+                    prefetch={false}
+                    className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+                privacy: (chunks) => (
+                  <Link
+                    href="/privacy"
+                    prefetch={false}
+                    className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </label>
           </div>
 
@@ -263,18 +273,18 @@ export default function SignupPage() {
             disabled={loading}
             className="w-full justify-center"
           >
-            {loading ? "Creating account…" : "Create account"}
+            {loading ? t("signup.creating") : t("signup.submit")}
           </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-[var(--color-muted)]">
-          Already have an account?{" "}
+          {t("signup.alreadyHaveAccount")}{" "}
           <Link
             href="/auth/login"
             prefetch={false}
             className="font-medium text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
-            Sign in
+            {t("signup.signIn")}
           </Link>
         </p>
       </div>
