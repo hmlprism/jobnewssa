@@ -86,13 +86,27 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
 
-  // Persist to localStorage on every change for anonymous users.
-  // Logged-in auto-save to DB is wired in Step 6.
+  // Anonymous users: persist to localStorage on every change.
   useEffect(() => {
     if (!isLoggedIn) {
       lsSave(data, idNumber);
     }
   }, [data, idNumber, isLoggedIn]);
+
+  // Logged-in users: auto-save to cv_drafts on step navigation.
+  // Fired after the step state updates so we always save the data for the
+  // step the user just completed, not the one they're moving to.
+  const saveDraft = useCallback(async (cvData: CvData) => {
+    try {
+      await fetch("/api/tools/cv/draft", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cvData),
+      });
+    } catch {
+      // Silent — auto-save failures should not interrupt the user
+    }
+  }, []);
 
   // ---------------------------------------------------------------------------
   // Validation — gate "Next" per step
@@ -140,10 +154,16 @@ export function CvWizard({ initialData, avatarUrl, isLoggedIn }: Props) {
   // Navigation
   // ---------------------------------------------------------------------------
   const goNext = () => {
-    if (canProceed() && step < TOTAL_STEPS) setStep((s) => s + 1);
+    if (canProceed() && step < TOTAL_STEPS) {
+      if (isLoggedIn) saveDraft(data);
+      setStep((s) => s + 1);
+    }
   };
   const goBack = () => {
-    if (step > 1) setStep((s) => s - 1);
+    if (step > 1) {
+      if (isLoggedIn) saveDraft(data);
+      setStep((s) => s - 1);
+    }
   };
 
   // ---------------------------------------------------------------------------
