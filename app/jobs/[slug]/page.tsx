@@ -13,6 +13,90 @@ import { getAuthUser } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Job } from "@/types/database";
 
+// ── DPSA government vacancy panel ────────────────────────────────────────────
+// Replaces the standard ApplyPanel for source === 'dpsa'. No in-app apply flow;
+// applicants must follow the department's own instructions.
+function DpsaApplyPanel({ job }: { job: Job }) {
+  const meta = (job.source_metadata ?? {}) as {
+    enquiries?: string;
+    apply_address?: string;
+  };
+
+  const applyAddress = meta.apply_address ?? null;
+  const enquiries = meta.enquiries ?? null;
+  const left = daysLeft(job.expires_at);
+
+  // Format closing deadline in SAST from the canonical expires_at timestamp.
+  const closingDate = job.expires_at
+    ? (() => {
+        const d = new Date(job.expires_at);
+        const datePart = d.toLocaleDateString("en-GB", {
+          day: "numeric", month: "long", year: "numeric",
+          timeZone: "Africa/Johannesburg",
+        });
+        const timePart = d.toLocaleTimeString("en-GB", {
+          hour: "2-digit", minute: "2-digit", hour12: false,
+          timeZone: "Africa/Johannesburg",
+        });
+        return `${datePart} at ${timePart}`;
+      })()
+    : null;
+
+  return (
+    <div className="border border-[var(--color-line)] p-4 text-sm">
+      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-indigo)]">
+        Government vacancy
+      </p>
+      <p className="mb-4 leading-snug text-[var(--color-muted)]">
+        Applications go directly to the department — not through this site.
+      </p>
+
+      {/* Closing date — clay urgency treatment */}
+      {closingDate && (
+        <div className="mb-4 bg-[var(--color-clay-dim)] px-3 py-2.5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-clay)]">
+            Closing date
+          </p>
+          <p className="mt-1 font-medium text-[var(--color-ink)]">{closingDate}</p>
+          {left && left !== "Expired" && (
+            <p className="mt-0.5 text-xs text-[var(--color-clay)]">{left}</p>
+          )}
+          {left === "Expired" && (
+            <p className="mt-0.5 text-xs text-[var(--color-muted)]">Deadline passed</p>
+          )}
+        </div>
+      )}
+
+      {/* How to apply */}
+      {applyAddress && (
+        <div className="mb-4">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+            How to apply
+          </p>
+          <p className="leading-snug text-[var(--color-ink)]">{applyAddress}</p>
+        </div>
+      )}
+
+      {/* Enquiries */}
+      {enquiries && (
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
+            Enquiries
+          </p>
+          <p className="text-[var(--color-ink)]">{enquiries}</p>
+        </div>
+      )}
+
+      {/* Fallback when metadata is fully absent */}
+      {!closingDate && !applyAddress && !enquiries && (
+        <p className="leading-snug text-[var(--color-muted)]">
+          Refer to the official DPSA Public Service Vacancy Circular for application instructions.
+        </p>
+      )}
+    </div>
+  );
+}
+
 // ── Flag derivation (mirrors job-card.tsx) ──────────────────────────────────
 // Gives visual continuity from the listing card to the detail view.
 const PROVINCE_ABBR: Record<string, string> = {
@@ -131,7 +215,9 @@ export default async function JobDetailPage({
 
             {/* Apply / external panel */}
             <div>
-              {job.source === "adzuna" && job.external_url ? (
+              {job.source === "dpsa" ? (
+                <DpsaApplyPanel job={job} />
+              ) : job.source === "adzuna" && job.external_url ? (
                 <>
                   <p className="mb-3 text-sm text-[var(--color-muted)]">
                     This listing is from an external job feed. Apply on the

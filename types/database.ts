@@ -7,7 +7,7 @@ export type ContractType =
   | "contract"
   | "internship"
   | "volunteer";
-export type JobSource = "adzuna" | "manual" | "employer_direct";
+export type JobSource = "adzuna" | "manual" | "employer_direct" | "dpsa";
 export type JobStatus = "draft" | "pending_review" | "published" | "expired" | "rejected";
 export type ApplicationStatus = "submitted" | "viewed" | "shortlisted" | "rejected" | "hired";
 
@@ -87,6 +87,7 @@ export interface Job {
   source: JobSource;
   external_id: string | null;
   external_url: string | null;
+  source_metadata: Record<string, unknown> | null;
   status: JobStatus;
   posted_at: string;
   expires_at: string | null;
