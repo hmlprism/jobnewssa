@@ -1,8 +1,8 @@
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
 import type { Job } from "@/types/database";
-import { CONTRACT_TYPE_LABELS } from "@/types/database";
 import { formatSalary, getDaysLeftNum, timeAgo } from "@/lib/utils";
 import { SaveButton } from "@/components/jobs/save-button";
+import { getTranslations } from "next-intl/server";
 
 // ── Flag derivation ──────────────────────────────────────────────────────────
 // Each job gets a 2–4 character code in the left flag column.
@@ -42,23 +42,25 @@ function getFlag(job: Job): { code: string; colorClass: string } {
   return { code: abbr ?? "—", colorClass: "text-[var(--color-muted)]" };
 }
 
-export function JobCard({
+export async function JobCard({
   job,
   initialSaved = false,
 }: {
   job: Job;
   initialSaved?: boolean;
 }) {
+  const [t, tc] = await Promise.all([
+    getTranslations("Jobs.card"),
+    getTranslations("Jobs.contractTypes"),
+  ]);
+
   const daysNum = getDaysLeftNum(job.expires_at);
   const isExpired = daysNum !== null && daysNum < 0;
   const isClosingSoon = daysNum !== null && daysNum >= 0 && daysNum <= 3;
   const isUrgent = job.is_urgent ?? false;
 
-  const closingSoonLabel =
-    daysNum === 0 ? "Last day" : `${daysNum} day${daysNum === 1 ? "" : "s"} left`;
-
   const companyName =
-    job.company?.name ?? job.company_name_raw ?? "Confidential company";
+    job.company?.name ?? job.company_name_raw ?? t("confidentialCompany");
   const location = job.city || job.province || null;
   const salary = formatSalary(job.salary_min, job.salary_max, job.salary_is_market_related);
 
@@ -119,13 +121,13 @@ export function JobCard({
 
           <div className="flex shrink-0 items-center gap-2 pt-0.5">
             {isExpired ? (
-              <span className="text-[11px] text-[var(--color-muted)]">Closed</span>
+              <span className="text-[11px] text-[var(--color-muted)]">{t("closed")}</span>
             ) : isClosingSoon ? (
               <span className="text-[11px] font-medium text-[var(--color-rust)]">
-                {closingSoonLabel}
+                {t("closingSoon", { daysNum })}
               </span>
             ) : isUrgent ? (
-              <span className="text-[11px] font-medium text-[var(--color-rust)]">Urgent</span>
+              <span className="text-[11px] font-medium text-[var(--color-rust)]">{t("urgent")}</span>
             ) : null}
             <SaveButton jobId={job.id} initialSaved={initialSaved} glyph />
           </div>
@@ -135,15 +137,15 @@ export function JobCard({
         <p className="mt-1 text-sm text-[var(--color-muted)]">
           <span className="font-medium text-[var(--color-ink)]">{companyName}</span>
           {location && <span> · {location}</span>}
-          {job.is_remote && !location && <span> · Remote</span>}
+          {job.is_remote && !location && <span> · {t("remote")}</span>}
         </p>
 
         {/* Contract type · salary */}
         <p className="mt-1 text-xs text-[var(--color-muted)]">
-          {CONTRACT_TYPE_LABELS[job.contract_type]}
+          {tc(job.contract_type)}
           {salary !== "Market related" && <span> · {salary}</span>}
           {!isExpired && daysNum !== null && daysNum > 3 && (
-            <span className="text-[var(--color-clay)]"> · {daysNum} days left</span>
+            <span className="text-[var(--color-clay)]"> · {t("daysLeft", { n: daysNum })}</span>
           )}
           <span> · {timeAgo(job.posted_at)}</span>
         </p>
@@ -151,7 +153,7 @@ export function JobCard({
         {/* Verified employer — plain text, no badge box */}
         {job.source === "employer_direct" && job.company?.verified && (
           <p className="mt-1 text-[11px] text-[var(--color-indigo)]">
-            ✓ Verified employer
+            {t("verifiedEmployer")}
           </p>
         )}
       </div>

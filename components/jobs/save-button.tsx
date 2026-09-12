@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Bookmark } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/lib/navigation";
+import { useTranslations } from "next-intl";
 
 export function SaveButton({
   jobId,
@@ -14,6 +15,7 @@ export function SaveButton({
   /** Use typographic ◆/◇ marker instead of the Bookmark icon */
   glyph?: boolean;
 }) {
+  const t = useTranslations("Jobs.save");
   const [saved, setSaved] = useState(initialSaved);
   const [loading, setLoading] = useState(false);
   const [animating, setAnimating] = useState(false);
@@ -57,8 +59,8 @@ export function SaveButton({
       <button
         onClick={toggle}
         disabled={loading}
-        aria-label={saved ? "Unsave this job" : "Save this job"}
-        title={saved ? "Unsave" : "Save"}
+        aria-label={saved ? t("unsaveAria") : t("saveAria")}
+        title={saved ? t("unsave") : t("save")}
         className="relative z-10 shrink-0 cursor-pointer select-none px-1 py-1 text-[11px] leading-none transition-colors disabled:pointer-events-none disabled:opacity-40"
         style={{ color: saved ? "var(--color-rust)" : "var(--color-muted)" }}
       >
@@ -71,8 +73,8 @@ export function SaveButton({
     <button
       onClick={toggle}
       disabled={loading}
-      aria-label={saved ? "Unsave this job" : "Save this job"}
-      title={saved ? "Unsave" : "Save"}
+      aria-label={saved ? t("unsaveAria") : t("saveAria")}
+      title={saved ? t("unsave") : t("save")}
       className="relative z-10 shrink-0 cursor-pointer p-1 text-[var(--color-muted)] transition-colors hover:text-[var(--color-gold)] disabled:pointer-events-none disabled:opacity-40"
     >
       <Bookmark

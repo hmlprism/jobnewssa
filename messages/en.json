@@ -134,5 +134,120 @@
       "body": "Post a vacancy and reach job seekers across every province, free.",
       "button": "Post a job"
     }
+  },
+  "Jobs": {
+    "listing": {
+      "dateline": "South Africa Employment Listings",
+      "positions": "{count, plural, one {position} other {positions}}",
+      "sortNewest": "Newest",
+      "sortClosing": "Closing soon",
+      "searchInput": "Job title, keyword, or company",
+      "locationInput": "City or province",
+      "searchButton": "Search",
+      "chips": {
+        "government": "Government",
+        "learnerships": "Learnerships",
+        "internships": "Internships",
+        "graduate": "Graduate",
+        "apprenticeships": "Apprenticeships",
+        "bursaries": "Bursaries",
+        "partTime": "Part-Time",
+        "remote": "Remote"
+      },
+      "empty": {
+        "heading": "No jobs found",
+        "body": "Try adjusting your search terms or clearing your filters.",
+        "clearFilters": "Clear all filters",
+        "alertText": "Set up a job alert \u2014 <link>create a free account</link> to get notified when matching vacancies are posted."
+      },
+      "pagination": {
+        "previous": "\u2190 Previous",
+        "next": "Next \u2192",
+        "page": "Page {page} of {total}"
+      }
+    },
+    "contractTypes": {
+      "permanent": "Permanent",
+      "part_time": "Part-time",
+      "temporary": "Temporary",
+      "contract": "Contract",
+      "internship": "Internship",
+      "volunteer": "Volunteer"
+    },
+    "filters": {
+      "title": "Filters",
+      "clearAll": "Clear all",
+      "salary": "Minimum salary / month",
+      "anySalary": "Any",
+      "province": "Province",
+      "anyProvince": "Any province",
+      "sector": "Sector",
+      "anySector": "Any sector",
+      "contractType": "Contract type",
+      "anyContract": "Any"
+    },
+    "card": {
+      "confidentialCompany": "Confidential company",
+      "remote": "Remote",
+      "closed": "Closed",
+      "urgent": "Urgent",
+      "verifiedEmployer": "\u2713 Verified employer",
+      "closingSoon": "{daysNum, plural, =0 {Last day} one {# day left} other {# days left}}",
+      "daysLeft": "{n, plural, one {# day left} other {# days left}}"
+    },
+    "detail": {
+      "backToSearch": "\u2190 Back to search",
+      "remote": "Remote",
+      "verified": "\u2713 Verified",
+      "confidentialCompany": "Confidential company",
+      "postedAgo": "Posted {timeAgo}",
+      "daysLeft": "{n, plural, =0 {Last day} one {# day left} other {# days left}}",
+      "expired": "Expired",
+      "externalFeedNote": "This listing is from an external job feed. Apply on the original site.",
+      "applyOnSite": "Apply on original site",
+      "alreadyApplied": "Already applied?",
+      "tips": {
+        "heading": "Application tips",
+        "tip1": "Tailor your CV to the job title and key requirements. SA employers often screen by keyword.",
+        "tip2": "Include your ID number or work-permit status if the ad requests it; omitting it is a common rejection reason.",
+        "tip3": "Keep your cover letter under one page and open with a sentence on why this specific role, not a generic greeting."
+      }
+    },
+    "dpsa": {
+      "badge": "Government vacancy",
+      "intro": "Applications go directly to the department \u2014 not through this site.",
+      "closingDate": "Closing date",
+      "closingDateTime": "{date} at {time}",
+      "daysLeft": "{n, plural, =0 {Last day} one {# day left} other {# days left}}",
+      "expired": "Deadline passed",
+      "howToApply": "How to apply",
+      "enquiries": "Enquiries",
+      "fallback": "Refer to the official DPSA Public Service Vacancy Circular for application instructions."
+    },
+    "apply": {
+      "signedOutNote": "Sign in to apply for this job.",
+      "signInToApply": "Sign in to apply",
+      "noResumeNote": "You need to upload a resume before you can apply.",
+      "completeProfile": "Complete your profile",
+      "appliedTitle": "Your application is in.",
+      "appliedBody": "The employer will be in touch if your profile is a match. In the meantime, <link>browse more vacancies</link>.",
+      "coverNoteLabel": "Cover note",
+      "coverNoteOptional": "(optional)",
+      "coverNotePlaceholder": "Briefly say why you\u2019re a fit for this role",
+      "submitting": "Submitting\u2026",
+      "submit": "Submit application"
+    },
+    "save": {
+      "save": "Save",
+      "unsave": "Unsave",
+      "saveAria": "Save this job",
+      "unsaveAria": "Unsave this job"
+    },
+    "logApplied": {
+      "signInPrompt": "<link>Sign in</link> to track your applications.",
+      "markedAsApplied": "Marked as applied",
+      "saving": "Saving\u2026",
+      "markAsApplied": "Mark as applied"
+    }
   }
 }

@@ -8,11 +8,12 @@ import {
   getAllSectors,
   type JobSearchFilters,
 } from "@/lib/jobs-query";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
+import { getTranslations } from "next-intl/server";
 
-export const metadata = { title: "Find jobs in South Africa" };
+export const dynamic = "force-dynamic";
 
-// Category chips — map each label to the URL param it sets/clears.
+// Category chip definition — labels resolved via translations inside the component.
 type ChipDef = {
   label: string;
   key: string;
@@ -20,29 +21,33 @@ type ChipDef = {
   clear?: string[];
 };
 
-const CATEGORY_CHIPS: ChipDef[] = [
-  { label: "Government",      key: "sector",   val: "government-parastatals", clear: ["q"] },
-  { label: "Learnerships",    key: "q",        val: "learnership",             clear: ["sector"] },
-  { label: "Internships",     key: "contract", val: "internship" },
-  { label: "Graduate",        key: "q",        val: "graduate programme",      clear: ["sector"] },
-  { label: "Apprenticeships", key: "q",        val: "apprenticeship",          clear: ["sector"] },
-  { label: "Bursaries",       key: "q",        val: "bursary",                 clear: ["sector"] },
-  { label: "Part-Time",       key: "contract", val: "part_time" },
-  { label: "Remote",          key: "remote",   val: "true" },
-];
-
 export default async function JobsPage({
   searchParams,
 }: {
   searchParams: Promise<JobSearchFilters>;
 }) {
-  const filters = await searchParams;
+  const [filters, t] = await Promise.all([
+    searchParams,
+    getTranslations("Jobs"),
+  ]);
+
   const [{ jobs, count, page, pageCount }, sectors] = await Promise.all([
     searchJobs(filters),
     getAllSectors(),
   ]);
 
   const activeSort = filters.sort ?? "newest";
+
+  const CATEGORY_CHIPS: ChipDef[] = [
+    { label: t("listing.chips.government"),      key: "sector",   val: "government-parastatals", clear: ["q"] },
+    { label: t("listing.chips.learnerships"),    key: "q",        val: "learnership",            clear: ["sector"] },
+    { label: t("listing.chips.internships"),     key: "contract", val: "internship" },
+    { label: t("listing.chips.graduate"),        key: "q",        val: "graduate programme",     clear: ["sector"] },
+    { label: t("listing.chips.apprenticeships"), key: "q",        val: "apprenticeship",         clear: ["sector"] },
+    { label: t("listing.chips.bursaries"),       key: "q",        val: "bursary",                clear: ["sector"] },
+    { label: t("listing.chips.partTime"),        key: "contract", val: "part_time" },
+    { label: t("listing.chips.remote"),          key: "remote",   val: "true" },
+  ];
 
   return (
     <>
@@ -56,46 +61,46 @@ export default async function JobsPage({
             {/* Dateline: section title + count + sort — all on one strip */}
             <div className="flex items-baseline justify-between border-b border-[var(--color-line)] py-2.5">
               <h1 className="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--color-muted)] select-none">
-                South Africa Jobs
+                {t("listing.dateline")}
               </h1>
               <div className="flex items-center gap-4">
                 <span className="text-xs text-[var(--color-muted)]">
-                  {count.toLocaleString()} {count === 1 ? "position" : "positions"}
+                  {count.toLocaleString()} {t("listing.positions", { count })}
                 </span>
-                <SortLink filters={filters} sort="newest"  activeSort={activeSort} label="Newest" />
-                <SortLink filters={filters} sort="closing" activeSort={activeSort} label="Closing soon" />
+                <SortLink filters={filters} sort="newest"  activeSort={activeSort} label={t("listing.sortNewest")} />
+                <SortLink filters={filters} sort="closing" activeSort={activeSort} label={t("listing.sortClosing")} />
               </div>
             </div>
 
             {/* Search bar — .search-form triggers the rust-on-focus CSS rule */}
             <form action="/jobs" className="search-form flex py-5">
               <label htmlFor="jobs-q" className="sr-only">
-                Job title, keyword, or company
+                {t("listing.searchInput")}
               </label>
               <input
                 id="jobs-q"
                 type="text"
                 name="q"
                 defaultValue={filters.q}
-                placeholder="Job title, keyword, or company"
+                placeholder={t("listing.searchInput")}
                 className="min-w-0 flex-1 border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] px-4 py-3 text-sm"
               />
               <label htmlFor="jobs-location" className="sr-only">
-                City or province
+                {t("listing.locationInput")}
               </label>
               <input
                 id="jobs-location"
                 type="text"
                 name="location"
                 defaultValue={filters.location}
-                placeholder="City or province"
+                placeholder={t("listing.locationInput")}
                 className="w-40 shrink-0 border border-r-0 border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-3 text-sm"
               />
               <button
                 type="submit"
                 className="shrink-0 cursor-pointer bg-[var(--color-rust)] px-6 py-3 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
               >
-                Search
+                {t("listing.searchButton")}
               </button>
             </form>
 
@@ -106,7 +111,7 @@ export default async function JobsPage({
                   (filters as Record<string, string>)[chip.key] === chip.val;
                 return (
                   <Link
-                    key={chip.label}
+                    key={chip.val}
                     href={chipHref(filters, chip)}
                     prefetch={false}
                     className={`py-3 ${
@@ -139,11 +144,10 @@ export default async function JobsPage({
               {jobs.length === 0 ? (
                 <div className="pb-16 pt-10">
                   <h2 className="text-xl font-semibold text-[var(--color-ink)]">
-                    No listings match — yet.
+                    {t("listing.empty.heading")}
                   </h2>
                   <p className="mt-3 max-w-sm text-[var(--color-muted)]">
-                    The market moves quickly. Try a broader keyword, a different
-                    province, or remove a filter.
+                    {t("listing.empty.body")}
                   </p>
                   <div className="mt-6 space-y-3 text-sm">
                     <div>
@@ -152,19 +156,21 @@ export default async function JobsPage({
                         prefetch={false}
                         className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
                       >
-                        Clear all filters
+                        {t("listing.empty.clearFilters")}
                       </Link>
                     </div>
                     <p className="text-[var(--color-muted)]">
-                      Want to be notified when matching roles are posted?{" "}
-                      <Link
-                        href="/auth/signup"
-                        prefetch={false}
-                        className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
-                      >
-                        Create a free account
-                      </Link>{" "}
-                      and set up a job alert.
+                      {t.rich("listing.empty.alertText", {
+                        link: (chunks) => (
+                          <Link
+                            href="/auth/signup"
+                            prefetch={false}
+                            className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
+                          >
+                            {chunks}
+                          </Link>
+                        ),
+                      })}
                     </p>
                   </div>
                 </div>
@@ -181,13 +187,13 @@ export default async function JobsPage({
               {pageCount > 1 && (
                 <div className="mt-8 flex items-center justify-center gap-4 border-t border-[var(--color-line)] pt-6 text-sm">
                   {page > 1 && (
-                    <PageLink filters={filters} page={page - 1} label="← Previous" />
+                    <PageLink filters={filters} page={page - 1} label={t("listing.pagination.previous")} />
                   )}
                   <span className="text-[var(--color-muted)]">
-                    Page {page} of {pageCount}
+                    {t("listing.pagination.page", { page, total: pageCount })}
                   </span>
                   {page < pageCount && (
-                    <PageLink filters={filters} page={page + 1} label="Next →" />
+                    <PageLink filters={filters} page={page + 1} label={t("listing.pagination.next")} />
                   )}
                 </div>
               )}

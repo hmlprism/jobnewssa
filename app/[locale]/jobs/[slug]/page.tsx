@@ -2,21 +2,22 @@ import { Suspense } from "react";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { getJobBySlug } from "@/lib/jobs-query";
-import { CONTRACT_TYPE_LABELS } from "@/types/database";
-import { formatSalary, daysLeft, timeAgo } from "@/lib/utils";
+import { formatSalary, getDaysLeftNum, timeAgo } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { LinkButton } from "@/components/ui/button";
 import { ApplyPanelServer } from "@/components/jobs/apply-panel-server";
 import { SaveButton } from "@/components/jobs/save-button";
 import { LogAppliedButton } from "@/components/jobs/log-applied-button";
 import { getAuthUser } from "@/lib/supabase/server";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
+import { getTranslations } from "next-intl/server";
 import type { Job } from "@/types/database";
 
 // ── DPSA government vacancy panel ────────────────────────────────────────────
 // Replaces the standard ApplyPanel for source === 'dpsa'. No in-app apply flow;
 // applicants must follow the department's own instructions.
-function DpsaApplyPanel({ job }: { job: Job }) {
+async function DpsaApplyPanel({ job }: { job: Job }) {
+  const t = await getTranslations("Jobs.dpsa");
   const meta = (job.source_metadata ?? {}) as {
     enquiries?: string;
     apply_address?: string;
@@ -24,7 +25,8 @@ function DpsaApplyPanel({ job }: { job: Job }) {
 
   const applyAddress = meta.apply_address ?? null;
   const enquiries = meta.enquiries ?? null;
-  const left = daysLeft(job.expires_at);
+  const daysNum = getDaysLeftNum(job.expires_at);
+  const isExpired = daysNum !== null && daysNum < 0;
 
   // Format closing deadline in SAST from the canonical expires_at timestamp.
   const closingDate = job.expires_at
@@ -38,31 +40,33 @@ function DpsaApplyPanel({ job }: { job: Job }) {
           hour: "2-digit", minute: "2-digit", hour12: false,
           timeZone: "Africa/Johannesburg",
         });
-        return `${datePart} at ${timePart}`;
+        return t("closingDateTime", { date: datePart, time: timePart });
       })()
     : null;
 
   return (
     <div className="border border-[var(--color-line)] p-4 text-sm">
       <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-indigo)]">
-        Government vacancy
+        {t("badge")}
       </p>
       <p className="mb-4 leading-snug text-[var(--color-muted)]">
-        Applications go directly to the department — not through this site.
+        {t("intro")}
       </p>
 
       {/* Closing date — clay urgency treatment */}
       {closingDate && (
         <div className="mb-4 bg-[var(--color-clay-dim)] px-3 py-2.5">
           <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-clay)]">
-            Closing date
+            {t("closingDate")}
           </p>
           <p className="mt-1 font-medium text-[var(--color-ink)]">{closingDate}</p>
-          {left && left !== "Expired" && (
-            <p className="mt-0.5 text-xs text-[var(--color-clay)]">{left}</p>
+          {daysNum !== null && !isExpired && (
+            <p className="mt-0.5 text-xs text-[var(--color-clay)]">
+              {t("daysLeft", { n: daysNum })}
+            </p>
           )}
-          {left === "Expired" && (
-            <p className="mt-0.5 text-xs text-[var(--color-muted)]">Deadline passed</p>
+          {isExpired && (
+            <p className="mt-0.5 text-xs text-[var(--color-muted)]">{t("expired")}</p>
           )}
         </div>
       )}
@@ -71,7 +75,7 @@ function DpsaApplyPanel({ job }: { job: Job }) {
       {applyAddress && (
         <div className="mb-4">
           <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-            How to apply
+            {t("howToApply")}
           </p>
           <p className="leading-snug text-[var(--color-ink)]">{applyAddress}</p>
         </div>
@@ -81,7 +85,7 @@ function DpsaApplyPanel({ job }: { job: Job }) {
       {enquiries && (
         <div>
           <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-            Enquiries
+            {t("enquiries")}
           </p>
           <p className="text-[var(--color-ink)]">{enquiries}</p>
         </div>
@@ -90,7 +94,7 @@ function DpsaApplyPanel({ job }: { job: Job }) {
       {/* Fallback when metadata is fully absent */}
       {!closingDate && !applyAddress && !enquiries && (
         <p className="leading-snug text-[var(--color-muted)]">
-          Refer to the official DPSA Public Service Vacancy Circular for application instructions.
+          {t("fallback")}
         </p>
       )}
     </div>
@@ -141,12 +145,18 @@ export default async function JobDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [job, user] = await Promise.all([getJobBySlug(slug), getAuthUser()]);
+  const [job, user, t, tc] = await Promise.all([
+    getJobBySlug(slug),
+    getAuthUser(),
+    getTranslations("Jobs"),
+    getTranslations("Jobs.contractTypes"),
+  ]);
   if (!job) notFound();
 
   const companyName =
-    job.company?.name ?? job.company_name_raw ?? "Confidential company";
-  const left = daysLeft(job.expires_at);
+    job.company?.name ?? job.company_name_raw ?? t("detail.confidentialCompany");
+  const daysNum = getDaysLeftNum(job.expires_at);
+  const isExpired = daysNum !== null && daysNum < 0;
   const location = job.city || job.province || null;
   const salary = formatSalary(job.salary_min, job.salary_max, job.salary_is_market_related);
   const flag = getFlag(job);
@@ -162,7 +172,7 @@ export default async function JobDetailPage({
           prefetch={false}
           className="mb-8 inline-block text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
         >
-          ← Back to search
+          {t("detail.backToSearch")}
         </Link>
 
         {/* Job header */}
@@ -176,9 +186,9 @@ export default async function JobDetailPage({
           <p className="text-sm text-[var(--color-muted)]">
             <span className="font-medium text-[var(--color-ink)]">{companyName}</span>
             {location && <span> · {location}</span>}
-            {job.is_remote && <span> · Remote</span>}
+            {job.is_remote && <span> · {t("detail.remote")}</span>}
             {job.source === "employer_direct" && job.company?.verified && (
-              <span className="text-[var(--color-indigo)]"> · ✓ Verified</span>
+              <span className="text-[var(--color-indigo)]"> · {t("detail.verified")}</span>
             )}
           </p>
 
@@ -192,13 +202,15 @@ export default async function JobDetailPage({
 
           {/* Metadata row — plain text, no badges or icons */}
           <p className="mt-3 text-sm text-[var(--color-muted)]">
-            <span>{CONTRACT_TYPE_LABELS[job.contract_type]}</span>
+            <span>{tc(job.contract_type)}</span>
             {salary !== "Market related" && <span> · {salary}</span>}
-            <span> · Posted {timeAgo(job.posted_at)}</span>
-            {left && left !== "Expired" && (
-              <span className="font-medium text-[var(--color-clay)]"> · {left}</span>
+            <span> · {t("detail.postedAgo", { timeAgo: timeAgo(job.posted_at) })}</span>
+            {daysNum !== null && !isExpired && (
+              <span className="font-medium text-[var(--color-clay)]">
+                {" "}· {t("detail.daysLeft", { n: daysNum })}
+              </span>
             )}
-            {left === "Expired" && <span> · Expired</span>}
+            {isExpired && <span> · {t("detail.expired")}</span>}
           </p>
         </div>
 
@@ -220,18 +232,17 @@ export default async function JobDetailPage({
               ) : job.source === "adzuna" && job.external_url ? (
                 <>
                   <p className="mb-3 text-sm text-[var(--color-muted)]">
-                    This listing is from an external job feed. Apply on the
-                    original site.
+                    {t("detail.externalFeedNote")}
                   </p>
                   <LinkButton
                     href={job.external_url}
                     className="w-full justify-center"
                   >
-                    Apply on original site
+                    {t("detail.applyOnSite")}
                   </LinkButton>
                   <div className="mt-5 border-t border-[var(--color-line)] pt-4">
                     <p className="mb-2 text-xs text-[var(--color-muted)]">
-                      Already applied?
+                      {t("detail.alreadyApplied")}
                     </p>
                     <LogAppliedButton
                       jobId={job.id}
@@ -254,23 +265,20 @@ export default async function JobDetailPage({
             {/* Application tips */}
             <div className="mt-6 border-t border-[var(--color-line)] pt-6">
               <h3 className="mb-3 text-xs font-semibold text-[var(--color-muted)]">
-                Application tips
+                {t("detail.tips.heading")}
               </h3>
               <ul className="space-y-2.5 text-sm text-[var(--color-ink)]">
                 <li className="flex gap-2">
                   <span className="mt-0.5 shrink-0 text-[var(--color-muted)]">—</span>
-                  Tailor your CV to the job title and key requirements. SA
-                  employers often screen by keyword.
+                  {t("detail.tips.tip1")}
                 </li>
                 <li className="flex gap-2">
                   <span className="mt-0.5 shrink-0 text-[var(--color-muted)]">—</span>
-                  Include your ID number or work-permit status if the ad
-                  requests it; omitting it is a common rejection reason.
+                  {t("detail.tips.tip2")}
                 </li>
                 <li className="flex gap-2">
                   <span className="mt-0.5 shrink-0 text-[var(--color-muted)]">—</span>
-                  Keep your cover letter under one page and open with a
-                  sentence on why this specific role, not a generic greeting.
+                  {t("detail.tips.tip3")}
                 </li>
               </ul>
             </div>

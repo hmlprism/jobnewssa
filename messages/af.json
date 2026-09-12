@@ -134,5 +134,120 @@
       "body": "Plaas \u2019n vakature en bereik werksoekers oor elke provinsie, gratis.",
       "button": "Plaas \u2019n pos"
     }
+  },
+  "Jobs": {
+    "listing": {
+      "dateline": "Suid-Afrika Werksgeleenthede",
+      "positions": "{count, plural, one {pos} other {poste}}",
+      "sortNewest": "Nuutste",
+      "sortClosing": "Sluit binnekort",
+      "searchInput": "Postitel, sleutelwoord of maatskappy",
+      "locationInput": "Stad of provinsie",
+      "searchButton": "Soek",
+      "chips": {
+        "government": "Staatsdiens",
+        "learnerships": "Leerlingskappe",
+        "internships": "Internskappe",
+        "graduate": "Gegradueerd",
+        "apprenticeships": "Vakleerlingskap",
+        "bursaries": "Beurse",
+        "partTime": "Deeltyds",
+        "remote": "Afstandswerk"
+      },
+      "empty": {
+        "heading": "Geen werk gevind nie",
+        "body": "Pas jou soekterme aan of verwyder jou filters.",
+        "clearFilters": "Verwyder alle filters",
+        "alertText": "Stel \u2019n werkskennis in \u2014 <link>skep \u2019n gratis rekening</link> om in kennis gestel te word wanneer nuwe vakatures geplaas word."
+      },
+      "pagination": {
+        "previous": "\u2190 Vorige",
+        "next": "Volgende \u2192",
+        "page": "Bladsy {page} van {total}"
+      }
+    },
+    "contractTypes": {
+      "permanent": "Permanent",
+      "part_time": "Deeltyds",
+      "temporary": "Tydelik",
+      "contract": "Kontrak",
+      "internship": "Internskappos",
+      "volunteer": "Vrywilliger"
+    },
+    "filters": {
+      "title": "Filters",
+      "clearAll": "Verwyder alles",
+      "salary": "Minimum salaris / maand",
+      "anySalary": "Enige",
+      "province": "Provinsie",
+      "anyProvince": "Enige provinsie",
+      "sector": "Sektor",
+      "anySector": "Enige sektor",
+      "contractType": "Kontraktipe",
+      "anyContract": "Enige"
+    },
+    "card": {
+      "confidentialCompany": "Vertroulike maatskappy",
+      "remote": "Afstandswerk",
+      "closed": "Gesluit",
+      "urgent": "Dringend",
+      "verifiedEmployer": "\u2713 Geverifieerde werkgewer",
+      "closingSoon": "{daysNum, plural, =0 {Laaste dag} one {Nog # dag} other {Nog # dae}}",
+      "daysLeft": "{n, plural, one {Nog # dag} other {Nog # dae}}"
+    },
+    "detail": {
+      "backToSearch": "\u2190 Terug na soek",
+      "remote": "Afstandswerk",
+      "verified": "\u2713 Geverifieer",
+      "confidentialCompany": "Vertroulike maatskappy",
+      "postedAgo": "Geplaas {timeAgo}",
+      "daysLeft": "{n, plural, =0 {Laaste dag} one {Nog # dag} other {Nog # dae}}",
+      "expired": "Verval",
+      "externalFeedNote": "Hierdie plasing is van \u2019n eksterne werksfeed. Doen aansoek op die oorspronklike webwerf.",
+      "applyOnSite": "Doen aansoek op oorspronklike webwerf",
+      "alreadyApplied": "Al aansoek gedoen?",
+      "tips": {
+        "heading": "Aansoektips",
+        "tip1": "Pas jou CV aan vir die postitel en sleutelvereistes. SA-werkgewers soek dikwels op sleutelwoorde.",
+        "tip2": "Sluit jou ID-nommer of werkspermit-status in as die advertensie dit vereis; weglating is \u2019n algemene afwysingsrede.",
+        "tip3": "Hou jou voorblad onder een bladsy en begin met \u2019n sin oor waarom jy hierdie spesifieke rol wil h\u00ea, nie \u2019n generiese groet nie."
+      }
+    },
+    "dpsa": {
+      "badge": "Staatsdiensvakature",
+      "intro": "Aansoeke gaan direk na die departement \u2014 nie deur hierdie webwerf nie.",
+      "closingDate": "Sluitingsdatum",
+      "closingDateTime": "{date} om {time}",
+      "daysLeft": "{n, plural, =0 {Laaste dag} one {Nog # dag} other {Nog # dae}}",
+      "expired": "Sluitingsdatum verstreke",
+      "howToApply": "Hoe om aansoek te doen",
+      "enquiries": "Navrae",
+      "fallback": "Verwys na die amptelike DPSA Staatsdiens Vakature-omsendbrief vir aansoek-instruksies."
+    },
+    "apply": {
+      "signedOutNote": "Teken in om vir hierdie werk aansoek te doen.",
+      "signInToApply": "Teken in om aansoek te doen",
+      "noResumeNote": "Jy moet \u2019n CV oplaai voordat jy aansoek kan doen.",
+      "completeProfile": "Voltooi jou profiel",
+      "appliedTitle": "Jou aansoek is ingestuur.",
+      "appliedBody": "Die werkgewer sal in aanraking kom as jou profiel \u2019n treffer is. Intussen, <link>blaai meer vakatures</link>.",
+      "coverNoteLabel": "Dekkingsbrief",
+      "coverNoteOptional": "(opsioneel)",
+      "coverNotePlaceholder": "S\u00ea kortliks waarom jy geskik is vir hierdie rol",
+      "submitting": "Besig om in te stuur\u2026",
+      "submit": "Stuur aansoek"
+    },
+    "save": {
+      "save": "Stoor",
+      "unsave": "Verwyder",
+      "saveAria": "Stoor hierdie werk",
+      "unsaveAria": "Verwyder hierdie werk"
+    },
+    "logApplied": {
+      "signInPrompt": "<link>Teken in</link> om jou aansoeke na te spoor.",
+      "markedAsApplied": "Gemerk as aansoek gedoen",
+      "saving": "Besig om te stoor\u2026",
+      "markAsApplied": "Merk as aansoek gedoen"
+    }
   }
 }
