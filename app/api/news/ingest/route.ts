@@ -11,7 +11,6 @@ export async function runNewsIngestion() {
   const supabase = createServiceClient();
 
   let totalIngested = 0;
-  let totalSkipped = 0;   // duplicate source_url — already in DB
   let totalFiltered = 0;  // failed keyword filter
   const ingested: { title: string; source: string }[] = [];
   const errors: string[] = [];
@@ -46,27 +45,27 @@ export async function runNewsIngestion() {
         continue;
       }
 
-      const { error } = await supabase.from("news_articles").insert({
-        title: item.title,
-        slug: null,
-        summary: item.summary || item.title, // summary is NOT NULL; fall back to title if empty
-        source_name: feed.sourceName,
-        source_url: item.sourceUrl,
-        image_url: item.imageUrl,
-        published_at: item.publishedAt,
-        category: item.category,
-        // ingested_at defaults to now() — not set explicitly
-      });
+      // Upsert on source_url — inserts new articles and refreshes image_url
+      // (and other fields) on existing ones, so re-running backfills any gaps.
+      const { error } = await supabase.from("news_articles").upsert(
+        {
+          title: item.title,
+          slug: null,
+          summary: item.summary || item.title, // summary is NOT NULL; fall back to title if empty
+          source_name: feed.sourceName,
+          source_url: item.sourceUrl,
+          image_url: item.imageUrl,
+          published_at: item.publishedAt,
+          category: item.category,
+          // ingested_at defaults to now() — not set explicitly
+        },
+        { onConflict: "source_url" }
+      );
 
       if (error) {
-        if (error.code === "23505") {
-          // Unique constraint on source_url — article already stored, skip silently
-          totalSkipped++;
-        } else {
-          errors.push(
-            `${feed.sourceName} — "${item.title.slice(0, 60)}": ${error.message}`
-          );
-        }
+        errors.push(
+          `${feed.sourceName} — "${item.title.slice(0, 60)}": ${error.message}`
+        );
       } else {
         totalIngested++;
         ingested.push({ title: item.title, source: feed.sourceName });
@@ -76,7 +75,6 @@ export async function runNewsIngestion() {
 
   return {
     ingested: totalIngested,
-    already_existed: totalSkipped,
     filtered_out: totalFiltered,
     feeds_processed: RSS_FEEDS.length,
     articles: ingested,

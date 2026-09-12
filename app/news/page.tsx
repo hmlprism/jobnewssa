@@ -24,6 +24,23 @@ const getCachedArticles = unstable_cache(
   { revalidate: 300, tags: ["news"] }
 );
 
+// One accent color per source outlet, drawn from existing design tokens.
+// Daily Maverick → Rust (editorial authority)
+// Moneyweb       → Amber (financial/business)
+// IOL            → Indigo (established broadsheet)
+const SOURCE_ACCENT: Record<string, string> = {
+  "Daily Maverick": "var(--color-rust)",
+  "Moneyweb": "var(--color-amber)",
+  "IOL": "var(--color-indigo)",
+};
+
+// Short label shown inside the no-image accent block.
+const SOURCE_ABBR: Record<string, string> = {
+  "Daily Maverick": "DM",
+  "Moneyweb": "MW",
+  "IOL": "IOL",
+};
+
 export default async function NewsPage() {
   const articles = await getCachedArticles();
 
@@ -46,21 +63,68 @@ export default async function NewsPage() {
           </div>
         ) : (
           <div className="mt-10 border-t border-[var(--color-line)]">
-            {articles.map((article) => (
-              <a
-                key={article.id}
-                href={article.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block border-b border-[var(--color-line)] py-5 hover:bg-[var(--color-paper-dim)]"
-              >
-                <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                  {article.source_name} · {timeAgo(article.published_at)}
-                </p>
-                <h2 className="mt-1 text-lg font-semibold">{article.title}</h2>
-                <p className="mt-1 text-sm text-[var(--color-muted)]">{article.summary}</p>
-              </a>
-            ))}
+            {articles.map((article) => {
+              const accentColor =
+                SOURCE_ACCENT[article.source_name as string] ?? "var(--color-ink)";
+              const abbr =
+                SOURCE_ABBR[article.source_name as string] ??
+                (article.source_name as string).slice(0, 3).toUpperCase();
+
+              return (
+                <a
+                  key={article.id}
+                  href={article.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-4 border-b border-[var(--color-line)] py-5 hover:bg-[var(--color-paper-dim)]"
+                >
+                  {/* Text content */}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">
+                      {article.source_name} · {timeAgo(article.published_at)}
+                    </p>
+                    <h2 className="mt-1 text-lg font-semibold leading-snug">
+                      {article.title}
+                    </h2>
+                    <p className="mt-1 text-sm text-[var(--color-muted)]">
+                      {article.summary}
+                    </p>
+                  </div>
+
+                  {/* Right slot: thumbnail when image_url present, source accent block otherwise */}
+                  <div className="shrink-0">
+                    {article.image_url ? (
+                      <div>
+                        {/* External RSS image; domain varies per source — using <img>, not next/image */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={article.image_url}
+                          alt=""
+                          loading="lazy"
+                          width={112}
+                          height={80}
+                          className="h-20 w-28 object-cover"
+                        />
+                        <p className="mt-1 text-xs text-[var(--color-muted)]">
+                          Image: {article.source_name}
+                        </p>
+                      </div>
+                    ) : (
+                      /* No image: solid source-colour block with outlet abbreviation */
+                      <div
+                        className="flex h-20 w-28 items-center justify-center"
+                        style={{ background: accentColor }}
+                        aria-hidden="true"
+                      >
+                        <span className="text-sm font-semibold tracking-widest text-[var(--color-paper)]">
+                          {abbr}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </a>
+              );
+            })}
           </div>
         )}
       </main>
