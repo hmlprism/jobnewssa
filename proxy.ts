@@ -17,7 +17,7 @@ const intlMiddleware = createIntlMiddleware({
 
 const TEST_I18N_PATHS = ["/test-i18n", "/en/test-i18n", "/af/test-i18n"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Supabase session refresh runs for ALL routes (existing behaviour, unchanged).
   const supabaseResponse = await updateSession(request);
 
