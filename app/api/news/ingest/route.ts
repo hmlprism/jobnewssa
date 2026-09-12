@@ -74,21 +74,21 @@ export async function runNewsIngestion() {
     }
   }
 
-  return NextResponse.json({
+  return {
     ingested: totalIngested,
     already_existed: totalSkipped,
     filtered_out: totalFiltered,
     feeds_processed: RSS_FEEDS.length,
     articles: ingested,
     errors: errors.length ? errors : undefined,
-  });
+  };
 }
 
 export async function POST(request: Request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  return runNewsIngestion();
+  return NextResponse.json(await runNewsIngestion());
 }
 
 // Allow unauthenticated GET in development only.
@@ -98,5 +98,5 @@ export async function GET(request: Request) {
   if (process.env.NODE_ENV === "production") {
     return NextResponse.json({ error: "Use POST with cron secret" }, { status: 405 });
   }
-  return runNewsIngestion();
+  return NextResponse.json(await runNewsIngestion());
 }
