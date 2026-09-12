@@ -25,11 +25,11 @@ const getCachedArticles = unstable_cache(
 );
 
 // One accent color per source outlet, drawn from existing design tokens.
-// Daily Maverick → Rust (editorial authority)
+// Daily Maverick → Ink (editorial authority; rust is reserved for CTAs/active states)
 // Moneyweb       → Amber (financial/business)
 // IOL            → Indigo (established broadsheet)
 const SOURCE_ACCENT: Record<string, string> = {
-  "Daily Maverick": "var(--color-rust)",
+  "Daily Maverick": "var(--color-ink)",
   "Moneyweb": "var(--color-amber)",
   "IOL": "var(--color-indigo)",
 };
