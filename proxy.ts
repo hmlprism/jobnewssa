@@ -2,43 +2,41 @@ import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import createIntlMiddleware from "next-intl/middleware";
 
-// PoC: test whether next-intl locale routing composes with Supabase auth.
-// Scoped to /test-i18n paths only — existing routes are untouched.
-// Delete this block (and revert to the original export below) once the
-// architecture question is answered.
 const intlMiddleware = createIntlMiddleware({
   locales: ["en", "af"],
   defaultLocale: "en",
-  // 'always' = every locale gets a URL prefix (/en/..., /af/...).
-  // This is intentional for the PoC — we want to verify the redirect
-  // from /test-i18n → /en/test-i18n and that /af/test-i18n works.
+  // Every locale gets a URL prefix — /en/... and /af/...
+  // Requests without a prefix are redirected to /en/...
   localePrefix: "always",
 });
 
-const TEST_I18N_PATHS = ["/test-i18n", "/en/test-i18n", "/af/test-i18n"];
+// Paths that must NOT receive locale routing:
+//  - /api/* — server-side API routes, never locale-prefixed
+//  - /auth/callback — OAuth callback URL registered in Supabase; must stay stable
+const NO_LOCALE_PREFIXES = ["/api/", "/auth/callback"];
 
 export async function proxy(request: NextRequest) {
   // Supabase session refresh runs for ALL routes (existing behaviour, unchanged).
   const supabaseResponse = await updateSession(request);
 
-  // For the PoC test paths, also run next-intl locale routing on top.
   const { pathname } = request.nextUrl;
-  const isTestPath = TEST_I18N_PATHS.some(
-    (p) => pathname === p || pathname.startsWith(p + "/")
-  );
 
-  if (isTestPath) {
-    const intlResponse = intlMiddleware(request);
-    // Forward any refreshed Supabase session cookies onto the intl response
-    // so the browser receives them regardless of whether intl redirects or passes through.
-    for (const cookie of supabaseResponse.cookies.getAll()) {
-      const { name, value, ...options } = cookie;
-      intlResponse.cookies.set(name, value, options);
-    }
-    return intlResponse;
+  // Skip locale routing for API routes and the auth callback handler.
+  if (NO_LOCALE_PREFIXES.some((p) => pathname.startsWith(p))) {
+    return supabaseResponse;
   }
 
-  return supabaseResponse;
+  // Run next-intl locale routing for all page routes.
+  const intlResponse = intlMiddleware(request);
+
+  // Forward any refreshed Supabase session cookies onto the intl response
+  // so the browser receives them whether intl redirects or passes through.
+  for (const cookie of supabaseResponse.cookies.getAll()) {
+    const { name, value, ...options } = cookie;
+    intlResponse.cookies.set(name, value, options);
+  }
+
+  return intlResponse;
 }
 
 export const config = {
