@@ -378,6 +378,16 @@
       "saved": "Profiel gestoor."
     }
   },
+  "Saved": {
+    "page": {
+      "title": "Gestore werke"
+    },
+    "empty": {
+      "heading": "Nog geen gestore werke nie",
+      "browse": "Blaai vakatures",
+      "body": "en tik op die boekmerkie-ikoon op enige plasing om dit hier te stoor."
+    }
+  },
   "Applications": {
     "page": {
       "title": "My aansoeke"

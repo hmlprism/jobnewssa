@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
@@ -9,10 +9,17 @@ import { Bookmark } from "lucide-react";
 import { Link } from "@/lib/navigation";
 import type { Job } from "@/types/database";
 
-export const metadata = { title: "Saved Jobs" };
+export async function generateMetadata() {
+  const t = await getTranslations("Saved.page");
+  return { title: t("title") };
+}
 
 async function SavedContent() {
-  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  const [user, locale, t] = await Promise.all([
+    getAuthUser(),
+    getLocale(),
+    getTranslations("Saved"),
+  ]);
   if (!user) redirect(`/${locale}/auth/login?next=%2F${locale}%2Fsaved`);
 
   const supabase = await createClient();
@@ -41,16 +48,16 @@ async function SavedContent() {
           size={32}
           className="mx-auto mb-3 text-[var(--color-muted)]"
         />
-        <p className="font-display text-lg">No saved jobs yet</p>
+        <p className="font-display text-lg">{t("empty.heading")}</p>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
           <Link
             href="/jobs"
             prefetch={false}
             className="underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
-            Browse vacancies
+            {t("empty.browse")}
           </Link>{" "}
-          and tap the bookmark icon on any listing to save it here.
+          {t("empty.body")}
         </p>
       </div>
     );
@@ -81,13 +88,14 @@ function SavedSkeleton() {
   );
 }
 
-export default function SavedPage() {
+export default async function SavedPage() {
+  const t = await getTranslations("Saved.page");
   return (
     <>
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
         <h1 className="mb-8 font-display text-2xl font-semibold">
-          Saved jobs
+          {t("title")}
         </h1>
         <Suspense fallback={<SavedSkeleton />}>
           <SavedContent />

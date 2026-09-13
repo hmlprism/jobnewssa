@@ -378,6 +378,16 @@
       "saved": "Profile saved."
     }
   },
+  "Saved": {
+    "page": {
+      "title": "Saved jobs"
+    },
+    "empty": {
+      "heading": "No saved jobs yet",
+      "browse": "Browse vacancies",
+      "body": "and tap the bookmark icon on any listing to save it here."
+    }
+  },
   "Applications": {
     "page": {
       "title": "My applications"
