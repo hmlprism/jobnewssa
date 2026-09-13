@@ -260,5 +260,33 @@
       "from": "From R{min}/month",
       "upTo": "Up to R{max}/month"
     }
+  },
+  "Shared": {
+    "nqfLevels": {
+      "1": "Level 1: Grade 9",
+      "2": "Level 2: Grade 10",
+      "3": "Level 3: Grade 11",
+      "4": "Level 4: National Senior Certificate (Matric)",
+      "5": "Level 5: Higher Certificate",
+      "6": "Level 6: Diploma / Advanced Certificate",
+      "7": "Level 7: Bachelor's Degree / Advanced Diploma",
+      "8": "Level 8: Honours / Postgraduate Diploma",
+      "9": "Level 9: Master's Degree",
+      "10": "Level 10: Doctoral Degree"
+    },
+    "qualificationTypes": {
+      "Certificate": "Certificate",
+      "Higher Certificate": "Higher Certificate",
+      "Diploma": "Diploma",
+      "Advanced Certificate": "Advanced Certificate",
+      "Advanced Diploma": "Advanced Diploma",
+      "Bachelor's Degree": "Bachelor's Degree",
+      "Bachelor Honours Degree": "Bachelor Honours Degree",
+      "Postgraduate Diploma": "Postgraduate Diploma",
+      "Professional Degree": "Professional Degree",
+      "Master's Degree": "Master's Degree",
+      "Doctoral Degree": "Doctoral Degree",
+      "Other": "Other"
+    }
   }
 }

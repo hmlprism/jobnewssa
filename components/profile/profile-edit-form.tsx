@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -129,6 +130,7 @@ export function ProfileEditForm({
   profile: Profile;
   userId: string;
 }) {
+  const tShared = useTranslations("Shared");
   const isEmployer = profile.role === "employer";
 
   const [headline, setHeadline] = useState(profile.headline ?? "");
@@ -435,9 +437,9 @@ export function ProfileEditForm({
             className={inputClass}
           >
             <option value="">Select NQF level</option>
-            {NQF_LEVELS.map(({ value, label }) => (
+            {NQF_LEVELS.map(({ value }) => (
               <option key={value} value={value}>
-                {label}
+                {tShared(`nqfLevels.${value}`)}
               </option>
             ))}
           </select>
@@ -474,9 +476,9 @@ export function ProfileEditForm({
             className={inputClass}
           >
             <option value="">Select type</option>
-            {QUALIFICATION_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t}
+            {QUALIFICATION_TYPES.map((qualType) => (
+              <option key={qualType} value={qualType}>
+                {tShared(`qualificationTypes.${qualType}`)}
               </option>
             ))}
           </select>

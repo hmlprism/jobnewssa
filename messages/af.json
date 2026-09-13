@@ -260,5 +260,33 @@
       "from": "Van R{min}/maand",
       "upTo": "Tot R{max}/maand"
     }
+  },
+  "Shared": {
+    "nqfLevels": {
+      "1": "Vlak 1: Graad 9",
+      "2": "Vlak 2: Graad 10",
+      "3": "Vlak 3: Graad 11",
+      "4": "Vlak 4: Nasionale Senior Sertifikaat (Matriek)",
+      "5": "Vlak 5: Hoër Sertifikaat",
+      "6": "Vlak 6: Diploma / Gevorderde Sertifikaat",
+      "7": "Vlak 7: Baccalaureusgraad / Gevorderde Diploma",
+      "8": "Vlak 8: Honneurs / Nagraadse Diploma",
+      "9": "Vlak 9: Meestersgraad",
+      "10": "Vlak 10: Doktorsgraad"
+    },
+    "qualificationTypes": {
+      "Certificate": "Sertifikaat",
+      "Higher Certificate": "Hoër Sertifikaat",
+      "Diploma": "Diploma",
+      "Advanced Certificate": "Gevorderde Sertifikaat",
+      "Advanced Diploma": "Gevorderde Diploma",
+      "Bachelor's Degree": "Baccalaureusgraad",
+      "Bachelor Honours Degree": "Honneurs-baccalaureusgraad",
+      "Postgraduate Diploma": "Nagraadse Diploma",
+      "Professional Degree": "Professionele Graad",
+      "Master's Degree": "Meestersgraad",
+      "Doctoral Degree": "Doktorsgraad",
+      "Other": "Ander"
+    }
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { SiteFooter } from "@/components/layout/footer";
@@ -46,6 +47,7 @@ const inputClass =
   "w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm";
 
 export default function PostJobPage() {
+  const tShared = useTranslations("Shared");
   const router = useRouter();
   const [authState, setAuthState] = useState<
     "loading" | "signed_out" | "wrong_role" | "ready"
@@ -409,9 +411,9 @@ export default function PostJobPage() {
                   className={inputClass}
                 >
                   <option value="">No minimum</option>
-                  {NQF_LEVELS.map(({ value, label }) => (
+                  {NQF_LEVELS.map(({ value }) => (
                     <option key={value} value={value}>
-                      {label}
+                      {tShared(`nqfLevels.${value}`)}
                     </option>
                   ))}
                 </select>
@@ -428,9 +430,9 @@ export default function PostJobPage() {
                   className={inputClass}
                 >
                   <option value="">No specific requirement</option>
-                  {QUALIFICATION_TYPES.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
+                  {QUALIFICATION_TYPES.map((qualType) => (
+                    <option key={qualType} value={qualType}>
+                      {tShared(`qualificationTypes.${qualType}`)}
                     </option>
                   ))}
                 </select>
