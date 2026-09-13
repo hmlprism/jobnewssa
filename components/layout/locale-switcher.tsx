@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";
 import { usePathname, Link } from "@/lib/navigation";
 import { locales, type AppLocale } from "@/lib/i18n-config";
@@ -9,6 +10,8 @@ const LOCALE_LABEL: Record<AppLocale, string> = { en: "EN", af: "AF" };
 export function LocaleSwitcher({ className }: { className?: string }) {
   const locale = useLocale() as AppLocale;
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const search = searchParams.toString();
 
   return (
     <div
@@ -25,7 +28,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
             <span className="text-[var(--color-ink)]">{LOCALE_LABEL[l]}</span>
           ) : (
             <Link
-              href={pathname}
+              href={search ? `${pathname}?${search}` : pathname}
               locale={l}
               prefetch={false}
               className="text-[var(--color-muted)] transition-colors duration-100 hover:text-[var(--color-rust)]"
