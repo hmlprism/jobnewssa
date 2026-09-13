@@ -1,23 +1,17 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
-import { timeAgo } from "@/lib/utils";
 import { Link } from "@/lib/navigation";
 import type { ApplicationStatus } from "@/types/database";
 import { FileText, MessageSquare } from "lucide-react";
 
-export const metadata = { title: "My Applications" };
-
-const STATUS_LABELS: Record<ApplicationStatus, string> = {
-  submitted: "Submitted",
-  viewed: "Viewed",
-  shortlisted: "Shortlisted",
-  rejected: "Rejected",
-  hired: "Hired",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("Applications.page");
+  return { title: t("title") };
+}
 
 const STATUS_COLOURS: Record<ApplicationStatus, string> = {
   submitted: "text-[var(--color-muted)]",
@@ -28,7 +22,12 @@ const STATUS_COLOURS: Record<ApplicationStatus, string> = {
 };
 
 async function ApplicationsContent() {
-  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  const [user, locale, t, tJobs] = await Promise.all([
+    getAuthUser(),
+    getLocale(),
+    getTranslations("Applications"),
+    getTranslations("Jobs"),
+  ]);
   if (!user) redirect(`/${locale}/auth/login?next=%2F${locale}%2Fapplications`);
 
   const supabase = await createClient();
@@ -84,16 +83,16 @@ async function ApplicationsContent() {
           size={32}
           className="mx-auto mb-3 text-[var(--color-muted)]"
         />
-        <p className="font-display text-lg">No applications yet</p>
+        <p className="font-display text-lg">{t("empty.heading")}</p>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
           <Link
             href="/jobs"
             prefetch={false}
             className="underline underline-offset-2 hover:text-[var(--color-rust)]"
           >
-            Browse vacancies
+            {t("empty.browse")}
           </Link>{" "}
-          and apply. Your applications will appear here.
+          {t("empty.body")}
         </p>
       </div>
     );
@@ -102,6 +101,18 @@ async function ApplicationsContent() {
   return (
     <div className="border border-[var(--color-line)]">
       {apps.map((app) => {
+        const daysOld = Math.floor(
+          (Date.now() - new Date(app.created_at).getTime()) / 86_400_000
+        );
+        const relTime =
+          daysOld === 0
+            ? tJobs("relative.today")
+            : daysOld === 1
+            ? tJobs("relative.yesterday")
+            : daysOld < 30
+            ? tJobs("relative.daysAgo", { n: daysOld })
+            : tJobs("relative.monthsAgo", { n: Math.floor(daysOld / 30) });
+
         const unread = unreadByApp[app.id] ?? 0;
         return (
           <div
@@ -119,17 +130,17 @@ async function ApplicationsContent() {
                 </Link>
               ) : (
                 <span className="font-medium text-[var(--color-muted)]">
-                  Job removed
+                  {t("jobRemoved")}
                 </span>
               )}
               <p className="mt-0.5 text-sm text-[var(--color-muted)]">
-                {app.job?.company_name_raw ?? "—"} · Applied{" "}
-                {timeAgo(app.created_at)}
+                {app.job?.company_name_raw ?? "—"} ·{" "}
+                {t("appliedAgo", { ago: relTime })}
               </p>
               <p
                 className={`mt-0.5 text-xs font-medium ${STATUS_COLOURS[app.status]}`}
               >
-                {STATUS_LABELS[app.status]}
+                {t(`status.${app.status}`)}
               </p>
             </div>
 
@@ -141,13 +152,13 @@ async function ApplicationsContent() {
               <MessageSquare size={14} />
               {unread > 0 ? (
                 <>
-                  Messages{" "}
+                  {t("messages")}{" "}
                   <span className="inline-block bg-[var(--color-rust)] px-1.5 py-0.5 text-xs font-semibold text-[var(--color-paper)]">
                     {unread}
                   </span>
                 </>
               ) : (
-                "Messages"
+                t("messages")
               )}
             </Link>
           </div>
@@ -177,12 +188,13 @@ function ApplicationsSkeleton() {
 }
 
 export default async function ApplicationsPage() {
+  const t = await getTranslations("Applications.page");
   return (
     <>
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-12">
         <h1 className="mb-8 font-display text-2xl font-semibold">
-          My applications
+          {t("title")}
         </h1>
         <Suspense fallback={<ApplicationsSkeleton />}>
           <ApplicationsContent />

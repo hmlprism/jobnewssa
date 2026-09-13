@@ -378,6 +378,26 @@
       "saved": "Profile saved."
     }
   },
+  "Applications": {
+    "page": {
+      "title": "My applications"
+    },
+    "empty": {
+      "heading": "No applications yet",
+      "browse": "Browse vacancies",
+      "body": "and apply. Your applications will appear here."
+    },
+    "jobRemoved": "Job removed",
+    "appliedAgo": "Applied {ago}",
+    "messages": "Messages",
+    "status": {
+      "submitted": "Submitted",
+      "viewed": "Viewed",
+      "shortlisted": "Shortlisted",
+      "rejected": "Rejected",
+      "hired": "Hired"
+    }
+  },
   "AccountSettings": {
     "page": {
       "title": "Account settings"

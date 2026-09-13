@@ -378,6 +378,26 @@
       "saved": "Profiel gestoor."
     }
   },
+  "Applications": {
+    "page": {
+      "title": "My aansoeke"
+    },
+    "empty": {
+      "heading": "Nog geen aansoeke nie",
+      "browse": "Blaai vakatures",
+      "body": "en doen aansoek. Jou aansoeke sal hier verskyn."
+    },
+    "jobRemoved": "Pos verwyder",
+    "appliedAgo": "Aansoek gedoen {ago}",
+    "messages": "Boodskappe",
+    "status": {
+      "submitted": "Ingedien",
+      "viewed": "Bekyk",
+      "shortlisted": "Kortgelys",
+      "rejected": "Afgekeur",
+      "hired": "Aangestel"
+    }
+  },
   "AccountSettings": {
     "page": {
       "title": "Rekening-instellings"
