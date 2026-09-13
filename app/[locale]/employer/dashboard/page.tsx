@@ -3,15 +3,24 @@ import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/lib/navigation";
 import { LinkButton } from "@/components/ui/button";
-import { timeAgo } from "@/lib/utils";
 import type { Company } from "@/types/database";
 import { Plus, ExternalLink, Users } from "lucide-react";
 
+export async function generateMetadata() {
+  const t = await getTranslations("Employer.dashboard");
+  return { title: t("heading") };
+}
+
 async function DashboardContent() {
-  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  const [user, locale, t, tJobs] = await Promise.all([
+    getAuthUser(),
+    getLocale(),
+    getTranslations("Employer.dashboard"),
+    getTranslations("Jobs"),
+  ]);
   if (!user) redirect(`/${locale}/auth/login`);
 
   const supabase = await createClient();
@@ -37,37 +46,36 @@ async function DashboardContent() {
         <div className="mb-6 border border-[var(--color-clay)] bg-[var(--color-clay-dim)] px-5 py-4 text-sm">
           <p>
             <span className="font-semibold">
-              Your employer account is unverified.
+              {t("unverifiedBanner.heading")}
             </span>{" "}
-            Your jobs are visible but show an &quot;Unverified employer&quot;
-            badge.{" "}
+            {t("unverifiedBanner.body")}{" "}
             <Link
               href="/employer/verify"
               prefetch={false}
               className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
             >
-              Verify your account →
+              {t("unverifiedBanner.link")}
             </Link>
           </p>
         </div>
       )}
       {company?.verified && (
         <div className="mb-6 border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-5 py-4 text-sm text-[var(--color-indigo)]">
-          <span className="font-semibold">✓ Verified employer.</span> Your
-          jobs display a verified badge.
+          <span className="font-semibold">{t("verifiedBanner.heading")}</span>{" "}
+          {t("verifiedBanner.body")}
         </div>
       )}
 
       {/* Job listings */}
       {!jobs || jobs.length === 0 ? (
         <div className="border border-[var(--color-line)] px-6 py-16 text-center">
-          <p className="font-display text-lg">No postings yet</p>
+          <p className="font-display text-lg">{t("empty.heading")}</p>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
-            Post your first vacancy to start receiving applications.
+            {t("empty.body")}
           </p>
           <LinkButton href="/employer/post" size="md" className="mt-6">
             <Plus size={16} />
-            Post your first job
+            {t("empty.button")}
           </LinkButton>
         </div>
       ) : (
@@ -76,6 +84,19 @@ async function DashboardContent() {
             const count =
               (job as unknown as { applications: { count: number }[] })
                 .applications?.[0]?.count ?? 0;
+
+            const daysOld = Math.floor(
+              (Date.now() - new Date(job.posted_at).getTime()) / 86_400_000
+            );
+            const relTime =
+              daysOld === 0
+                ? tJobs("relative.today")
+                : daysOld === 1
+                ? tJobs("relative.yesterday")
+                : daysOld < 30
+                ? tJobs("relative.daysAgo", { n: daysOld })
+                : tJobs("relative.monthsAgo", { n: Math.floor(daysOld / 30) });
+
             return (
               <div
                 key={job.id}
@@ -97,11 +118,11 @@ async function DashboardContent() {
                           : "text-[var(--color-muted)]"
                       }`}
                     >
-                      {job.status === "published" ? "Live" : job.status}
+                      {job.status === "published" ? t("statusLive") : job.status}
                     </span>
                   </div>
                   <p className="mt-0.5 text-sm text-[var(--color-muted)]">
-                    Posted {timeAgo(job.posted_at)}
+                    {t("postedAgo", { ago: relTime })}
                   </p>
                 </div>
                 <div className="flex shrink-0 items-center gap-4">
@@ -111,13 +132,13 @@ async function DashboardContent() {
                     className="flex items-center gap-1.5 text-sm font-medium text-[var(--color-rust)] hover:underline"
                   >
                     <Users size={14} />
-                    {count} applicant{count !== 1 ? "s" : ""}
+                    {t("applicantsCount", { count })}
                   </Link>
                   <Link
                     href={`/jobs/${job.slug}`}
                     prefetch={false}
                     className="hidden text-[var(--color-muted)] hover:text-[var(--color-ink)] sm:block"
-                    aria-label="View listing"
+                    aria-label={t("viewListingAria")}
                   >
                     <ExternalLink size={14} />
                   </Link>
@@ -151,17 +172,18 @@ function DashboardSkeleton() {
 }
 
 export default async function EmployerDashboard() {
+  const t = await getTranslations("Employer.dashboard");
   return (
     <>
       <SiteHeader />
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-12">
         <div className="mb-8 flex items-center justify-between">
           <h1 className="font-display text-2xl font-semibold">
-            Your job postings
+            {t("heading")}
           </h1>
           <LinkButton href="/employer/post" size="sm">
             <Plus size={15} />
-            Post a job
+            {t("postJob")}
           </LinkButton>
         </div>
 

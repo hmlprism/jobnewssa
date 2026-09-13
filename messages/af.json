@@ -378,6 +378,127 @@
       "saved": "Profiel gestoor."
     }
   },
+  "Employer": {
+    "dashboard": {
+      "heading": "Jou werksinskrywings",
+      "postJob": "Plaas \u2019n pos",
+      "unverifiedBanner": {
+        "heading": "Jou werkgewer-rekening is nie geverifieer nie.",
+        "body": "Jou poste is sigbaar maar wys \u2019n \u201eOngetoetste werkgewer\u201c kenteken.",
+        "link": "Verifieer jou rekening \u2192"
+      },
+      "verifiedBanner": {
+        "heading": "\u2713 Geverifieerde werkgewer.",
+        "body": "Jou poste wys \u2019n geverifieerde kenteken."
+      },
+      "empty": {
+        "heading": "Nog geen inskrywings nie",
+        "body": "Plaas jou eerste vakature om aansoeke te begin ontvang.",
+        "button": "Plaas jou eerste pos"
+      },
+      "statusLive": "Lewendig",
+      "postedAgo": "Geplaas {ago}",
+      "applicantsCount": "{count, plural, one {# aansoeknemer} other {# aansoeknemers}}",
+      "viewListingAria": "Bekyk inskrywing"
+    },
+    "applicants": {
+      "backToDashboard": "Terug na dashboard",
+      "metaTitle": "Aansoekers \u2014 {jobTitle}",
+      "metaTitleFallback": "Aansoekers",
+      "count": "{count, plural, one {# aansoeknemer} other {# aansoeknemers}}",
+      "empty": {
+        "heading": "Nog geen aansoeke nie",
+        "body": "Aansoeke sal hier verskyn soos kandidate aansoek doen."
+      },
+      "applicantFallback": "Aansoeknemer",
+      "appliedAgo": "Aansoek gedoen {ago}",
+      "resume": "CV",
+      "noResume": "Geen CV nie",
+      "message": "Boodskap",
+      "coverNote": "Dekkingsbrief"
+    },
+    "verify": {
+      "backToDashboard": "Terug na dashboard",
+      "heading": "Verifieer jou werkgewer-rekening",
+      "noAccess": {
+        "heading": "Werkgewer-rekening benodig",
+        "body": "Teken in met \u2019n werkgewer-rekening om jou maatskappy te verifieer.",
+        "signIn": "Teken in"
+      },
+      "noCompany": {
+        "heading": "Plaas eers \u2019n pos",
+        "body": "Jou maatskappyprofiel word geskep wanneer jy jou eerste pos plaas.",
+        "link": "Plaas \u2019n vakature"
+      },
+      "verified": {
+        "heading": "\u2713 Jou rekening is geverifieer",
+        "body": "Jou poste wys \u2019n geverifieerde kenteken.",
+        "verifiedOn": "Geverifieer op {date}."
+      },
+      "description": "Ons kontroleer dat jou rekening se e-posdomein ooreenstem met jou maatskappy-webwerf. As hulle ooreenstem, word jou rekening onmiddellik geverifieer en jou poste wys \u2019n geverifieerde kenteken.",
+      "websiteLabel": "Maatskappy-webwerf-URL",
+      "websiteHint": "Moet ooreenstem met jou rekening se e-posdomein. Byvoorbeeld, as jou e-pos you@acme.co.za is, voer acme.co.za in.",
+      "checking": "Besig om te kontroleer\u2026",
+      "verifyNow": "Verifieer nou",
+      "successMessage": "Jou werkgewer-rekening is nou geverifieer.",
+      "failedMessage": "Verifikasie het misluk.",
+      "errorMessage": "Iets het verkeerd gegaan. Probeer weer."
+    },
+    "post": {
+      "signedOut": {
+        "heading": "Teken in om \u2019n pos te plaas",
+        "body": "Jy benodig \u2019n werkgewer-rekening om vakatures te plaas.",
+        "createAccount": "Skep werkgewer-rekening"
+      },
+      "wrongRole": {
+        "heading": "Werkgewer-rekening benodig",
+        "body": "Jou rekening is geregistreer as werksoeker. Kontak ondersteuning om na \u2019n werkgewer-rekening oor te skakel."
+      },
+      "success": {
+        "heading": "Pos geplaas",
+        "body": "Jou vakature is lewendig. Jy word aangestuur na jou dashboard\u2026"
+      },
+      "heading": "Plaas \u2019n pos",
+      "subheading": "Gratis om te plaas. Onmiddellik lewendig, verval na 30 dae.",
+      "mustBeSignedIn": "Jy moet ingeteken wees.",
+      "sections": {
+        "jobDetails": "Posbesonderhede",
+        "location": "Ligging",
+        "classificationSalary": "Klassifikasie & salaris",
+        "requirements": "Vereistes",
+        "equity": "Billikheid & toeganklikheid",
+        "optional": "(opsioneel)"
+      },
+      "fields": {
+        "companyName": "Maatskappynaam",
+        "jobTitle": "Postitel",
+        "jobDescription": "Posbeskrywing",
+        "province": "Provinsie",
+        "city": "Stad / dorp",
+        "contractType": "Kontraktipe",
+        "sector": "Sektor",
+        "selectSector": "Kies sektor",
+        "nqfLevel": "Min. NKR-vlak benodig",
+        "nqfNoMin": "Geen minimum",
+        "qualType": "Vereiste kwalifikasietipe",
+        "qualNoReq": "Geen spesifieke vereiste",
+        "eeNote": "Indiensnemingsbillikheid / Regstellende aksie-verklaring",
+        "accommodation": "Toeganklikheidsakkommodasie-kontak",
+        "salaryMin": "Min salaris (R/maand)",
+        "salaryMax": "Maks salaris (R/maand)"
+      },
+      "placeholders": {
+        "jobDescription": "Verantwoordelikhede, vereistes, hoe om aansoek te doen...",
+        "eeNote": "bv. Voorkeur sal gegee word aan kandidate van aangewese groepe soos omskryf in die Wet op Indiensnemingsbillikheid."
+      },
+      "checkboxes": {
+        "isRemote": "Dit is \u2019n afstandspos",
+        "marketRelated": "Salaris is markverband (moenie \u2019n bedrag spesifiseer nie)"
+      },
+      "submit": "Plaas pos",
+      "submitting": "Besig om te plaas\u2026"
+    }
+  },
   "News": {
     "page": {
       "title": "Suid-Afrika werksmark nuus"

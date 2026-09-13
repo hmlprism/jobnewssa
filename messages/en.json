@@ -378,6 +378,127 @@
       "saved": "Profile saved."
     }
   },
+  "Employer": {
+    "dashboard": {
+      "heading": "Your job postings",
+      "postJob": "Post a job",
+      "unverifiedBanner": {
+        "heading": "Your employer account is unverified.",
+        "body": "Your jobs are visible but show an \u201cUnverified employer\u201d badge.",
+        "link": "Verify your account \u2192"
+      },
+      "verifiedBanner": {
+        "heading": "\u2713 Verified employer.",
+        "body": "Your jobs display a verified badge."
+      },
+      "empty": {
+        "heading": "No postings yet",
+        "body": "Post your first vacancy to start receiving applications.",
+        "button": "Post your first job"
+      },
+      "statusLive": "Live",
+      "postedAgo": "Posted {ago}",
+      "applicantsCount": "{count, plural, one {# applicant} other {# applicants}}",
+      "viewListingAria": "View listing"
+    },
+    "applicants": {
+      "backToDashboard": "Back to dashboard",
+      "metaTitle": "Applicants \u2014 {jobTitle}",
+      "metaTitleFallback": "Applicants",
+      "count": "{count, plural, one {# applicant} other {# applicants}}",
+      "empty": {
+        "heading": "No applications yet",
+        "body": "Applications will appear here as candidates apply."
+      },
+      "applicantFallback": "Applicant",
+      "appliedAgo": "Applied {ago}",
+      "resume": "Resume",
+      "noResume": "No resume",
+      "message": "Message",
+      "coverNote": "Cover note"
+    },
+    "verify": {
+      "backToDashboard": "Back to dashboard",
+      "heading": "Verify your employer account",
+      "noAccess": {
+        "heading": "Employer account required",
+        "body": "Sign in with an employer account to verify your company.",
+        "signIn": "Sign in"
+      },
+      "noCompany": {
+        "heading": "Post a job first",
+        "body": "Your company profile is created when you post your first job.",
+        "link": "Post a vacancy"
+      },
+      "verified": {
+        "heading": "\u2713 Your account is verified",
+        "body": "Your jobs display a verified badge.",
+        "verifiedOn": "Verified on {date}."
+      },
+      "description": "We check that your account email domain matches your company website. If they match, your account is verified instantly and your jobs show a verified badge.",
+      "websiteLabel": "Company website URL",
+      "websiteHint": "Must match your account email domain. For example, if your email is you@acme.co.za, enter acme.co.za.",
+      "checking": "Checking\u2026",
+      "verifyNow": "Verify now",
+      "successMessage": "Your employer account is now verified.",
+      "failedMessage": "Verification failed.",
+      "errorMessage": "Something went wrong. Try again."
+    },
+    "post": {
+      "signedOut": {
+        "heading": "Sign in to post a job",
+        "body": "You need an employer account to post vacancies.",
+        "createAccount": "Create employer account"
+      },
+      "wrongRole": {
+        "heading": "Employer account required",
+        "body": "Your account is registered as a job seeker. Contact support to switch to an employer account."
+      },
+      "success": {
+        "heading": "Job posted",
+        "body": "Your vacancy is live. Redirecting to your dashboard\u2026"
+      },
+      "heading": "Post a job",
+      "subheading": "Free to post. Live immediately, expires after 30 days.",
+      "mustBeSignedIn": "You must be signed in.",
+      "sections": {
+        "jobDetails": "Job details",
+        "location": "Location",
+        "classificationSalary": "Classification & salary",
+        "requirements": "Requirements",
+        "equity": "Equity & accessibility",
+        "optional": "(optional)"
+      },
+      "fields": {
+        "companyName": "Company name",
+        "jobTitle": "Job title",
+        "jobDescription": "Job description",
+        "province": "Province",
+        "city": "City / town",
+        "contractType": "Contract type",
+        "sector": "Sector",
+        "selectSector": "Select sector",
+        "nqfLevel": "Min. NQF level required",
+        "nqfNoMin": "No minimum",
+        "qualType": "Required qualification type",
+        "qualNoReq": "No specific requirement",
+        "eeNote": "Employment Equity / Affirmative Action statement",
+        "accommodation": "Accessibility accommodation contact",
+        "salaryMin": "Min salary (R/month)",
+        "salaryMax": "Max salary (R/month)"
+      },
+      "placeholders": {
+        "jobDescription": "Responsibilities, requirements, how to apply...",
+        "eeNote": "e.g. Preference will be given to candidates from designated groups as defined in the Employment Equity Act."
+      },
+      "checkboxes": {
+        "isRemote": "This is a remote position",
+        "marketRelated": "Salary is market related (don\u2019t specify a figure)"
+      },
+      "submit": "Post job",
+      "submitting": "Posting\u2026"
+    }
+  },
   "News": {
     "page": {
       "title": "South Africa job market news"
