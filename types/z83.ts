@@ -12,7 +12,7 @@ export interface Z83SectionA {
 export interface Z83SectionB {
   // Identity
   name: string;          // "Surname and Full names" combined — e.g. "DLAMINI Thabo Sipho"
-  dob: string;           // DDMMYY — e.g. "150390" (15 March 1990)
+  // dob deliberately omitted — date of birth is sensitive PII, never stored (see Z83FillData)
   passport_number: string;
   // Demographics
   race: "African" | "White" | "Coloured" | "Indian" | "Other" | "";
@@ -100,6 +100,7 @@ export interface Z83DraftData {
 // ─── Complete PDF fill data — includes fields never written to DB ─────────────
 export interface Z83FillData extends Z83DraftData {
   id_number: string;             // 13-digit SA ID — display-only, never persisted
+  dob: string;                   // DDMMYY — date of birth, sensitive PII, never persisted
   section_b_declarations: Z83Declarations;
   page1_initials: string | null; // PNG data URI from canvas ink pad, or null
   page2_initials: string | null;

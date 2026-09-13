@@ -149,7 +149,7 @@ export async function fillZ83(data: Z83FillData): Promise<Uint8Array> {
   // ── Section B — Identity & Demographics ──────────────────────────────────
   tx("Surname and Full names", data.section_b.name);
   tx("Surname and Full names_2", data.section_b.name); // same name repeated on page 2
-  tx("DDMMYY", data.section_b.dob);
+  tx("DDMMYY", data.dob);           // display-only — never stored in DB
   tx("Identity Number", data.id_number); // display-only — never stored in DB
   tx("Passport2 number", data.section_b.passport_number);
   tx("Preferred language for correspondence", data.section_b.preferred_language);
@@ -353,7 +353,7 @@ export async function auditZ83(data: Z83FillData): Promise<string> {
   lines.push(`=== SECTION B — Identity ===`);
   tx(`Name (page 1 field)`, `Surname and Full names`, data.section_b.name);
   tx(`Name (page 2 field)`, `Surname and Full names_2`, data.section_b.name);
-  tx(`Date of Birth (DDMMYY)`, `DDMMYY`, data.section_b.dob);
+  tx(`Date of Birth (DDMMYY) [display-only, NEVER stored]`, `DDMMYY`, data.dob);
   tx(`ID Number [display-only, NEVER stored]`, `Identity Number`, data.id_number);
   tx(`Passport Number`, `Passport2 number`, data.section_b.passport_number);
   tx(`Preferred Language`, `Preferred language for correspondence`, data.section_b.preferred_language);
@@ -505,7 +505,6 @@ export const SAMPLE_Z83: Z83FillData = {
   },
   section_b: {
     name: "DLAMINI Thabo Sipho",
-    dob: "150390",
     passport_number: "",
     race: "African",
     gender: "Male",
@@ -577,8 +576,9 @@ export const SAMPLE_Z83: Z83FillData = {
       tel: "082 345 6789",
     },
   ],
-  // --- Not stored in DB ---
+  // --- Not stored in DB (display-only fields) ---
   id_number: "9003155678083",
+  dob: "150390",
   section_b_declarations: {
     criminal_conviction: false,
     criminal_conviction_details: "",
