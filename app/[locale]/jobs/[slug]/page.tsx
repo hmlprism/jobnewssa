@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { getJobBySlug } from "@/lib/jobs-query";
-import { formatSalary, getDaysLeftNum, timeAgo } from "@/lib/utils";
+import { getDaysLeftNum } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { LinkButton } from "@/components/ui/button";
 import { ApplyPanelServer } from "@/components/jobs/apply-panel-server";
@@ -158,7 +158,26 @@ export default async function JobDetailPage({
   const daysNum = getDaysLeftNum(job.expires_at);
   const isExpired = daysNum !== null && daysNum < 0;
   const location = job.city || job.province || null;
-  const salary = formatSalary(job.salary_min, job.salary_max, job.salary_is_market_related);
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("en-ZA", { maximumFractionDigits: 0 }).format(n);
+  const salary = (() => {
+    if (job.salary_is_market_related || (!job.salary_min && !job.salary_max))
+      return null;
+    if (job.salary_min && job.salary_max)
+      return t("salary.range", { min: fmt(job.salary_min), max: fmt(job.salary_max) });
+    if (job.salary_min) return t("salary.from", { min: fmt(job.salary_min) });
+    if (job.salary_max) return t("salary.upTo", { max: fmt(job.salary_max) });
+    return null;
+  })();
+  const postedAgo = (() => {
+    const diff = Date.now() - new Date(job.posted_at).getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    if (days === 0) return t("relative.today");
+    if (days === 1) return t("relative.yesterday");
+    if (days < 30) return t("relative.daysAgo", { n: days });
+    const months = Math.floor(days / 30);
+    return t("relative.monthsAgo", { n: months });
+  })();
   const flag = getFlag(job);
 
   return (
@@ -203,8 +222,8 @@ export default async function JobDetailPage({
           {/* Metadata row — plain text, no badges or icons */}
           <p className="mt-3 text-sm text-[var(--color-muted)]">
             <span>{tc(job.contract_type)}</span>
-            {salary !== "Market related" && <span> · {salary}</span>}
-            <span> · {t("detail.postedAgo", { timeAgo: timeAgo(job.posted_at) })}</span>
+            {salary !== null && <span> · {salary}</span>}
+            <span> · {t("detail.postedAgo", { timeAgo: postedAgo })}</span>
             {daysNum !== null && !isExpired && (
               <span className="font-medium text-[var(--color-clay)]">
                 {" "}· {t("detail.daysLeft", { n: daysNum })}

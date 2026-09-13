@@ -248,6 +248,17 @@
       "markedAsApplied": "Marked as applied",
       "saving": "Saving\u2026",
       "markAsApplied": "Mark as applied"
+    },
+    "relative": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "daysAgo": "{n, plural, one {# day ago} other {# days ago}}",
+      "monthsAgo": "{n, plural, one {# month ago} other {# months ago}}"
+    },
+    "salary": {
+      "range": "R{min} \u2013 R{max}/month",
+      "from": "From R{min}/month",
+      "upTo": "Up to R{max}/month"
     }
   }
 }

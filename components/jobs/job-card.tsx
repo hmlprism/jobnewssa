@@ -1,6 +1,6 @@
 import { Link } from "@/lib/navigation";
 import type { Job } from "@/types/database";
-import { formatSalary, getDaysLeftNum, timeAgo } from "@/lib/utils";
+import { getDaysLeftNum } from "@/lib/utils";
 import { SaveButton } from "@/components/jobs/save-button";
 import { getTranslations } from "next-intl/server";
 
@@ -49,9 +49,11 @@ export async function JobCard({
   job: Job;
   initialSaved?: boolean;
 }) {
-  const [t, tc] = await Promise.all([
+  const [t, tc, tRel, tSal] = await Promise.all([
     getTranslations("Jobs.card"),
     getTranslations("Jobs.contractTypes"),
+    getTranslations("Jobs.relative"),
+    getTranslations("Jobs.salary"),
   ]);
 
   const daysNum = getDaysLeftNum(job.expires_at);
@@ -62,7 +64,26 @@ export async function JobCard({
   const companyName =
     job.company?.name ?? job.company_name_raw ?? t("confidentialCompany");
   const location = job.city || job.province || null;
-  const salary = formatSalary(job.salary_min, job.salary_max, job.salary_is_market_related);
+  const fmt = (n: number) =>
+    new Intl.NumberFormat("en-ZA", { maximumFractionDigits: 0 }).format(n);
+  const salary = (() => {
+    if (job.salary_is_market_related || (!job.salary_min && !job.salary_max))
+      return null;
+    if (job.salary_min && job.salary_max)
+      return tSal("range", { min: fmt(job.salary_min), max: fmt(job.salary_max) });
+    if (job.salary_min) return tSal("from", { min: fmt(job.salary_min) });
+    if (job.salary_max) return tSal("upTo", { max: fmt(job.salary_max) });
+    return null;
+  })();
+  const postedAgo = (() => {
+    const diff = Date.now() - new Date(job.posted_at).getTime();
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    if (days === 0) return tRel("today");
+    if (days === 1) return tRel("yesterday");
+    if (days < 30) return tRel("daysAgo", { n: days });
+    const months = Math.floor(days / 30);
+    return tRel("monthsAgo", { n: months });
+  })();
 
   const flag = getFlag(job);
 
@@ -143,11 +164,11 @@ export async function JobCard({
         {/* Contract type · salary */}
         <p className="mt-1 text-xs text-[var(--color-muted)]">
           {tc(job.contract_type)}
-          {salary !== "Market related" && <span> · {salary}</span>}
+          {salary !== null && <span> · {salary}</span>}
           {!isExpired && daysNum !== null && daysNum > 3 && (
             <span className="text-[var(--color-clay)]"> · {t("daysLeft", { n: daysNum })}</span>
           )}
-          <span> · {timeAgo(job.posted_at)}</span>
+          <span> · {postedAgo}</span>
         </p>
 
         {/* Verified employer — plain text, no badge box */}

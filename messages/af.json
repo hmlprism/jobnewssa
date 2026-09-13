@@ -248,6 +248,17 @@
       "markedAsApplied": "Gemerk as aansoek gedoen",
       "saving": "Besig om te stoor\u2026",
       "markAsApplied": "Merk as aansoek gedoen"
+    },
+    "relative": {
+      "today": "Vandag",
+      "yesterday": "Gister",
+      "daysAgo": "{n, plural, one {# dag gelede} other {# dae gelede}}",
+      "monthsAgo": "{n, plural, one {# maand gelede} other {# maande gelede}}"
+    },
+    "salary": {
+      "range": "R{min} \u2013 R{max}/maand",
+      "from": "Van R{min}/maand",
+      "upTo": "Tot R{max}/maand"
     }
   }
 }
