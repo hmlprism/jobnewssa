@@ -377,5 +377,40 @@
       "saveProfile": "Stoor profiel",
       "saved": "Profiel gestoor."
     }
+  },
+  "AccountSettings": {
+    "page": {
+      "title": "Rekening-instellings"
+    },
+    "profile": {
+      "sectionHeading": "Profiel",
+      "picLabel": "Profielfoto",
+      "picAlt": "Profielfoto",
+      "changePic": "Verander foto",
+      "uploadPic": "Laai foto op",
+      "picHint": "JPEG, PNG of WebP \u00b7 maks 2 MB",
+      "picTooLarge": "Prent moet onder 2 MB wees.",
+      "fullName": "Volle naam",
+      "fullNamePlaceholder": "Jou volle naam",
+      "emailAddress": "E-posadres",
+      "emailHint": "E-posadres kan nie hier verander word nie. Kontak ondersteuning as jy dit wil wysig.",
+      "saved": "Veranderings gestoor.",
+      "saving": "Besig om te stoor\u2026",
+      "save": "Stoor veranderings"
+    },
+    "password": {
+      "sectionHeading": "Verander wagwoord",
+      "current": "Huidige wagwoord",
+      "new": "Nuwe wagwoord",
+      "confirm": "Bevestig nuwe wagwoord",
+      "show": "Wys wagwoord",
+      "hide": "Verberg wagwoord",
+      "mismatch": "Wagwoorde stem nie ooreen nie.",
+      "tooShort": "Nuwe wagwoord moet ten minste 6 karakters wees.",
+      "incorrect": "Huidige wagwoord is verkeerd.",
+      "updated": "Wagwoord opgedateer.",
+      "updating": "Besig om op te dateer\u2026",
+      "update": "Dateer wagwoord op"
+    }
   }
 }

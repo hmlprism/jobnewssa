@@ -377,5 +377,40 @@
       "saveProfile": "Save profile",
       "saved": "Profile saved."
     }
+  },
+  "AccountSettings": {
+    "page": {
+      "title": "Account settings"
+    },
+    "profile": {
+      "sectionHeading": "Profile",
+      "picLabel": "Profile picture",
+      "picAlt": "Profile picture",
+      "changePic": "Change picture",
+      "uploadPic": "Upload picture",
+      "picHint": "JPEG, PNG or WebP \u00b7 max 2 MB",
+      "picTooLarge": "Image must be under 2 MB.",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Your full name",
+      "emailAddress": "Email address",
+      "emailHint": "Email cannot be changed here. Contact support if you need to update it.",
+      "saved": "Changes saved.",
+      "saving": "Saving\u2026",
+      "save": "Save changes"
+    },
+    "password": {
+      "sectionHeading": "Change password",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "show": "Show password",
+      "hide": "Hide password",
+      "mismatch": "Passwords don\u2019t match.",
+      "tooShort": "New password must be at least 6 characters.",
+      "incorrect": "Current password is incorrect.",
+      "updated": "Password updated.",
+      "updating": "Updating\u2026",
+      "update": "Update password"
+    }
   }
 }

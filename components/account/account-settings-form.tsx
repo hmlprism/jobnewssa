@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -32,6 +33,7 @@ function PasswordField({
   required?: boolean;
   minLength?: number;
 }) {
+  const t = useTranslations("AccountSettings");
   const [show, setShow] = useState(false);
   return (
     <div>
@@ -52,7 +54,7 @@ function PasswordField({
           type="button"
           onClick={() => setShow((s) => !s)}
           className="absolute inset-y-0 right-0 flex cursor-pointer items-center px-3 text-[var(--color-muted)] hover:text-[var(--color-ink)]"
-          aria-label={show ? "Hide password" : "Show password"}
+          aria-label={show ? t("password.hide") : t("password.show")}
         >
           {show ? <EyeOff size={16} /> : <Eye size={16} />}
         </button>
@@ -72,6 +74,7 @@ export function AccountSettingsForm({
   initialName: string | null;
   initialAvatarUrl: string | null;
 }) {
+  const t = useTranslations("AccountSettings");
   const router = useRouter();
 
   const [fullName, setFullName] = useState(initialName ?? "");
@@ -96,7 +99,7 @@ export function AccountSettingsForm({
     const file = e.target.files?.[0] ?? null;
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
-      setProfileError("Image must be under 2 MB.");
+      setProfileError(t("profile.picTooLarge"));
       e.target.value = "";
       return;
     }
@@ -158,11 +161,11 @@ export function AccountSettingsForm({
     setPasswordError(null);
 
     if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords don't match.");
+      setPasswordError(t("password.mismatch"));
       return;
     }
     if (newPassword.length < 6) {
-      setPasswordError("New password must be at least 6 characters.");
+      setPasswordError(t("password.tooShort"));
       return;
     }
 
@@ -175,7 +178,7 @@ export function AccountSettingsForm({
       password: currentPassword,
     });
     if (verifyError) {
-      setPasswordError("Current password is incorrect.");
+      setPasswordError(t("password.incorrect"));
       setPasswordStatus("error");
       return;
     }
@@ -201,18 +204,18 @@ export function AccountSettingsForm({
     <div className="space-y-12">
       {/* Profile */}
       <form onSubmit={handleProfileSave} className="space-y-6">
-        <SectionHeading>Profile</SectionHeading>
+        <SectionHeading>{t("profile.sectionHeading")}</SectionHeading>
 
         {/* Avatar */}
         <div>
-          <p className="mb-2 text-sm font-medium">Profile picture</p>
+          <p className="mb-2 text-sm font-medium">{t("profile.picLabel")}</p>
           <div className="flex items-center gap-4">
             <div className="h-16 w-16 flex-shrink-0 overflow-hidden bg-[var(--color-line)]">
               {displaySrc ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={displaySrc}
-                  alt="Profile picture"
+                  alt={t("profile.picAlt")}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -226,7 +229,7 @@ export function AccountSettingsForm({
                 htmlFor="avatar-upload"
                 className="inline-flex cursor-pointer items-center border border-[var(--color-ink)] bg-[var(--color-paper)] px-3 py-1.5 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)]"
               >
-                {avatarUrl ? "Change picture" : "Upload picture"}
+                {avatarUrl ? t("profile.changePic") : t("profile.uploadPic")}
               </label>
               {avatarFile && (
                 <p className="mt-1 text-xs text-[var(--color-muted)]">
@@ -242,7 +245,7 @@ export function AccountSettingsForm({
                 onChange={handleAvatarChange}
               />
               <p className="mt-1 text-xs text-[var(--color-muted)]">
-                JPEG, PNG or WebP · max 2 MB
+                {t("profile.picHint")}
               </p>
             </div>
           </div>
@@ -254,25 +257,24 @@ export function AccountSettingsForm({
             htmlFor="full-name"
             className="mb-1.5 block text-sm font-medium"
           >
-            Full name
+            {t("profile.fullName")}
           </label>
           <input
             id="full-name"
             type="text"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            placeholder="Your full name"
+            placeholder={t("profile.fullNamePlaceholder")}
             className={inputClass}
           />
         </div>
 
         {/* Email (read-only) */}
         <div>
-          <p className="mb-1.5 text-sm font-medium">Email address</p>
+          <p className="mb-1.5 text-sm font-medium">{t("profile.emailAddress")}</p>
           <p className="text-sm">{email}</p>
           <p className="mt-1 text-xs text-[var(--color-muted)]">
-            Email cannot be changed here. Contact support if you need to
-            update it.
+            {t("profile.emailHint")}
           </p>
         </div>
 
@@ -280,28 +282,28 @@ export function AccountSettingsForm({
           <p className="text-sm text-[var(--color-rust)]">{profileError}</p>
         )}
         {profileStatus === "saved" && (
-          <p className="text-sm text-[var(--color-green)]">Changes saved.</p>
+          <p className="text-sm text-[var(--color-green)]">{t("profile.saved")}</p>
         )}
 
         <Button type="submit" disabled={profileStatus === "saving"}>
-          {profileStatus === "saving" ? "Saving…" : "Save changes"}
+          {profileStatus === "saving" ? t("profile.saving") : t("profile.save")}
         </Button>
       </form>
 
       {/* Password */}
       <form onSubmit={handlePasswordSave} className="space-y-4">
-        <SectionHeading>Change password</SectionHeading>
+        <SectionHeading>{t("password.sectionHeading")}</SectionHeading>
 
         <PasswordField
           id="current-password"
-          label="Current password"
+          label={t("password.current")}
           value={currentPassword}
           onChange={setCurrentPassword}
           required
         />
         <PasswordField
           id="new-password"
-          label="New password"
+          label={t("password.new")}
           value={newPassword}
           onChange={setNewPassword}
           required
@@ -309,7 +311,7 @@ export function AccountSettingsForm({
         />
         <PasswordField
           id="confirm-new-password"
-          label="Confirm new password"
+          label={t("password.confirm")}
           value={confirmPassword}
           onChange={setConfirmPassword}
           required
@@ -320,12 +322,12 @@ export function AccountSettingsForm({
         )}
         {passwordStatus === "saved" && (
           <p className="text-sm text-[var(--color-green)]">
-            Password updated.
+            {t("password.updated")}
           </p>
         )}
 
         <Button type="submit" disabled={passwordStatus === "saving"}>
-          {passwordStatus === "saving" ? "Updating…" : "Update password"}
+          {passwordStatus === "saving" ? t("password.updating") : t("password.update")}
         </Button>
       </form>
     </div>
