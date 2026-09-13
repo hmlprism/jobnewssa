@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { SiteFooter } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
 import type { Company } from "@/types/database";
 import { ArrowLeft } from "lucide-react";
 
@@ -16,6 +17,8 @@ type PageState =
   | "unverified";
 
 export default function EmployerVerifyPage() {
+  const t = useTranslations("Employer.verify");
+  const locale = useLocale();
   const [pageState, setPageState] = useState<PageState>("loading");
   const [company, setCompany] = useState<Company | null>(null);
   const [websiteUrl, setWebsiteUrl] = useState("");
@@ -71,18 +74,15 @@ export default function EmployerVerifyPage() {
       const json = await res.json();
       if (json.verified) {
         setPageState("verified");
-        setResult({
-          ok: true,
-          message: "Your employer account is now verified.",
-        });
+        setResult({ ok: true, message: t("successMessage") });
       } else {
         setResult({
           ok: false,
-          message: json.message ?? json.error ?? "Verification failed.",
+          message: json.message ?? json.error ?? t("failedMessage"),
         });
       }
     } catch {
-      setResult({ ok: false, message: "Something went wrong. Try again." });
+      setResult({ ok: false, message: t("errorMessage") });
     } finally {
       setSubmitting(false);
     }
@@ -104,17 +104,17 @@ export default function EmployerVerifyPage() {
       <>
         <main className="mx-auto max-w-lg px-4 py-16 text-center sm:px-6">
           <h1 className="font-display text-2xl font-semibold">
-            Employer account required
+            {t("noAccess.heading")}
           </h1>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
-            Sign in with an employer account to verify your company.
+            {t("noAccess.body")}
           </p>
           <Link
             href="/auth/login"
             prefetch={false}
             className="mt-6 inline-block text-sm font-medium text-[var(--color-rust)] underline underline-offset-2"
           >
-            Sign in
+            {t("noAccess.signIn")}
           </Link>
         </main>
         <SiteFooter />
@@ -127,23 +127,25 @@ export default function EmployerVerifyPage() {
       <>
         <main className="mx-auto max-w-lg px-4 py-16 text-center sm:px-6">
           <h1 className="font-display text-2xl font-semibold">
-            Post a job first
+            {t("noCompany.heading")}
           </h1>
           <p className="mt-2 text-sm text-[var(--color-muted)]">
-            Your company profile is created when you post your first job.
+            {t("noCompany.body")}
           </p>
           <Link
             href="/employer/post"
             prefetch={false}
             className="mt-6 inline-block text-sm font-medium text-[var(--color-rust)] underline underline-offset-2"
           >
-            Post a vacancy
+            {t("noCompany.link")}
           </Link>
         </main>
         <SiteFooter />
       </>
     );
   }
+
+  const dateFmtLocale = locale === "af" ? "af-ZA" : "en-ZA";
 
   return (
     <>
@@ -154,23 +156,26 @@ export default function EmployerVerifyPage() {
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
         >
           <ArrowLeft size={14} />
-          Back to dashboard
+          {t("backToDashboard")}
         </Link>
 
         <h1 className="font-display text-2xl font-semibold">
-          Verify your employer account
+          {t("heading")}
         </h1>
 
         {pageState === "verified" ? (
           <div className="mt-6 border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-5 py-4 text-sm text-[var(--color-indigo)]">
-            <p className="font-semibold">✓ Your account is verified</p>
+            <p className="font-semibold">{t("verified.heading")}</p>
             <p className="mt-1">
-              Your jobs display a verified badge.
+              {t("verified.body")}
               {company?.verified_at && (
                 <>
                   {" "}
-                  Verified on{" "}
-                  {new Date(company.verified_at).toLocaleDateString("en-ZA")}.
+                  {t("verified.verifiedOn", {
+                    date: new Date(company.verified_at).toLocaleDateString(
+                      dateFmtLocale
+                    ),
+                  })}
                 </>
               )}
             </p>
@@ -178,15 +183,13 @@ export default function EmployerVerifyPage() {
         ) : (
           <>
             <p className="mt-2 text-sm text-[var(--color-muted)]">
-              We check that your account email domain matches your company
-              website. If they match, your account is verified instantly and your
-              jobs show a verified badge.
+              {t("description")}
             </p>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
               <label className="block">
                 <span className="mb-1.5 block text-sm font-medium">
-                  Company website URL
+                  {t("websiteLabel")}
                 </span>
                 <input
                   type="text"
@@ -197,8 +200,7 @@ export default function EmployerVerifyPage() {
                   className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm"
                 />
                 <p className="mt-1.5 text-xs text-[var(--color-muted)]">
-                  Must match your account email domain. For example, if your email is{" "}
-                  <em>you@acme.co.za</em>, enter <em>acme.co.za</em>.
+                  {t("websiteHint")}
                 </p>
               </label>
 
@@ -219,7 +221,7 @@ export default function EmployerVerifyPage() {
                 disabled={submitting}
                 className="w-full justify-center"
               >
-                {submitting ? "Checking…" : "Verify now"}
+                {submitting ? t("checking") : t("verifyNow")}
               </Button>
             </form>
           </>
