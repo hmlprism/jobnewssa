@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
 import { timeAgo } from "@/lib/utils";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
 import type { ApplicationStatus } from "@/types/database";
 import { FileText, MessageSquare } from "lucide-react";
 
@@ -27,8 +28,8 @@ const STATUS_COLOURS: Record<ApplicationStatus, string> = {
 };
 
 async function ApplicationsContent() {
-  const user = await getAuthUser();
-  if (!user) redirect("/auth/login?next=%2Fapplications");
+  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  if (!user) redirect(`/${locale}/auth/login?next=%2F${locale}%2Fapplications`);
 
   const supabase = await createClient();
 

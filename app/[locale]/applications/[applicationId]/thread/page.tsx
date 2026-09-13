@@ -1,5 +1,8 @@
 import { Suspense } from "react";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
+import { Link } from "@/lib/navigation";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import {
@@ -7,7 +10,6 @@ import {
   type MsgRow,
 } from "@/components/messaging/message-thread";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -17,8 +19,8 @@ async function ThreadContent({
 }: {
   applicationId: string;
 }) {
-  const user = await getAuthUser();
-  if (!user) redirect("/auth/login");
+  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  if (!user) redirect(`/${locale}/auth/login`);
 
   const supabase = await createClient();
 

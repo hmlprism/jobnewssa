@@ -3,15 +3,16 @@ import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import Link from "next/link";
+import { getLocale } from "next-intl/server";
+import { Link } from "@/lib/navigation";
 import { LinkButton } from "@/components/ui/button";
 import { timeAgo } from "@/lib/utils";
 import type { Company } from "@/types/database";
 import { Plus, ExternalLink, Users } from "lucide-react";
 
 async function DashboardContent() {
-  const user = await getAuthUser();
-  if (!user) redirect("/auth/login");
+  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  if (!user) redirect(`/${locale}/auth/login`);
 
   const supabase = await createClient();
 

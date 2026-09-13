@@ -4,6 +4,7 @@ import {
   getAuthProfile,
 } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { ProfileEditForm } from "@/components/profile/profile-edit-form";
@@ -12,8 +13,8 @@ import type { Profile } from "@/types/database";
 export const metadata = { title: "My Profile" };
 
 export default async function ProfileEditPage() {
-  const user = await getAuthUser();
-  if (!user) redirect("/auth/login");
+  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  if (!user) redirect(`/${locale}/auth/login`);
 
   const supabase = await createClient();
   const [profile, { data: sensitiveRows }] = await Promise.all([

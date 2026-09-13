@@ -1,18 +1,19 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
 import { JobCard } from "@/components/jobs/job-card";
 import { Bookmark } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
 import type { Job } from "@/types/database";
 
 export const metadata = { title: "Saved Jobs" };
 
 async function SavedContent() {
-  const user = await getAuthUser();
-  if (!user) redirect("/auth/login?next=%2Fsaved");
+  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  if (!user) redirect(`/${locale}/auth/login?next=%2F${locale}%2Fsaved`);
 
   const supabase = await createClient();
 

@@ -4,12 +4,14 @@ import {
   createServiceClient,
   getAuthUser,
 } from "@/lib/supabase/server";
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
+import { Link } from "@/lib/navigation";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { ApplicantStatus } from "@/components/employer/applicant-status";
 import { timeAgo } from "@/lib/utils";
-import Link from "next/link";
 import type { ApplicationStatus } from "@/types/database";
 import { ArrowLeft, FileText, MessageSquare } from "lucide-react";
 
@@ -42,8 +44,8 @@ export async function generateMetadata({
 }
 
 async function ApplicantsContent({ jobId }: { jobId: string }) {
-  const user = await getAuthUser();
-  if (!user) redirect("/auth/login");
+  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  if (!user) redirect(`/${locale}/auth/login`);
 
   const supabase = await createClient();
 

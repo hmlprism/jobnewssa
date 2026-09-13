@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
+import { getLocale } from "next-intl/server";
+import { Link } from "@/lib/navigation";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
@@ -202,8 +203,8 @@ function ConversationGroup({
 }
 
 export default async function MessagesPage() {
-  const user = await getAuthUser();
-  if (!user) redirect("/auth/login");
+  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  if (!user) redirect(`/${locale}/auth/login`);
 
   const conversations = await getInboxConversations(user.id);
 

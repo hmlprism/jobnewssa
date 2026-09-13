@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { getAuthUser, getAuthProfile } from "@/lib/supabase/server";
@@ -8,8 +9,8 @@ import type { Profile } from "@/types/database";
 export const metadata = { title: "Account Settings" };
 
 export default async function AccountSettingsPage() {
-  const user = await getAuthUser();
-  if (!user) redirect("/auth/login");
+  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  if (!user) redirect(`/${locale}/auth/login`);
 
   const profile = (await getAuthProfile()) as Profile | null;
 
