@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { StepA } from "./step-a";
 import { StepB } from "./step-b";
 import { StepC } from "./step-c";
+import { StepD } from "./step-d";
 import type { Z83FillData, Z83DraftData, Z83SectionB, Z83Declarations } from "@/types/z83";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -184,6 +185,10 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
         data.section_f_ps_reappointment !== null
       );
     }
+    if (step === 4) {
+      const b = data.section_b;
+      return !!b.communication_pref && b.contact_details.trim().length > 0;
+    }
     // Remaining steps: always valid for now (individual steps add their own rules)
     return true;
   }, [step, data.section_a, data.section_b, data.dob, data.id_number, data.section_b_declarations, data.section_f_ps_reappointment]);
@@ -328,8 +333,18 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
           />
         )}
 
-        {/* Steps 4–6 will be added in subsequent build phases */}
-        {step > 3 && step < TOTAL_STEPS && (
+        {step === 4 && (
+          <StepD
+            sectionB={data.section_b}
+            sectionD={data.section_d}
+            attempted={attempted}
+            onSectionBChange={(section_b) => setData((d) => ({ ...d, section_b }))}
+            onSectionDChange={(section_d) => setData((d) => ({ ...d, section_d }))}
+          />
+        )}
+
+        {/* Steps 5–6 will be added in subsequent build phases */}
+        {step > 4 && step < TOTAL_STEPS && (
           <div className="flex items-center justify-center py-20 border border-dashed border-[var(--color-line)]">
             <p className="text-sm text-[var(--color-muted)]">
               Step {step} — coming soon
