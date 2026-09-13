@@ -24,10 +24,26 @@ export function StepA({ data, attempted, onChange }: Props) {
 
   const e = attempted
     ? {
-        position: !data.position.trim() ? "Required" : undefined,
-        department: !data.department.trim() ? "Required" : undefined,
-        ref_no: !data.ref_no.trim() ? "Required" : undefined,
-        availability: !data.availability.trim() ? "Required" : undefined,
+        position: !data.position.trim()
+          ? "Required"
+          : data.position.trim().length < 5 || !/[a-zA-Z]/.test(data.position)
+          ? "Enter the full position title (at least 5 characters)"
+          : undefined,
+        department: !data.department.trim()
+          ? "Required"
+          : data.department.trim().length < 5 || !/[a-zA-Z]/.test(data.department)
+          ? "Enter the full department name (at least 5 characters)"
+          : undefined,
+        ref_no: !data.ref_no.trim()
+          ? "Required"
+          : data.ref_no.trim().length < 3 || /^(.)\1*$/.test(data.ref_no.trim())
+          ? "Enter a valid reference number (e.g. DPSA 01/2026/01)"
+          : undefined,
+        availability: !data.availability.trim()
+          ? "Required"
+          : data.availability.trim().length < 5 || !/[a-zA-Z]/.test(data.availability)
+          ? "Enter your availability or notice period (at least 5 characters)"
+          : undefined,
       }
     : {};
 

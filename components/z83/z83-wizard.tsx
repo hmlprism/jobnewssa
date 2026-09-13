@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { StepA } from "./step-a";
+import { StepB } from "./step-b";
 import type { Z83FillData, Z83DraftData, Z83SectionB, Z83Declarations } from "@/types/z83";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -142,15 +143,29 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
     const a = data.section_a;
     if (step === 1) {
       return (
-        a.position.trim().length > 0 &&
-        a.department.trim().length > 0 &&
-        a.ref_no.trim().length > 0 &&
-        a.availability.trim().length > 0
+        a.position.trim().length >= 5 && /[a-zA-Z]/.test(a.position) &&
+        a.department.trim().length >= 5 && /[a-zA-Z]/.test(a.department) &&
+        a.ref_no.trim().length >= 3 && !/^(.)\1*$/.test(a.ref_no.trim()) &&
+        a.availability.trim().length >= 5 && /[a-zA-Z]/.test(a.availability)
+      );
+    }
+    if (step === 2) {
+      const b = data.section_b;
+      return (
+        b.name.trim().length >= 2 &&
+        /[a-zA-Z]/.test(b.name) &&
+        /^\d{6}$/.test(data.dob) &&
+        !!b.race &&
+        !!b.gender &&
+        (!data.id_number || data.id_number.length === 13) &&
+        (!b.passport_number ||
+          (b.passport_number.trim().length >= 3 &&
+            /[a-zA-Z]/.test(b.passport_number)))
       );
     }
     // Remaining steps: always valid for now (individual steps add their own rules)
     return true;
-  }, [step, data.section_a]);
+  }, [step, data.section_a, data.section_b, data.dob, data.id_number]);
 
   // ── PDF download ──────────────────────────────────────────────────────────
   const handleDownload = useCallback(async () => {
@@ -266,8 +281,20 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
           />
         )}
 
-        {/* Steps 2–7 will be added in subsequent build phases */}
-        {step > 1 && step < TOTAL_STEPS && (
+        {step === 2 && (
+          <StepB
+            sectionB={data.section_b}
+            dob={data.dob}
+            idNumber={data.id_number}
+            attempted={attempted}
+            onSectionBChange={(section_b) => setData((d) => ({ ...d, section_b }))}
+            onDobChange={(dob) => setData((d) => ({ ...d, dob }))}
+            onIdNumberChange={(id_number) => setData((d) => ({ ...d, id_number }))}
+          />
+        )}
+
+        {/* Steps 3–6 will be added in subsequent build phases */}
+        {step > 2 && step < TOTAL_STEPS && (
           <div className="flex items-center justify-center py-20 border border-dashed border-[var(--color-line)]">
             <p className="text-sm text-[var(--color-muted)]">
               Step {step} — coming soon
