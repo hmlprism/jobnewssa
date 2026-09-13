@@ -6,12 +6,11 @@ import {
 } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { redirect } from "next/navigation";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/lib/navigation";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { ApplicantStatus } from "@/components/employer/applicant-status";
-import { timeAgo } from "@/lib/utils";
 import type { ApplicationStatus } from "@/types/database";
 import { ArrowLeft, FileText, MessageSquare } from "lucide-react";
 
@@ -33,18 +32,30 @@ export async function generateMetadata({
 }: {
   params: Promise<{ jobId: string }>;
 }) {
-  const { jobId } = await params;
+  const [{ jobId }, t] = await Promise.all([
+    params,
+    getTranslations("Employer.applicants"),
+  ]);
   const supabase = await createClient();
   const { data: job } = await supabase
     .from("jobs")
     .select("title")
     .eq("id", jobId)
     .single();
-  return { title: job ? `Applicants — ${job.title}` : "Applicants" };
+  return {
+    title: job
+      ? t("metaTitle", { jobTitle: job.title })
+      : t("metaTitleFallback"),
+  };
 }
 
 async function ApplicantsContent({ jobId }: { jobId: string }) {
-  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  const [user, locale, t, tJobs] = await Promise.all([
+    getAuthUser(),
+    getLocale(),
+    getTranslations("Employer.applicants"),
+    getTranslations("Jobs"),
+  ]);
   if (!user) redirect(`/${locale}/auth/login`);
 
   const supabase = await createClient();
@@ -116,21 +127,36 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
     <>
       <h1 className="font-display text-2xl font-semibold">{job.title}</h1>
       <p className="mt-1 text-sm text-[var(--color-muted)]">
-        {applicants.length} applicant{applicants.length !== 1 ? "s" : ""}
+        {t("count", { count: applicants.length })}
       </p>
 
       <div className="mt-8">
         {applicants.length === 0 ? (
           <div className="border border-[var(--color-line)] px-6 py-16 text-center">
-            <p className="font-display text-lg">No applications yet</p>
+            <p className="font-display text-lg">{t("empty.heading")}</p>
             <p className="mt-2 text-sm text-[var(--color-muted)]">
-              Applications will appear here as candidates apply.
+              {t("empty.body")}
             </p>
           </div>
         ) : (
           <div className="border border-[var(--color-line)]">
             {applicants.map((app) => {
               const unread = unreadByApp[app.id] ?? 0;
+
+              const daysOld = Math.floor(
+                (Date.now() - new Date(app.created_at).getTime()) / 86_400_000
+              );
+              const relTime =
+                daysOld === 0
+                  ? tJobs("relative.today")
+                  : daysOld === 1
+                  ? tJobs("relative.yesterday")
+                  : daysOld < 30
+                  ? tJobs("relative.daysAgo", { n: daysOld })
+                  : tJobs("relative.monthsAgo", {
+                      n: Math.floor(daysOld / 30),
+                    });
+
               return (
                 <div
                   key={app.id}
@@ -139,7 +165,7 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
                   <div className="flex items-start justify-between gap-6">
                     <div className="min-w-0">
                       <p className="font-medium">
-                        {app.profile?.full_name ?? "Applicant"}
+                        {app.profile?.full_name ?? t("applicantFallback")}
                       </p>
                       {app.profile?.headline && (
                         <p className="text-sm text-[var(--color-muted)]">
@@ -147,7 +173,7 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
                         </p>
                       )}
                       <p className="mt-1 text-xs text-[var(--color-muted)]">
-                        Applied {timeAgo(app.created_at)}
+                        {t("appliedAgo", { ago: relTime })}
                       </p>
                     </div>
 
@@ -165,11 +191,11 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
                             className="flex items-center gap-1 text-sm font-medium text-[var(--color-rust)] hover:underline"
                           >
                             <FileText size={13} />
-                            Resume
+                            {t("resume")}
                           </a>
                         ) : (
                           <span className="text-xs text-[var(--color-muted)]">
-                            No resume
+                            {t("noResume")}
                           </span>
                         )}
                         <Link
@@ -180,13 +206,13 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
                           <MessageSquare size={13} />
                           {unread > 0 ? (
                             <>
-                              Message{" "}
+                              {t("message")}{" "}
                               <span className="inline-block bg-[var(--color-rust)] px-1.5 py-0.5 text-xs font-semibold text-[var(--color-paper)]">
                                 {unread}
                               </span>
                             </>
                           ) : (
-                            "Message"
+                            t("message")
                           )}
                         </Link>
                       </div>
@@ -196,7 +222,7 @@ async function ApplicantsContent({ jobId }: { jobId: string }) {
                   {app.cover_note && (
                     <div className="mt-4 border-l-2 border-[var(--color-line)] pl-4">
                       <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-muted)]">
-                        Cover note
+                        {t("coverNote")}
                       </p>
                       <p className="whitespace-pre-wrap text-sm">
                         {app.cover_note}
@@ -243,7 +269,10 @@ export default async function ApplicantsPage({
 }: {
   params: Promise<{ jobId: string }>;
 }) {
-  const { jobId } = await params;
+  const [{ jobId }, t] = await Promise.all([
+    params,
+    getTranslations("Employer.applicants"),
+  ]);
 
   return (
     <>
@@ -255,7 +284,7 @@ export default async function ApplicantsPage({
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
         >
           <ArrowLeft size={14} />
-          Back to dashboard
+          {t("backToDashboard")}
         </Link>
 
         <Suspense fallback={<ApplicantsSkeleton />}>
