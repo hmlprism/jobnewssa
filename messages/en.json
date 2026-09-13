@@ -288,5 +288,94 @@
       "Doctoral Degree": "Doctoral Degree",
       "Other": "Other"
     }
+  },
+  "Profile": {
+    "page": {
+      "title": "My profile"
+    },
+    "privateBadge": "Private (only visible to you)",
+    "resume": {
+      "sectionHeading": "Resume",
+      "label": "Resume",
+      "labelHint": "(PDF, max 5 MB)",
+      "onFile": "Resume on file",
+      "viewOpening": "Opening\u2026",
+      "view": "View resume",
+      "chooseFile": "Choose file",
+      "fileTooLarge": "File must be under 5 MB.",
+      "replaceHint": "Upload a new file to replace your existing resume.",
+      "requiredHint": "A resume is required before you can apply for jobs."
+    },
+    "basicInfo": {
+      "sectionHeading": "Basic information",
+      "headline": "Professional headline",
+      "headlinePlaceholder": "e.g. Senior Software Engineer",
+      "phone": "Phone number",
+      "phonePlaceholder": "e.g. 082 123 4567 or +27 82 123 4567",
+      "province": "Province",
+      "provinceSelect": "Select province",
+      "city": "City / Town",
+      "cityPlaceholder": "e.g. Cape Town"
+    },
+    "qualifications": {
+      "sectionHeading": "Qualifications",
+      "nqfLevel": "Highest NQF level",
+      "nqfSelect": "Select NQF level",
+      "qualTitle": "Qualification title",
+      "qualTitlePlaceholder": "e.g. Bachelor of Commerce in Accounting",
+      "qualType": "Qualification type",
+      "qualTypeSelect": "Select type",
+      "profReg": "Professional registration number",
+      "profRegPlaceholder": "e.g. HPCSA: PR123456 / SAICA: 12345678",
+      "profRegHint": "Include the registering body prefix (HPCSA, SAICA, ECSA, SACAP, etc.).",
+      "profRegSelfReported": "Self-reported, not independently verified."
+    },
+    "workAuth": {
+      "sectionHeading": "Work authorisation",
+      "label": "Work authorisation status",
+      "select": "Select status",
+      "citizen": "South African Citizen",
+      "permanent_resident": "Permanent Resident",
+      "work_permit": "Work Permit Holder",
+      "other": "Other"
+    },
+    "jobPrefs": {
+      "sectionHeading": "Job preferences",
+      "preferredProvince": "Preferred province",
+      "noPreference": "No preference",
+      "preferredContract": "Preferred contract type",
+      "desiredSalary": "Minimum desired salary (ZAR / month)"
+    },
+    "equity": {
+      "sectionHeading": "Employment equity",
+      "disclaimer": "This information is stored privately and is never shared with employers or visible to other users. It may be used in aggregate, anonymised reporting only.",
+      "disabilityStatus": "Disability status",
+      "disabilityPlaceholder": "e.g. None / Physical / Hearing / Visual / Cognitive / Prefer not to say",
+      "eeDesignation": "EE designation",
+      "preferNotToSay": "Prefer not to say",
+      "eeOptions": {
+        "African": "African",
+        "Coloured": "Coloured",
+        "Indian / Asian": "Indian / Asian",
+        "White": "White",
+        "Not specified": "Not specified"
+      },
+      "encouragement": "We encourage you to complete this section."
+    },
+    "errors": {
+      "phoneDigitsOnly": "Phone number must contain digits only.",
+      "phoneInvalid": "Enter a valid South African phone number. Use 10 digits starting with 0 (e.g. 082 123 4567) or international format (e.g. +27 82 123 4567).",
+      "saicaDigits": "SAICA membership numbers are 8 digits (e.g. SAICA: 12345678).",
+      "ecsaNumeric": "ECSA registration numbers are numeric (e.g. ECSA: 123456).",
+      "sacapFormat": "Check your SACAP number format (e.g. SACAP: 12345).",
+      "hpcsaPrefix": "Please include your HPCSA registration number after the prefix.",
+      "fixErrors": "Please fix the errors above before saving.",
+      "fileTooLarge": "File must be under 5 MB."
+    },
+    "save": {
+      "saving": "Saving\u2026",
+      "saveProfile": "Save profile",
+      "saved": "Profile saved."
+    }
   }
 }

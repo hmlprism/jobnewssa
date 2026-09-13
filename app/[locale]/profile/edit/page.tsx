@@ -4,16 +4,19 @@ import {
   getAuthProfile,
 } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { ProfileEditForm } from "@/components/profile/profile-edit-form";
 import type { Profile } from "@/types/database";
 
-export const metadata = { title: "My Profile" };
+export async function generateMetadata() {
+  const t = await getTranslations("Profile.page");
+  return { title: t("title") };
+}
 
 export default async function ProfileEditPage() {
-  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  const [user, locale, t] = await Promise.all([getAuthUser(), getLocale(), getTranslations("Profile.page")]);
   if (!user) redirect(`/${locale}/auth/login`);
 
   const supabase = await createClient();
@@ -37,7 +40,7 @@ export default async function ProfileEditPage() {
       <SiteHeader />
       <main className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
         <h1 className="mb-8 font-display text-2xl font-semibold">
-          My profile
+          {t("title")}
         </h1>
         <ProfileEditForm profile={fullProfile} userId={user.id} />
       </main>

@@ -288,5 +288,94 @@
       "Doctoral Degree": "Doktorsgraad",
       "Other": "Ander"
     }
+  },
+  "Profile": {
+    "page": {
+      "title": "My profiel"
+    },
+    "privateBadge": "Privaat (slegs sigbaar vir jou)",
+    "resume": {
+      "sectionHeading": "CV",
+      "label": "CV",
+      "labelHint": "(PDF, maks 5 MB)",
+      "onFile": "CV in l\u00eaer",
+      "viewOpening": "Besig om oop te maak\u2026",
+      "view": "Bekyk CV",
+      "chooseFile": "Kies l\u00eaer",
+      "fileTooLarge": "L\u00eaer moet onder 5 MB wees.",
+      "replaceHint": "Laai \u2019n nuwe l\u00eaer op om jou bestaande CV te vervang.",
+      "requiredHint": "Jy moet eers \u2019n CV oplaai voordat jy aansoek kan doen."
+    },
+    "basicInfo": {
+      "sectionHeading": "Basiese inligting",
+      "headline": "Professionele opskrif",
+      "headlinePlaceholder": "bv. Senior Sagteware-ingenieur",
+      "phone": "Telefoonnommer",
+      "phonePlaceholder": "bv. 082 123 4567 of +27 82 123 4567",
+      "province": "Provinsie",
+      "provinceSelect": "Kies provinsie",
+      "city": "Stad / Dorp",
+      "cityPlaceholder": "bv. Kaapstad"
+    },
+    "qualifications": {
+      "sectionHeading": "Kwalifikasies",
+      "nqfLevel": "Hoogste NKR-vlak",
+      "nqfSelect": "Kies NKR-vlak",
+      "qualTitle": "Kwalifikasie-titel",
+      "qualTitlePlaceholder": "bv. Baccalaureus in Rekeningkunde",
+      "qualType": "Kwalifikasie-tipe",
+      "qualTypeSelect": "Kies tipe",
+      "profReg": "Professionele registrasienommer",
+      "profRegPlaceholder": "bv. HPCSA: PR123456 / SAICA: 12345678",
+      "profRegHint": "Sluit die registrerende liggaam se voorvoegsel in (HPCSA, SAICA, ECSA, SACAP, ens.).",
+      "profRegSelfReported": "Self-gerapporteer, nie onafhanklik geverifieer nie."
+    },
+    "workAuth": {
+      "sectionHeading": "Werkmagtiging",
+      "label": "Werkmagtigingstatus",
+      "select": "Kies status",
+      "citizen": "Suid-Afrikaanse Burger",
+      "permanent_resident": "Permanente Inwoner",
+      "work_permit": "Werkspermit-houer",
+      "other": "Ander"
+    },
+    "jobPrefs": {
+      "sectionHeading": "Werkvoorkeure",
+      "preferredProvince": "Voorkeurprovinsie",
+      "noPreference": "Geen voorkeur",
+      "preferredContract": "Voorkeur kontraktipe",
+      "desiredSalary": "Minimum gewenste salaris (ZAR / maand)"
+    },
+    "equity": {
+      "sectionHeading": "Indiensnemingsgelykheid",
+      "disclaimer": "Hierdie inligting word privaat gestoor en word nooit met werkgewers gedeel of vir ander gebruikers sigbaar nie. Dit kan slegs gebruik word in geaggregeerde, geanonimiseerde verslagdoening.",
+      "disabilityStatus": "Gestremdheids-status",
+      "disabilityPlaceholder": "bv. Geen / Fisies / Gehoor / Visueel / Kognitief / Verkies om nie te s\u00ea nie",
+      "eeDesignation": "BV-aanwysing",
+      "preferNotToSay": "Verkies om nie te s\u00ea nie",
+      "eeOptions": {
+        "African": "Swart",
+        "Coloured": "Kleurling",
+        "Indian / Asian": "Indi\u00ebr / Asiaat",
+        "White": "Wit",
+        "Not specified": "Nie gespesifiseer nie"
+      },
+      "encouragement": "Ons moedig jou aan om hierdie afdeling te voltooi."
+    },
+    "errors": {
+      "phoneDigitsOnly": "Telefoonnommer moet slegs syfers bevat.",
+      "phoneInvalid": "Voer \u2019n geldige Suid-Afrikaanse telefoonnommer in. Gebruik 10 syfers wat met 0 begin (bv. 082 123 4567) of internasionale formaat (bv. +27 82 123 4567).",
+      "saicaDigits": "SAICA-lidmaatskapsnommers bestaan uit 8 syfers (bv. SAICA: 12345678).",
+      "ecsaNumeric": "ECSA-registrasienommers is numeries (bv. ECSA: 123456).",
+      "sacapFormat": "Kontroleer jou SACAP-nommer-formaat (bv. SACAP: 12345).",
+      "hpcsaPrefix": "Sluit asseblief jou HPCSA-registrasienommer in na die voorvoegsel.",
+      "fixErrors": "Maak asseblief die foute hierbo reg voor jy stoor.",
+      "fileTooLarge": "L\u00eaer moet onder 5 MB wees."
+    },
+    "save": {
+      "saving": "Besig om te stoor\u2026",
+      "saveProfile": "Stoor profiel",
+      "saved": "Profiel gestoor."
+    }
   }
 }
