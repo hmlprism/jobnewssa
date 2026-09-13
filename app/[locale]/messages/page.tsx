@@ -1,12 +1,16 @@
 import { redirect } from "next/navigation";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/lib/navigation";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { createClient, getAuthUser } from "@/lib/supabase/server";
 import { MessageSquare } from "lucide-react";
 
-export const metadata = { title: "Messages" };
+export async function generateMetadata() {
+  const t = await getTranslations("Messaging.page");
+  return { title: t("title") };
+}
+
 export const dynamic = "force-dynamic";
 
 type ConversationSummary = {
@@ -20,7 +24,11 @@ type ConversationSummary = {
   myRole: "applicant" | "employer";
 };
 
-function formatInboxTime(iso: string): string {
+function formatInboxTime(
+  iso: string,
+  dateFmtLocale: string,
+  yesterday: string
+): string {
   const d = new Date(iso);
   const now = new Date();
   const todayStart = new Date(
@@ -34,15 +42,15 @@ function formatInboxTime(iso: string): string {
   );
 
   if (diffDays === 0) {
-    return d.toLocaleTimeString("en-ZA", {
+    return d.toLocaleTimeString(dateFmtLocale, {
       hour: "2-digit",
       minute: "2-digit",
     });
   }
-  if (diffDays === 1) return "Yesterday";
+  if (diffDays === 1) return yesterday;
   if (diffDays < 7)
-    return d.toLocaleDateString("en-ZA", { weekday: "short" });
-  return d.toLocaleDateString("en-ZA", {
+    return d.toLocaleDateString(dateFmtLocale, { weekday: "short" });
+  return d.toLocaleDateString(dateFmtLocale, {
     day: "numeric",
     month: "short",
     year: d.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
@@ -55,7 +63,9 @@ function previewBody(body: string): string {
 }
 
 async function getInboxConversations(
-  userId: string
+  userId: string,
+  employerFallback: string,
+  applicantFallback: string
 ): Promise<ConversationSummary[]> {
   const supabase = await createClient();
 
@@ -107,8 +117,8 @@ async function getInboxConversations(
 
     const otherPartyName =
       myRole === "applicant"
-        ? (job.company_name_raw ?? "Employer")
-        : (applicantProfile?.full_name ?? "Applicant");
+        ? (job.company_name_raw ?? employerFallback)
+        : (applicantProfile?.full_name ?? applicantFallback);
 
     return {
       applicationId: app.id,
@@ -132,7 +142,17 @@ async function getInboxConversations(
   return conversations;
 }
 
-function ConversationRow({ conv }: { conv: ConversationSummary }) {
+function ConversationRow({
+  conv,
+  dateFmtLocale,
+  yesterday,
+  noPreview,
+}: {
+  conv: ConversationSummary;
+  dateFmtLocale: string;
+  yesterday: string;
+  noPreview: string;
+}) {
   const hasUnread = conv.unreadCount > 0;
   return (
     <Link
@@ -160,13 +180,13 @@ function ConversationRow({ conv }: { conv: ConversationSummary }) {
             </span>
           </p>
           <p className="mt-0.5 truncate text-sm text-[var(--color-muted)]">
-            {conv.lastBody ? previewBody(conv.lastBody) : "No messages yet"}
+            {conv.lastBody ? previewBody(conv.lastBody) : noPreview}
           </p>
         </div>
         <div className="flex flex-shrink-0 flex-col items-end gap-1">
           {conv.lastAt && (
             <span className="whitespace-nowrap text-xs text-[var(--color-muted)]">
-              {formatInboxTime(conv.lastAt)}
+              {formatInboxTime(conv.lastAt, dateFmtLocale, yesterday)}
             </span>
           )}
           {hasUnread && (
@@ -183,9 +203,15 @@ function ConversationRow({ conv }: { conv: ConversationSummary }) {
 function ConversationGroup({
   label,
   conversations,
+  dateFmtLocale,
+  yesterday,
+  noPreview,
 }: {
   label: string;
   conversations: ConversationSummary[];
+  dateFmtLocale: string;
+  yesterday: string;
+  noPreview: string;
 }) {
   if (conversations.length === 0) return null;
   return (
@@ -195,7 +221,13 @@ function ConversationGroup({
       </h2>
       <div>
         {conversations.map((conv) => (
-          <ConversationRow key={conv.applicationId} conv={conv} />
+          <ConversationRow
+            key={conv.applicationId}
+            conv={conv}
+            dateFmtLocale={dateFmtLocale}
+            yesterday={yesterday}
+            noPreview={noPreview}
+          />
         ))}
       </div>
     </section>
@@ -203,10 +235,22 @@ function ConversationGroup({
 }
 
 export default async function MessagesPage() {
-  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  const [user, locale, t] = await Promise.all([
+    getAuthUser(),
+    getLocale(),
+    getTranslations("Messaging"),
+  ]);
   if (!user) redirect(`/${locale}/auth/login`);
 
-  const conversations = await getInboxConversations(user.id);
+  const dateFmtLocale = locale === "af" ? "af-ZA" : "en-ZA";
+  const yesterday = t("yesterday");
+  const noPreview = t("noPreview");
+
+  const conversations = await getInboxConversations(
+    user.id,
+    t("roleEmployer"),
+    t("roleApplicant")
+  );
 
   const asSeeker = conversations.filter((c) => c.myRole === "applicant");
   const asEmployer = conversations.filter((c) => c.myRole === "employer");
@@ -216,7 +260,9 @@ export default async function MessagesPage() {
     <>
       <SiteHeader />
       <main className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
-        <h1 className="mb-8 font-display text-2xl font-semibold">Messages</h1>
+        <h1 className="mb-8 font-display text-2xl font-semibold">
+          {t("page.title")}
+        </h1>
 
         {conversations.length === 0 ? (
           <div className="border border-[var(--color-line)] px-6 py-14 text-center">
@@ -224,10 +270,9 @@ export default async function MessagesPage() {
               size={32}
               className="mx-auto mb-3 text-[var(--color-muted)]"
             />
-            <p className="font-display text-lg">No conversations yet</p>
+            <p className="font-display text-lg">{t("empty.heading")}</p>
             <p className="mt-2 text-sm text-[var(--color-muted)]">
-              Conversations start when an employer messages an applicant, or
-              vice versa, after a job application is submitted.
+              {t("empty.body")}
             </p>
             <div className="mt-6 flex justify-center gap-4 text-sm">
               <Link
@@ -235,7 +280,7 @@ export default async function MessagesPage() {
                 prefetch={false}
                 className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
               >
-                Find jobs to apply for
+                {t("empty.findJobs")}
               </Link>
               <span className="text-[var(--color-muted)]">·</span>
               <Link
@@ -243,25 +288,37 @@ export default async function MessagesPage() {
                 prefetch={false}
                 className="font-medium underline underline-offset-2 hover:text-[var(--color-rust)]"
               >
-                My applications
+                {t("empty.myApplications")}
               </Link>
             </div>
           </div>
         ) : showRoleLabels ? (
           <div className="space-y-8">
             <ConversationGroup
-              label="As job seeker"
+              label={t("rowGroupSeeker")}
               conversations={asSeeker}
+              dateFmtLocale={dateFmtLocale}
+              yesterday={yesterday}
+              noPreview={noPreview}
             />
             <ConversationGroup
-              label="As employer"
+              label={t("rowGroupEmployer")}
               conversations={asEmployer}
+              dateFmtLocale={dateFmtLocale}
+              yesterday={yesterday}
+              noPreview={noPreview}
             />
           </div>
         ) : (
           <div className="border-t border-[var(--color-line)]">
             {conversations.map((conv) => (
-              <ConversationRow key={conv.applicationId} conv={conv} />
+              <ConversationRow
+                key={conv.applicationId}
+                conv={conv}
+                dateFmtLocale={dateFmtLocale}
+                yesterday={yesterday}
+                noPreview={noPreview}
+              />
             ))}
           </div>
         )}

@@ -378,6 +378,36 @@
       "saved": "Profile saved."
     }
   },
+  "Messaging": {
+    "page": {
+      "title": "Messages"
+    },
+    "empty": {
+      "heading": "No conversations yet",
+      "body": "Conversations start when an employer messages an applicant, or vice versa, after a job application is submitted.",
+      "findJobs": "Find jobs to apply for",
+      "myApplications": "My applications"
+    },
+    "noPreview": "No messages yet",
+    "noMessages": "No messages yet. Send one to get the conversation started.",
+    "rowGroupSeeker": "As job seeker",
+    "rowGroupEmployer": "As employer",
+    "roleEmployer": "Employer",
+    "roleApplicant": "Applicant",
+    "rePrefix": "Re:",
+    "backToApplicants": "Back to applicants",
+    "backToApplications": "Back to my applications",
+    "you": "You",
+    "failedToSend": "Failed to send. Please try again.",
+    "writePlaceholder": "Write your message\u2026",
+    "messageAriaLabel": "Message",
+    "sendAriaLabel": "Send message",
+    "sending": "Sending\u2026",
+    "send": "Send",
+    "yesterday": "Yesterday",
+    "todayAt": "Today at {time}",
+    "dateAt": "{date} at {time}"
+  },
   "Saved": {
     "page": {
       "title": "Saved jobs"

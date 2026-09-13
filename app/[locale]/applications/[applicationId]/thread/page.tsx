@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { redirect } from "next/navigation";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/lib/navigation";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
@@ -19,7 +19,11 @@ async function ThreadContent({
 }: {
   applicationId: string;
 }) {
-  const [user, locale] = await Promise.all([getAuthUser(), getLocale()]);
+  const [user, locale, t] = await Promise.all([
+    getAuthUser(),
+    getLocale(),
+    getTranslations("Messaging"),
+  ]);
   if (!user) redirect(`/${locale}/auth/login`);
 
   const supabase = await createClient();
@@ -76,21 +80,21 @@ async function ThreadContent({
   }));
 
   const otherPartyName = isApplicant
-    ? (job.company_name_raw ?? "Employer")
-    : (applicantProfile?.full_name ?? "Applicant");
+    ? (job.company_name_raw ?? t("roleEmployer"))
+    : (applicantProfile?.full_name ?? t("roleApplicant"));
 
   return (
     <>
       {/* Context header */}
       <div className="mb-6 border-b border-[var(--color-line)] pb-4">
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
-          {isApplicant ? "Employer" : "Applicant"}
+          {isApplicant ? t("roleEmployer") : t("roleApplicant")}
         </p>
         <h1 className="mt-1 font-display text-2xl font-semibold">
           {otherPartyName}
         </h1>
         <p className="mt-1 text-sm text-[var(--color-muted)]">
-          Re:{" "}
+          {t("rePrefix")}{" "}
           <Link
             href={`/jobs/${job.slug}`}
             prefetch={false}
@@ -140,13 +144,16 @@ export default async function ThreadPage({
   params: Promise<{ applicationId: string }>;
   searchParams: Promise<{ from?: string }>;
 }) {
-  const { applicationId } = await params;
-  const { from } = await searchParams;
+  const [{ applicationId }, { from }, t] = await Promise.all([
+    params,
+    searchParams,
+    getTranslations("Messaging"),
+  ]);
 
   const backHref = from
     ? `/employer/dashboard/${from}/applicants`
     : "/applications";
-  const backLabel = from ? "Back to applicants" : "Back to my applications";
+  const backLabel = from ? t("backToApplicants") : t("backToApplications");
 
   return (
     <>

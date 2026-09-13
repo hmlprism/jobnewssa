@@ -378,6 +378,36 @@
       "saved": "Profiel gestoor."
     }
   },
+  "Messaging": {
+    "page": {
+      "title": "Boodskappe"
+    },
+    "empty": {
+      "heading": "Nog geen gesprekke nie",
+      "body": "Gesprekke begin wanneer \u2019n werkgewer \u2019n aansoeknemer of omgekeerd boodskap stuur, nadat \u2019n werksaansoek ingestuur is.",
+      "findJobs": "Soek werke om aansoek te doen",
+      "myApplications": "My aansoeke"
+    },
+    "noPreview": "Nog geen boodskappe nie",
+    "noMessages": "Nog geen boodskappe nie. Stuur een om die gesprek te begin.",
+    "rowGroupSeeker": "As werksoeker",
+    "rowGroupEmployer": "As werkgewer",
+    "roleEmployer": "Werkgewer",
+    "roleApplicant": "Aansoeknemer",
+    "rePrefix": "Re:",
+    "backToApplicants": "Terug na aansoekers",
+    "backToApplications": "Terug na my aansoeke",
+    "you": "Jy",
+    "failedToSend": "Kon nie stuur nie. Probeer asseblief weer.",
+    "writePlaceholder": "Skryf jou boodskap\u2026",
+    "messageAriaLabel": "Boodskap",
+    "sendAriaLabel": "Stuur boodskap",
+    "sending": "Besig om te stuur\u2026",
+    "send": "Stuur",
+    "yesterday": "Gister",
+    "todayAt": "Vandag om {time}",
+    "dateAt": "{date} om {time}"
+  },
   "Saved": {
     "page": {
       "title": "Gestore werke"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
@@ -11,6 +12,7 @@ export function SendMessageForm({
   applicationId: string;
   userId: string;
 }) {
+  const t = useTranslations("Messaging");
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +36,7 @@ export function SendMessageForm({
     });
 
     if (err) {
-      setError("Failed to send. Please try again.");
+      setError(t("failedToSend"));
       setSending(false);
       return;
     }
@@ -49,7 +51,7 @@ export function SendMessageForm({
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
-        placeholder="Write your message…"
+        placeholder={t("writePlaceholder")}
         rows={3}
         disabled={sending}
         className="w-full resize-none border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-sm placeholder:text-[var(--color-muted)] focus:outline-none focus:border-[var(--color-ink)] disabled:opacity-50"
@@ -62,7 +64,7 @@ export function SendMessageForm({
         disabled={sending || !body.trim()}
         className="mt-2 bg-[var(--color-rust)] px-4 py-2 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)] disabled:opacity-50 disabled:pointer-events-none"
       >
-        {sending ? "Sending…" : "Send"}
+        {sending ? t("sending") : t("send")}
       </button>
     </form>
   );
