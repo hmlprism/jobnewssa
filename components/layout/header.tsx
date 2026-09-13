@@ -6,6 +6,7 @@ import { LinkButton } from "@/components/ui/button";
 import { getAuthUser, getAuthProfile, createClient } from "@/lib/supabase/server";
 import { UserMenu } from "@/components/layout/user-menu";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 
 export async function SiteHeader() {
   const t = await getTranslations("Header");
@@ -48,8 +49,9 @@ export async function SiteHeader() {
           <NavLink href="/employer/post">{t("nav.postJob")}</NavLink>
         </nav>
 
-        {/* Right side: auth controls + mobile hamburger */}
+        {/* Right side: locale switcher + auth controls + mobile hamburger */}
         <div className="flex items-center gap-3">
+          <LocaleSwitcher className="hidden lg:flex" />
           <Suspense fallback={<AuthControlsSkeleton />}>
             <AuthControls />
           </Suspense>

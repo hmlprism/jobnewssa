@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/navigation";
+import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 
 export function MobileNav({
   isLoggedIn,
@@ -78,6 +79,10 @@ export function MobileNav({
                   )}
                 </MobileLink>
               )}
+
+              <div className="mt-4 border-t border-[var(--color-line)] pt-4">
+                <LocaleSwitcher />
+              </div>
 
               {!isLoggedIn && (
                 <div className="mt-4 space-y-2 border-t border-[var(--color-line)] pt-4">
