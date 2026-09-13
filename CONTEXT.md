@@ -144,8 +144,8 @@ canonical implementation.
 
 ### SiteHeader — streaming Suspense architecture
 
-`SiteHeader` is a synchronous function that renders the static shell
-immediately. Auth-dependent parts are async Server Components inside
+`SiteHeader` is an **async** function (required to `await getTranslations("Header")`
+from next-intl). Auth-dependent parts are async Server Components inside
 `<Suspense>` boundaries:
 
 ```
@@ -197,6 +197,50 @@ runs inside a `<Suspense>` on the job detail page. It:
 
 The client component receives its initial state as props and needs no
 `auth.getUser()` call on mount.
+
+---
+
+## Internationalisation (i18n)
+
+### Setup
+next-intl 4.14.4. All user-facing pages live under `app/[locale]/` — URLs are
+`/en/...` and `/af/...`. The following stay at the root and are **not** locale-prefixed:
+`app/api/*`, `app/auth/callback/route.ts` (Supabase-registered redirect URI — must
+not move), and `app/layout.tsx`.
+
+Supported locales are defined in `lib/i18n-config.ts`: `en` (default) and `af`
+(Afrikaans). The active locale is resolved per-request in `i18n/request.ts` and
+injected via `NextIntlClientProvider` in `app/[locale]/layout.tsx`.
+
+### Navigation — always use `@/lib/navigation`
+**RULE: Import `Link`, `useRouter`, and `usePathname` from `@/lib/navigation`,
+never from `next/link` or `next-intl/navigation` directly.**
+
+`lib/navigation.ts` wraps `createNavigation` from next-intl, which auto-prefixes
+hrefs with the current locale. Using `next/link` directly bypasses this and
+produces locale-stripped URLs (and TS errors if you forget the prefix).
+
+### Translations
+String files: `messages/en.json` and `messages/af.json`. All pages are fully
+extracted. Namespaces: `Header`, `Auth`, `Home`, `Jobs`, `Shared`, `Profile`,
+`AccountSettings`, `Applications`, `Saved`, `Messaging`, `News`, `Employer`
+(sub-namespaces: `dashboard`, `applicants`, `verify`, `post`).
+
+Server components use `getTranslations("Namespace")` from `next-intl/server`
+(requires `await`). Client components use `useTranslations("Namespace")` from
+`next-intl`. ICU message format is used for plurals and relative time throughout.
+
+### Locale switcher
+`components/layout/locale-switcher.tsx` — `"use client"` component rendering
+`EN | AF`. Active locale = ink-coloured span; inactive = muted link with rust
+hover. Uses `useSearchParams()` to preserve the current URL's query string
+(e.g. active job filters) when switching locale. Rendered in the desktop header
+(`hidden lg:flex`) and in the mobile slide-out nav panel.
+
+### Auth redirects
+Protected pages redirect to `/${locale}/auth/login` (locale-aware) rather than
+the hardcoded `/auth/login` path. Without this, proxy.ts would add an extra
+redirect hop to normalise the missing locale prefix.
 
 ---
 
@@ -305,11 +349,12 @@ triggers a TypeScript inference bug in supabase-js 2.114 when using named
 interfaces. All query results are typed at the call site using the types in
 `types/database.ts` instead.
 
-### middleware deprecation
-`middleware.ts` at the project root is the Supabase session-refresh middleware.
-Next.js 16.3.4 deprecates this convention in favour of `proxy`. It continues
-to function correctly but logs a build warning. Migration can be done with:
-`npx @next/codemod@canary middleware-to-proxy .`
+### middleware → proxy migration (complete)
+The Supabase session-refresh middleware lives in `proxy.ts` at the project root.
+The official Next.js codemod (`npx @next/codemod@canary middleware-to-proxy .`)
+has already been applied on this branch. Both the Supabase `updateSession` call
+and the next-intl `intlMiddleware` run inside `proxy.ts`, with Supabase cookies
+forwarded onto the intl response. No build warning is emitted.
 
 ---
 
