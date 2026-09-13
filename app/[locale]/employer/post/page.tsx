@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { SiteFooter } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
 import {
   SA_PROVINCES,
   CONTRACT_TYPE_LABELS,
@@ -15,17 +15,8 @@ import {
 } from "@/types/database";
 
 const NQF_LEVELS = [
-  { value: "1", label: "Level 1: Grade 9" },
-  { value: "2", label: "Level 2: Grade 10" },
-  { value: "3", label: "Level 3: Grade 11" },
-  { value: "4", label: "Level 4: National Senior Certificate (Matric)" },
-  { value: "5", label: "Level 5: Higher Certificate" },
-  { value: "6", label: "Level 6: Diploma / Advanced Certificate" },
-  { value: "7", label: "Level 7: Bachelor's Degree / Advanced Diploma" },
-  { value: "8", label: "Level 8: Honours / Postgraduate Diploma" },
-  { value: "9", label: "Level 9: Master's Degree" },
-  { value: "10", label: "Level 10: Doctoral Degree" },
-];
+  "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+] as const;
 
 const QUALIFICATION_TYPES = [
   "Certificate",
@@ -40,14 +31,17 @@ const QUALIFICATION_TYPES = [
   "Master's Degree",
   "Doctoral Degree",
   "Other",
-];
+] as const;
+
 import { slugify } from "@/lib/slug";
 
 const inputClass =
   "w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm";
 
 export default function PostJobPage() {
+  const t = useTranslations("Employer.post");
   const tShared = useTranslations("Shared");
+  const tJobs = useTranslations("Jobs");
   const router = useRouter();
   const [authState, setAuthState] = useState<
     "loading" | "signed_out" | "wrong_role" | "ready"
@@ -112,7 +106,7 @@ export default function PostJobPage() {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      setError("You must be signed in.");
+      setError(t("mustBeSignedIn"));
       setSubmitting(false);
       return;
     }
@@ -204,17 +198,17 @@ export default function PostJobPage() {
     return (
       <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
         <h1 className="font-display text-2xl font-semibold">
-          Sign in to post a job
+          {t("signedOut.heading")}
         </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          You need an employer account to post vacancies.
+          {t("signedOut.body")}
         </p>
         <Link
           href="/auth/signup"
           prefetch={false}
           className="mt-6 inline-flex bg-[var(--color-rust)] px-6 py-3 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
         >
-          Create employer account
+          {t("signedOut.createAccount")}
         </Link>
       </main>
     );
@@ -224,11 +218,10 @@ export default function PostJobPage() {
     return (
       <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
         <h1 className="font-display text-2xl font-semibold">
-          Employer account required
+          {t("wrongRole.heading")}
         </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Your account is registered as a job seeker. Contact support to switch
-          to an employer account.
+          {t("wrongRole.body")}
         </p>
       </main>
     );
@@ -237,9 +230,11 @@ export default function PostJobPage() {
   if (success) {
     return (
       <main className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6">
-        <h1 className="font-display text-2xl font-semibold">Job posted</h1>
+        <h1 className="font-display text-2xl font-semibold">
+          {t("success.heading")}
+        </h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          Your vacancy is live. Redirecting to your dashboard…
+          {t("success.body")}
         </p>
       </main>
     );
@@ -248,32 +243,32 @@ export default function PostJobPage() {
   return (
     <>
       <main className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
-        <h1 className="font-display text-2xl font-semibold">Post a job</h1>
+        <h1 className="font-display text-2xl font-semibold">{t("heading")}</h1>
         <p className="mt-1.5 text-sm text-[var(--color-muted)]">
-          Free to post. Live immediately, expires after 30 days.
+          {t("subheading")}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           {/* Section: Basic details */}
           <fieldset className="space-y-4">
             <legend className="mb-3 border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
-              Job details
+              {t("sections.jobDetails")}
             </legend>
             <Field
-              label="Company name"
+              label={t("fields.companyName")}
               value={companyName}
               onChange={setCompanyName}
               required
             />
             <Field
-              label="Job title"
+              label={t("fields.jobTitle")}
               value={title}
               onChange={setTitle}
               required
             />
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium">
-                Job description
+                {t("fields.jobDescription")}
               </span>
               <textarea
                 value={description}
@@ -281,7 +276,7 @@ export default function PostJobPage() {
                 required
                 rows={8}
                 className={`${inputClass} p-3`}
-                placeholder="Responsibilities, requirements, how to apply..."
+                placeholder={t("placeholders.jobDescription")}
               />
             </label>
           </fieldset>
@@ -289,12 +284,12 @@ export default function PostJobPage() {
           {/* Section: Location */}
           <fieldset className="space-y-4">
             <legend className="mb-3 border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
-              Location
+              {t("sections.location")}
             </legend>
             <div className="grid grid-cols-2 gap-4">
               <label className="block">
                 <span className="mb-1.5 block text-sm font-medium">
-                  Province
+                  {t("fields.province")}
                 </span>
                 <select
                   value={province}
@@ -308,7 +303,11 @@ export default function PostJobPage() {
                   ))}
                 </select>
               </label>
-              <Field label="City / town" value={city} onChange={setCity} />
+              <Field
+                label={t("fields.city")}
+                value={city}
+                onChange={setCity}
+              />
             </div>
             <label className="flex cursor-pointer items-center gap-2 text-sm">
               <input
@@ -316,19 +315,19 @@ export default function PostJobPage() {
                 checked={isRemote}
                 onChange={(e) => setIsRemote(e.target.checked)}
               />
-              This is a remote position
+              {t("checkboxes.isRemote")}
             </label>
           </fieldset>
 
           {/* Section: Classification */}
           <fieldset className="space-y-4">
             <legend className="mb-3 border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
-              Classification & salary
+              {t("sections.classificationSalary")}
             </legend>
             <div className="grid grid-cols-2 gap-4">
               <label className="block">
                 <span className="mb-1.5 block text-sm font-medium">
-                  Contract type
+                  {t("fields.contractType")}
                 </span>
                 <select
                   value={contractType}
@@ -340,7 +339,7 @@ export default function PostJobPage() {
                   {(Object.keys(CONTRACT_TYPE_LABELS) as ContractType[]).map(
                     (ct) => (
                       <option key={ct} value={ct}>
-                        {CONTRACT_TYPE_LABELS[ct]}
+                        {tJobs(`contractTypes.${ct}`)}
                       </option>
                     )
                   )}
@@ -348,14 +347,14 @@ export default function PostJobPage() {
               </label>
               <label className="block">
                 <span className="mb-1.5 block text-sm font-medium">
-                  Sector
+                  {t("fields.sector")}
                 </span>
                 <select
                   value={sectorId}
                   onChange={(e) => setSectorId(e.target.value)}
                   className={inputClass}
                 >
-                  <option value="">Select sector</option>
+                  <option value="">{t("fields.selectSector")}</option>
                   {sectors.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.name}
@@ -371,19 +370,19 @@ export default function PostJobPage() {
                 checked={marketRelated}
                 onChange={(e) => setMarketRelated(e.target.checked)}
               />
-              Salary is market related (don&apos;t specify a figure)
+              {t("checkboxes.marketRelated")}
             </label>
 
             {!marketRelated && (
               <div className="grid grid-cols-2 gap-4">
                 <Field
-                  label="Min salary (R/month)"
+                  label={t("fields.salaryMin")}
                   type="number"
                   value={salaryMin}
                   onChange={setSalaryMin}
                 />
                 <Field
-                  label="Max salary (R/month)"
+                  label={t("fields.salaryMax")}
                   type="number"
                   value={salaryMax}
                   onChange={setSalaryMax}
@@ -395,23 +394,23 @@ export default function PostJobPage() {
           {/* Section: Requirements */}
           <fieldset className="space-y-4">
             <legend className="mb-3 border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
-              Requirements{" "}
+              {t("sections.requirements")}{" "}
               <span className="font-normal normal-case tracking-normal">
-                (optional)
+                {t("sections.optional")}
               </span>
             </legend>
             <div className="grid grid-cols-2 gap-4">
               <label className="block">
                 <span className="mb-1.5 block text-sm font-medium">
-                  Min. NQF level required
+                  {t("fields.nqfLevel")}
                 </span>
                 <select
                   value={requiredNqfLevel}
                   onChange={(e) => setRequiredNqfLevel(e.target.value)}
                   className={inputClass}
                 >
-                  <option value="">No minimum</option>
-                  {NQF_LEVELS.map(({ value }) => (
+                  <option value="">{t("fields.nqfNoMin")}</option>
+                  {NQF_LEVELS.map((value) => (
                     <option key={value} value={value}>
                       {tShared(`nqfLevels.${value}`)}
                     </option>
@@ -420,7 +419,7 @@ export default function PostJobPage() {
               </label>
               <label className="block">
                 <span className="mb-1.5 block text-sm font-medium">
-                  Required qualification type
+                  {t("fields.qualType")}
                 </span>
                 <select
                   value={requiredQualificationType}
@@ -429,7 +428,7 @@ export default function PostJobPage() {
                   }
                   className={inputClass}
                 >
-                  <option value="">No specific requirement</option>
+                  <option value="">{t("fields.qualNoReq")}</option>
                   {QUALIFICATION_TYPES.map((qualType) => (
                     <option key={qualType} value={qualType}>
                       {tShared(`qualificationTypes.${qualType}`)}
@@ -443,25 +442,25 @@ export default function PostJobPage() {
           {/* Section: EE & accessibility */}
           <fieldset className="space-y-4">
             <legend className="mb-3 border-b border-[var(--color-line)] pb-2 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
-              Equity & accessibility{" "}
+              {t("sections.equity")}{" "}
               <span className="font-normal normal-case tracking-normal">
-                (optional)
+                {t("sections.optional")}
               </span>
             </legend>
             <label className="block">
               <span className="mb-1.5 block text-sm font-medium">
-                Employment Equity / Affirmative Action statement
+                {t("fields.eeNote")}
               </span>
               <textarea
                 value={eeNote}
                 onChange={(e) => setEeNote(e.target.value)}
                 rows={3}
                 className={`${inputClass} p-3`}
-                placeholder="e.g. Preference will be given to candidates from designated groups as defined in the Employment Equity Act."
+                placeholder={t("placeholders.eeNote")}
               />
             </label>
             <Field
-              label="Accessibility accommodation contact"
+              label={t("fields.accommodation")}
               value={accommodationContact}
               onChange={setAccommodationContact}
             />
@@ -477,7 +476,7 @@ export default function PostJobPage() {
             size="lg"
             className="w-full justify-center"
           >
-            {submitting ? "Posting…" : "Post job"}
+            {submitting ? t("submitting") : t("submit")}
           </Button>
         </form>
       </main>
