@@ -32,7 +32,9 @@ const GENDER_CHOICE: Record<string, string> = {
 
 // Group4–Group14 — all standard Yes/No groups
 // Choice6 = Yes (left/first widget), Choice7 = No (right/second widget)
-function yesNo(val: boolean): string {
+// Returns "" for null (unanswered) — the radio helper skips empty strings, leaving the field blank.
+function yesNo(val: boolean | null): string {
+  if (val === null) return "";
   return val ? "Choice6" : "Choice7";
 }
 
@@ -45,8 +47,9 @@ const COMM_CHOICE: Record<string, string> = {
 };
 
 // Group17 — PS re-appointment (widget order reversed from other Yes/No groups)
-// Choice1 = Yes, Choice2 = No
-function psReapp(val: boolean): string {
+// Choice1 = Yes, Choice2 = No — returns "" for null (unanswered).
+function psReapp(val: boolean | null): string {
+  if (val === null) return "";
   return val ? "Choice1" : "Choice2";
 }
 
@@ -392,20 +395,21 @@ export async function auditZ83(data: Z83FillData): Promise<string> {
   // ── Section B — Declarations ───────────────────────────────────────────────
   lines.push(`=== SECTION B — Declarations [NEVER stored in DB] ===`);
   const decl = data.section_b_declarations;
-  radioReport(`Criminal Conviction`, `Group7`, yesNo(decl.criminal_conviction), decl.criminal_conviction ? "YES" : "No");
+  const yn = (v: boolean | null) => v === null ? "[not answered]" : v ? "YES" : "No";
+  radioReport(`Criminal Conviction`, `Group7`, yesNo(decl.criminal_conviction), yn(decl.criminal_conviction));
   tx(`  Details (Text6)`, `Text6`, decl.criminal_conviction_details);
-  radioReport(`Pending Criminal Charges`, `Group8`, yesNo(decl.pending_criminal), decl.pending_criminal ? "YES" : "No");
+  radioReport(`Pending Criminal Charges`, `Group8`, yesNo(decl.pending_criminal), yn(decl.pending_criminal));
   tx(`  Details (Text7)`, `Text7`, decl.pending_criminal_details);
-  radioReport(`Dismissed for Misconduct`, `Group9`, yesNo(decl.dismissed_misconduct), decl.dismissed_misconduct ? "YES" : "No");
+  radioReport(`Dismissed for Misconduct`, `Group9`, yesNo(decl.dismissed_misconduct), yn(decl.dismissed_misconduct));
   tx(`  Details (Text8)`, `Text8`, decl.dismissed_misconduct_details);
-  radioReport(`Pending Disciplinary`, `Group10`, yesNo(decl.pending_disciplinary), decl.pending_disciplinary ? "YES" : "No");
+  radioReport(`Pending Disciplinary`, `Group10`, yesNo(decl.pending_disciplinary), yn(decl.pending_disciplinary));
   tx(`  Details (Text9)`, `Text9`, decl.pending_disciplinary_details);
-  radioReport(`Resigned Pending Verdict`, `Group11`, yesNo(decl.resigned_pending), decl.resigned_pending ? "YES" : "No");
+  radioReport(`Resigned Pending Verdict`, `Group11`, yesNo(decl.resigned_pending), yn(decl.resigned_pending));
   tx(`  Details (Text10)`, `Text10`, decl.resigned_pending_details);
-  radioReport(`Discharged Ill-Health`, `Group12`, yesNo(decl.discharged_ill_health), decl.discharged_ill_health ? "YES" : "No");
-  radioReport(`Business with State`, `Group13`, yesNo(decl.business_with_state), decl.business_with_state ? "YES" : "No");
+  radioReport(`Discharged Ill-Health`, `Group12`, yesNo(decl.discharged_ill_health), yn(decl.discharged_ill_health));
+  radioReport(`Business with State`, `Group13`, yesNo(decl.business_with_state), yn(decl.business_with_state));
   tx(`  Details (Text11)`, `Text11`, decl.business_with_state_details);
-  radioReport(`Will Relinquish Business`, `Group14`, yesNo(decl.will_relinquish), decl.will_relinquish ? "YES" : "No");
+  radioReport(`Will Relinquish Business`, `Group14`, yesNo(decl.will_relinquish), yn(decl.will_relinquish));
   lines.push(``);
 
   // ── Section D — Language proficiency ──────────────────────────────────────
@@ -460,7 +464,7 @@ export async function auditZ83(data: Z83FillData): Promise<string> {
     `PS Re-appointment`,
     `Group17`,
     psReapp(data.section_f_ps_reappointment),
-    data.section_f_ps_reappointment ? "Yes" : "No"
+    data.section_f_ps_reappointment === null ? "[not answered]" : data.section_f_ps_reappointment ? "Yes" : "No"
   );
   lines.push(`    NOTE: Group17 widget order reversed — Choice1=Yes, Choice2=No`);
   tx(

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { StepA } from "./step-a";
 import { StepB } from "./step-b";
+import { StepC } from "./step-c";
 import type { Z83FillData, Z83DraftData, Z83SectionB, Z83Declarations } from "@/types/z83";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -41,20 +42,23 @@ const DEFAULT_SECTION_B: Z83SectionB = {
 };
 
 const DEFAULT_DECLARATIONS: Z83Declarations = {
-  criminal_conviction: false,
+  // All Yes/No fields start as null — user must consciously select an answer.
+  // Defaulting to false would mean someone could submit "No" to criminal/disciplinary
+  // questions without having deliberately chosen that answer.
+  criminal_conviction: null,
   criminal_conviction_details: "",
-  pending_criminal: false,
+  pending_criminal: null,
   pending_criminal_details: "",
-  dismissed_misconduct: false,
+  dismissed_misconduct: null,
   dismissed_misconduct_details: "",
-  pending_disciplinary: false,
+  pending_disciplinary: null,
   pending_disciplinary_details: "",
-  resigned_pending: false,
+  resigned_pending: null,
   resigned_pending_details: "",
-  discharged_ill_health: false,
-  business_with_state: false,
+  discharged_ill_health: null,
+  business_with_state: null,
   business_with_state_details: "",
-  will_relinquish: false,
+  will_relinquish: null,
   ps_reappointment_details: "",
 };
 
@@ -65,7 +69,7 @@ const DEFAULT_Z83: Z83FillData = {
   section_e: [],
   section_e_current: "",
   section_f: [],
-  section_f_ps_reappointment: false,
+  section_f_ps_reappointment: null,
   section_g: [],
   // Sensitive — never stored in DB, always starts blank each session
   id_number: "",
@@ -108,8 +112,11 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<Z83FillData>(() => {
     if (initialDraft) {
-      // Merge saved non-sensitive draft into the default (adds blank sensitive fields)
-      return { ...DEFAULT_Z83, ...initialDraft };
+      // Merge saved non-sensitive draft into the default (adds blank sensitive fields).
+      // section_f_ps_reappointment is always reset to null regardless of what was stored —
+      // same session-only discipline as all other declaration fields. Old drafts may have
+      // stored the previous default (false), which would silently pre-answer this question.
+      return { ...DEFAULT_Z83, ...initialDraft, section_f_ps_reappointment: null };
     }
     return DEFAULT_Z83;
     // NOTE: no localStorage fallback — Z83 is session-only even for anonymous users
@@ -163,9 +170,23 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
             /[a-zA-Z]/.test(b.passport_number)))
       );
     }
+    if (step === 3) {
+      const d = data.section_b_declarations;
+      return (
+        d.criminal_conviction !== null &&
+        d.pending_criminal !== null &&
+        d.dismissed_misconduct !== null &&
+        d.pending_disciplinary !== null &&
+        d.resigned_pending !== null &&
+        d.discharged_ill_health !== null &&
+        d.business_with_state !== null &&
+        (d.business_with_state !== true || d.will_relinquish !== null) &&
+        data.section_f_ps_reappointment !== null
+      );
+    }
     // Remaining steps: always valid for now (individual steps add their own rules)
     return true;
-  }, [step, data.section_a, data.section_b, data.dob, data.id_number]);
+  }, [step, data.section_a, data.section_b, data.dob, data.id_number, data.section_b_declarations, data.section_f_ps_reappointment]);
 
   // ── PDF download ──────────────────────────────────────────────────────────
   const handleDownload = useCallback(async () => {
@@ -293,8 +314,22 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
           />
         )}
 
-        {/* Steps 3–6 will be added in subsequent build phases */}
-        {step > 2 && step < TOTAL_STEPS && (
+        {step === 3 && (
+          <StepC
+            declarations={data.section_b_declarations}
+            onDeclarationsChange={(section_b_declarations) =>
+              setData((d) => ({ ...d, section_b_declarations }))
+            }
+            psPreviousEmployee={data.section_f_ps_reappointment}
+            onPsPreviousEmployeeChange={(section_f_ps_reappointment) =>
+              setData((d) => ({ ...d, section_f_ps_reappointment }))
+            }
+            attempted={attempted}
+          />
+        )}
+
+        {/* Steps 4–6 will be added in subsequent build phases */}
+        {step > 3 && step < TOTAL_STEPS && (
           <div className="flex items-center justify-center py-20 border border-dashed border-[var(--color-line)]">
             <p className="text-sm text-[var(--color-muted)]">
               Step {step} — coming soon

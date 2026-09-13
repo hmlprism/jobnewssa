@@ -67,21 +67,22 @@ export interface Z83Reference {
 }
 
 // Section B declarations — NEVER written to z83_drafts.data (see migration 0021 comments)
+// All Yes/No fields are null until explicitly answered — never default to No.
 export interface Z83Declarations {
-  criminal_conviction: boolean;
+  criminal_conviction: boolean | null;
   criminal_conviction_details: string;
-  pending_criminal: boolean;
+  pending_criminal: boolean | null;
   pending_criminal_details: string;
-  dismissed_misconduct: boolean;
+  dismissed_misconduct: boolean | null;
   dismissed_misconduct_details: string;
-  pending_disciplinary: boolean;
+  pending_disciplinary: boolean | null;
   pending_disciplinary_details: string;
-  resigned_pending: boolean;
+  resigned_pending: boolean | null;
   resigned_pending_details: string;
-  discharged_ill_health: boolean;
-  business_with_state: boolean;
+  discharged_ill_health: boolean | null;
+  business_with_state: boolean | null;
   business_with_state_details: string;
-  will_relinquish: boolean;
+  will_relinquish: boolean | null;
   ps_reappointment_details: string; // "If yes, provide name of previous employing dept..."
 }
 
@@ -93,7 +94,7 @@ export interface Z83DraftData {
   section_e: Z83Qualification[];  // up to 4 rows
   section_e_current: string;      // "Current study institution and qualification"
   section_f: Z83WorkEntry[];      // up to 3 rows
-  section_f_ps_reappointment: boolean; // Group17 Yes/No
+  section_f_ps_reappointment: boolean | null; // Group17 Yes/No — null until explicitly answered
   section_g: Z83Reference[];      // up to 3 refs
 }
 
