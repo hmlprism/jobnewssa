@@ -1,8 +1,10 @@
 # Job News SA — Project Context
 
-South African job board. Employers post vacancies directly; a secondary feed
-ingests listings from Adzuna. Job seekers browse, filter, apply with a resume,
-and exchange messages with employers through a per-application thread.
+South African job board. Employers post vacancies directly; secondary feeds ingest
+listings from Adzuna and the DPSA Public Service Vacancy Circular. Job seekers
+browse, filter, apply with a resume, and exchange messages with employers through
+a per-application thread. Two tools help applicants prepare: a CV Maker and a Z83
+government form filler.
 
 ---
 
@@ -202,21 +204,32 @@ The client component receives its initial state as props and needs no
 
 ## Database schema overview
 
-Migrations live in `supabase/migrations/` (0001–0012, all applied).
+Migrations live in `supabase/migrations/`.
+
+**Applied to production:** 0001–0018, 0021
+**Built, pending production apply:** 0019 (DPSA source type), 0020 (cv_drafts)
+
+**Migration 0018 — critical rule for future SECURITY DEFINER functions:**
+All future `SECURITY DEFINER` functions must include `SET search_path = public`.
+Without it, `::user_role` casts fail when triggered via `supabase_auth_admin`
+(whose session search_path may not include `public`). This caused "Database error
+saving new user" on every signup until fixed in 0018.
 
 ### Core tables
 
 | Table | Notes |
 |---|---|
-| `profiles` | Extends `auth.users`. Role: `job_seeker` \| `employer` \| `admin`. Has `resume_url`, `avatar_url`. |
+| `profiles` | Extends `auth.users`. Role: `job_seeker` \| `employer` \| `admin`. Has `resume_url`, `avatar_url`, `consented_at timestamptz` (migration 0017 — captures signup consent). |
 | `companies` | Created on first employer job post. `verified boolean`, `verification_method text`, `verified_at timestamptz`. One company per employer (`owner_id`). |
 | `sectors` | Static taxonomy (seeded in 0003). Slug-addressed. |
-| `jobs` | `source`: `adzuna` \| `manual` \| `employer_direct`. `status`: `draft` \| `pending_review` \| `published` \| `expired` \| `rejected`. Has full-text `search_vector`. SA-specific fields: `province`, `employment_equity_note`, `required_nqf_level`. |
+| `jobs` | `source`: `adzuna` \| `manual` \| `employer_direct` \| `dpsa`. `status`: `draft` \| `pending_review` \| `published` \| `expired` \| `rejected`. Has full-text `search_vector`. SA-specific fields: `province`, `employment_equity_note`, `required_nqf_level`. `source_metadata jsonb` column added in migration 0019 for DPSA-specific data (enquiries, apply address, circular ref). |
 | `applications` | Joins `jobs` ↔ `profiles`. Status: `submitted` → `viewed` → `shortlisted` → `rejected` \| `hired`. |
 | `messages` | Per-application thread. `sender_id`, `body`, `read_at` (null until recipient opens). |
-| `news_articles` | Manual inserts only — no ingestion configured. |
+| `news_articles` | Populated by the news ingestion pipeline (3 live RSS feeds). `slug` nullable, `UNIQUE (source_url)` for dedup, `ingested_at timestamptz` (migration 0016). |
 | `saved_jobs` | User-scoped bookmarks. |
 | `job_alerts` | Schema exists; alerting logic not yet implemented. |
+| `cv_drafts` | Stores non-sensitive CV wizard data per user (JSONB). UNIQUE on `user_id`. Migration 0020, pending production apply. |
+| `z83_drafts` | Stores non-sensitive Z83 wizard data per user (JSONB). UNIQUE on `user_id`. Migration 0021, applied. See Z83 sensitivity model below. |
 
 ### Storage buckets
 
@@ -262,6 +275,8 @@ of a thread without storing employer identity directly on the message row.
 
 **news_articles** — Public select only. No client insert path.
 
+**cv_drafts / z83_drafts** — Owner-only select, insert, update (`user_id = auth.uid()`).
+
 ---
 
 ## Known architectural constraints
@@ -282,12 +297,15 @@ What is not built: Supabase Realtime subscriptions. The message thread page
 loads messages on navigation; new messages sent by the other party do not
 appear until the user refreshes or navigates away and back.
 
-### News — no ingestion source
-The `/news` page and `news_articles` table exist. The page currently shows
-an empty state. There is a placeholder reference to `lib/news-ingest.ts` in
-the empty-state copy, but that file does not exist. News articles must be
-inserted manually, or an ingestion source must be built and wired to the
-Adzuna-style cron pattern used for job ingestion.
+### News — Cloudflare-blocked sources
+Three live RSS feeds are active: Daily Maverick (`/dmrss/`), Moneyweb
+(`/feed/`), IOL (`/rss`). BusinessTech, News24, and The Citizen are blocked
+by Cloudflare; TimesLive and EWN return 404. Do not attempt to add those
+sources without a proxy or scraping workaround.
+
+### DPSA migrations — pending production apply
+Migration 0019 (`alter type job_source add value 'dpsa'`) has not yet been
+applied to production. The ingest endpoint will fail in production until it is.
 
 ### Job alerts — schema only
 The `job_alerts` table exists (columns: user, search criteria, frequency).
@@ -310,6 +328,135 @@ interfaces. All query results are typed at the call site using the types in
 Next.js 16.3.4 deprecates this convention in favour of `proxy`. It continues
 to function correctly but logs a build warning. Migration can be done with:
 `npx @next/codemod@canary middleware-to-proxy .`
+(Note: this codemod has already been applied on the `i18n-experiment` branch.)
+
+---
+
+## Content ingestion pipelines
+
+### Combined daily cron
+`POST /api/ingest` — Vercel Cron slot 1, 03:00 UTC daily. Runs Adzuna job
+ingestion and news ingestion concurrently via `Promise.allSettled`. Auth:
+`Bearer CRON_SECRET`.
+
+### Adzuna jobs
+Fetches listings across 6 SA cities; upserts via service-role client. Dedup
+by `external_id`. Source: `adzuna`.
+
+### News articles
+Three live RSS feeds: Daily Maverick, Moneyweb, IOL. Filter: 50
+employment-related keywords (strikes, retrenchments, minimum wage, UIF,
+SETA, EPWP, etc.). Dedup: `INSERT … ON CONFLICT (source_url) DO NOTHING`.
+Config + parser + filter: `lib/news-feeds.ts`. Expected yield: 0–5 articles
+per typical day; spikes on Stats SA release days and major retrenchment news.
+
+### DPSA vacancy circulars
+`POST /api/dpsa/ingest` — Vercel Cron slot 2, Fridays 06:00 UTC. Parses DPSA
+Public Service Vacancy Circular PDFs (~250 posts per circular). Auth: `Bearer
+CRON_SECRET`. Preview mode (no DB writes): `?preview=true`. Override target
+circular: `?circular=N&year=YYYY`. Parser: `lib/dpsa-pdf.ts` (pdfjs-dist
+coordinate extraction) + `lib/dpsa-parser.ts` (state machine). DPSA job
+detail pages show a government apply panel (enquiries + postal address) in
+place of the standard ApplyPanel.
+
+---
+
+## Tools
+
+### CV Maker (`/tools/cv-maker`)
+5-step wizard: Contact → Summary → Work Experience → Education + Skills → Preview.
+
+- **PDF:** `@react-pdf/renderer` v4.9.0. Fonts registered as base64 data URIs
+  (WOFF2 fails during pdfkit embed; `file://` fails in Next.js fetch polyfill —
+  data URI is the correct pattern).
+- **Types:** `types/cv.ts` — `CvData` interface. `photo_url` and `id_number`
+  are display-only in the wizard; never written to `cv_drafts.data`.
+- **Draft:** `cv_drafts` table (migration 0020). Auto-saves on step navigation
+  for logged-in users; `localStorage` fallback for anonymous users.
+- **Profile pre-fill:** name, email, phone, city, province, headline → summary,
+  qualification → education, professional registration → skills.
+- **API:** `POST /api/tools/cv/generate` (no auth required, returns PDF),
+  `PUT /api/tools/cv/draft` (auth required, upserts `cv_drafts`).
+
+### Z83 Form Filler (`/tools/z83`)
+7-step wizard for the South African government employment application form (Z83).
+
+- **PDF fill:** `pdf-lib` + `public/forms/z83-template.pdf`. All AcroForm field
+  names and radio button choice values documented in `lib/z83-fill.ts`.
+- **Types:** `types/z83.ts`. `Z83DraftData` = persistable subset (8 keys);
+  `Z83FillData` extends it with session-only sensitive fields.
+- **Draft:** `z83_drafts` table (migration 0021, applied). Auto-saves on step
+  navigation for logged-in users. **No localStorage fallback** — anonymous users
+  lose data on close. This is intentional: sensitive declaration data must not
+  persist in the browser.
+- **API:** `POST /api/tools/z83/generate` (no auth required, returns PDF),
+  `PUT /api/tools/z83/draft` (auth required, upserts `z83_drafts`).
+
+**Sensitivity model — NEVER write these to the database:**
+
+| Field | Reason |
+|---|---|
+| `id_number` | 13-digit SA ID number |
+| `dob` | Date of birth (DDMMYY) |
+| `section_b_declarations` | All 9 Yes/No answers: criminal record, disciplinary history, pending charges, business interests, etc. |
+| `page1_initials`, `page2_initials`, `signature` | PNG data URIs of handwritten marks |
+| `declaration_date` | Date of signing |
+
+`section_f_ps_reappointment` (previous public service Yes/No) IS in
+`Z83DraftData` and is persisted, but is **forced to `null` on every draft
+load** regardless of what is stored, so it never silently pre-answers the
+question across sessions.
+
+All 9 declaration fields use `boolean | null` (not `boolean`). `null` means
+not yet answered; validation blocks Next until every question is explicitly
+answered. Defaulting to `false` was rejected as it would silently pre-answer
+legal declarations on a government form.
+
+**Build status as of 2026-09-14:**
+
+| Step | Content | Status |
+|---|---|---|
+| 1 | Job specifics (Section A) | Committed |
+| 2 | Personal details — identity, demographics, citizenship (Section B) | Committed |
+| 3 | Declarations — 9 Yes/No questions, never saved (Section B) | Committed |
+| 4 | Contact, profile details, language proficiency (Sections B + D) | Committed |
+| 5 | Qualifications (Section E) | Committed |
+| 6 | Work experience + references (Sections F + G) | Committed |
+| 7 | Signature canvas + declaration date + PDF download | **NOT YET COMMITTED** — next task |
+
+`components/z83/step-preview.tsx` exists and is wired into the wizard but the
+commit for Steps 5–7 has not been made. Resume here next session.
+
+---
+
+## i18n experiment branch
+
+**Branch:** `i18n-experiment` | **Worktree:** `jobnewssa-i18n` (separate directory)
+**Status:** Complete. Fully pushed to `origin`. **Not merged into `main`.**
+
+Do not rebuild this. The full implementation exists on this branch.
+
+What's complete:
+- **Library:** next-intl 4.14.4
+- **Route structure:** all user-facing pages under `app/[locale]/`; `/api/*`
+  and `/auth/callback` stay at root (Supabase-registered URL, must not move)
+- **Locales:** `en` (English), `af` (Afrikaans)
+- **Coverage:** every page and component — Header, Auth, Home, Jobs (listing,
+  detail, filters, DPSA panel), Profile, Account settings, Applications, Saved,
+  Messaging, News, Employer (dashboard, applicants, verify, post)
+- **Language switcher:** `LocaleSwitcher` in header — `EN | AF` links that
+  preserve the current path; desktop (`hidden lg:flex`) + mobile slide-out
+- **Auth redirect fix:** protected pages redirect to `/${locale}/auth/login`
+  (eliminates the double-hop through the unlocalized path)
+- **middleware → proxy:** official codemod applied on this branch
+
+Key merge considerations:
+- Delete `app/[locale]/test-i18n/` (throwaway PoC page)
+- Turbopack workers may crash after 3h+ uptime on first visit to a new locale
+  — `rm -rf .next` + restart; not a code bug
+- `lib/navigation.ts` exports a locale-aware `Link` and `useRouter` via
+  `createNavigation` — all links inside `app/[locale]/` must import from there,
+  never from `next/link` directly
 
 ---
 
@@ -317,9 +464,17 @@ to function correctly but logs a build warning. Migration can be done with:
 
 | Route | Auth | Purpose |
 |---|---|---|
-| `POST /api/jobs/ingest` | `Bearer CRON_SECRET` | Fetches from Adzuna API across 6 SA cities, upserts jobs via service-role client. Called by Vercel Cron. |
+| `POST /api/ingest` | `Bearer CRON_SECRET` | Combined daily cron: runs Adzuna + news ingestion concurrently. |
+| `POST /api/jobs/ingest` | `Bearer CRON_SECRET` | Adzuna job ingestion across 6 SA cities. |
+| `POST /api/dpsa/ingest` | `Bearer CRON_SECRET` | DPSA vacancy circular parsing + upsert. |
+| `GET /api/dpsa/ingest` | None (dev only) | Preview mode — parses PDF without DB writes. |
+| `POST /api/news/ingest` | `Bearer CRON_SECRET` | News RSS ingestion (3 feeds). |
 | `POST /api/employer/verify` | Session cookie | Checks email domain vs website domain, marks `companies.verified = true` via service-role client. |
 | `GET /api/messages/unread-count` | Session cookie | Returns unread count for the current user. **Currently unused** — the header computes this server-side. Route exists if a client-side path is needed in future. |
+| `POST /api/tools/cv/generate` | None | Renders and returns a CV PDF. Accepts `CvData` JSON. |
+| `PUT /api/tools/cv/draft` | Session cookie | Upserts non-sensitive CV data to `cv_drafts`. |
+| `POST /api/tools/z83/generate` | None | Fills and returns a Z83 PDF. Accepts `Z83FillData` JSON. Sensitive fields accepted but never stored. |
+| `PUT /api/tools/z83/draft` | Session cookie | Upserts non-sensitive Z83 data to `z83_drafts`. Server-side allowlist strips any sensitive keys even if sent. |
 
 ---
 
