@@ -378,6 +378,18 @@
       "saved": "Profiel gestoor."
     }
   },
+  "News": {
+    "page": {
+      "title": "Suid-Afrika werksmark nuus"
+    },
+    "heading": "Werksmark nuus",
+    "description": "Arbeidsmark- en wervingsnuus relevant vir Suid-Afrikaanse werksoekers, saamgestel uit openbare bronne.",
+    "empty": {
+      "heading": "Nog geen artikels nie",
+      "body": "Nuusinname is nog nie opgestel nie. Sien lib/news-ingest.ts."
+    },
+    "imageCredit": "Prent: {source}"
+  },
   "Messaging": {
     "page": {
       "title": "Boodskappe"

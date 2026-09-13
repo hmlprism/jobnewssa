@@ -1,11 +1,15 @@
+import { getLocale, getTranslations } from "next-intl/server";
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
 import { createClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
-import { timeAgo } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "South Africa job market news" };
+
+export async function generateMetadata() {
+  const t = await getTranslations("News.page");
+  return { title: t("title") };
+}
 
 const getCachedArticles = unstable_cache(
   async () => {
@@ -42,23 +46,27 @@ const SOURCE_ABBR: Record<string, string> = {
 };
 
 export default async function NewsPage() {
-  const articles = await getCachedArticles();
+  const [articles, locale, t, tJobs] = await Promise.all([
+    getCachedArticles(),
+    getLocale(),
+    getTranslations("News"),
+    getTranslations("Jobs"),
+  ]);
 
   return (
     <>
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-        <h1 className="font-display text-3xl">Job market news</h1>
+        <h1 className="font-display text-3xl">{t("heading")}</h1>
         <p className="mt-2 text-[var(--color-muted)]">
-          Labour market and hiring news relevant to South African job seekers,
-          curated from public sources.
+          {t("description")}
         </p>
 
         {!articles || articles.length === 0 ? (
           <div className="mt-10 border border-[var(--color-line)] px-6 py-16 text-center">
-            <p className="font-display text-lg">No articles yet</p>
+            <p className="font-display text-lg">{t("empty.heading")}</p>
             <p className="mt-2 text-sm text-[var(--color-muted)]">
-              News ingestion hasn&apos;t been configured yet. See lib/news-ingest.ts.
+              {t("empty.body")}
             </p>
           </div>
         ) : (
@@ -69,6 +77,19 @@ export default async function NewsPage() {
               const abbr =
                 SOURCE_ABBR[article.source_name as string] ??
                 (article.source_name as string).slice(0, 3).toUpperCase();
+
+              const daysOld = Math.floor(
+                (Date.now() - new Date(article.published_at).getTime()) /
+                  86_400_000
+              );
+              const relTime =
+                daysOld === 0
+                  ? tJobs("relative.today")
+                  : daysOld === 1
+                  ? tJobs("relative.yesterday")
+                  : daysOld < 30
+                  ? tJobs("relative.daysAgo", { n: daysOld })
+                  : tJobs("relative.monthsAgo", { n: Math.floor(daysOld / 30) });
 
               return (
                 <a
@@ -81,7 +102,7 @@ export default async function NewsPage() {
                   {/* Text content */}
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                      {article.source_name} · {timeAgo(article.published_at)}
+                      {article.source_name} · {relTime}
                     </p>
                     <h2 className="mt-1 text-lg font-semibold leading-snug">
                       {article.title}
@@ -106,7 +127,7 @@ export default async function NewsPage() {
                           className="h-20 w-28 object-cover"
                         />
                         <p className="mt-1 text-xs text-[var(--color-muted)]">
-                          Image: {article.source_name}
+                          {t("imageCredit", { source: article.source_name as string })}
                         </p>
                       </div>
                     ) : (

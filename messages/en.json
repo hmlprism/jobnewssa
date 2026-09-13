@@ -378,6 +378,18 @@
       "saved": "Profile saved."
     }
   },
+  "News": {
+    "page": {
+      "title": "South Africa job market news"
+    },
+    "heading": "Job market news",
+    "description": "Labour market and hiring news relevant to South African job seekers, curated from public sources.",
+    "empty": {
+      "heading": "No articles yet",
+      "body": "News ingestion hasn\u2019t been configured yet. See lib/news-ingest.ts."
+    },
+    "imageCredit": "Image: {source}"
+  },
   "Messaging": {
     "page": {
       "title": "Messages"
