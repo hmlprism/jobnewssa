@@ -31,7 +31,8 @@ export function SiteFooter() {
             </p>
             <p className="mt-2 max-w-xs text-sm text-[var(--color-muted)]">
               A free, independent job board for South Africa. Listings sourced
-              from public feeds and direct employer submissions.
+              from public feeds and direct employer submissions. Not affiliated
+              with Careers24, Indeed, or any other job board.
             </p>
           </div>
         </div>
@@ -96,12 +97,8 @@ export function SiteFooter() {
           </div>
           <div>
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
-              About
+              Legal
             </h3>
-            <p className="mb-3 text-sm text-[var(--color-muted)]">
-              Job News SA is not affiliated with Careers24, Indeed, or any
-              other job board. Built in South Africa.
-            </p>
             <ul className="space-y-2 text-sm text-[var(--color-ink)]">
               <li>
                 <Link href="/privacy" prefetch={false} className="hover:text-[var(--color-rust)]">
