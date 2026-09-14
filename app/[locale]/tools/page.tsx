@@ -1,6 +1,6 @@
 import { SiteHeader } from "@/components/layout/header";
 import { SiteFooter } from "@/components/layout/footer";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
 import { FileText, ClipboardList } from "lucide-react";
 
 export const metadata = { title: "Job Tools — Job News SA" };
@@ -38,11 +38,8 @@ export default function ToolsPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           {TOOLS.map(({ Icon, title, description, href }) => (
             <div key={title} className="border border-[var(--color-line)] p-6">
-              <div className="mb-4 flex items-start justify-between gap-3">
+              <div className="mb-4">
                 <Icon size={28} className="text-[var(--color-ink)]" />
-                <span className="border border-[var(--color-line)] px-2 py-0.5 text-[11px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                  Coming soon
-                </span>
               </div>
               <h2 className="font-display text-xl font-semibold">{title}</h2>
               <p className="mt-2 text-sm leading-relaxed text-[var(--color-muted)]">
@@ -51,9 +48,9 @@ export default function ToolsPage() {
               <Link
                 href={href}
                 prefetch={false}
-                className="mt-5 inline-flex border border-[var(--color-line)] px-4 py-2 text-sm font-medium text-[var(--color-ink)] hover:border-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)]"
+                className="mt-5 inline-flex border border-[var(--color-rust)] px-4 py-2 text-sm font-medium text-[var(--color-rust)] hover:bg-[var(--color-rust)] hover:text-[var(--color-paper)]"
               >
-                Learn more
+                Open
               </Link>
             </div>
           ))}
