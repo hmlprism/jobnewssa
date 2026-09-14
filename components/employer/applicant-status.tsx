@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import type { ApplicationStatus } from "@/types/database";
 
-const STATUS_LABELS: Record<ApplicationStatus, string> = {
-  submitted: "Submitted",
-  viewed: "Viewed",
-  shortlisted: "Shortlisted",
-  rejected: "Rejected",
-  hired: "Hired",
-};
+const STATUS_VALUES: ApplicationStatus[] = [
+  "submitted",
+  "viewed",
+  "shortlisted",
+  "rejected",
+  "hired",
+];
 
 export function ApplicantStatus({
   applicationId,
@@ -19,6 +20,7 @@ export function ApplicantStatus({
   applicationId: string;
   initialStatus: ApplicationStatus;
 }) {
+  const t = useTranslations("Applications");
   const [status, setStatus] = useState<ApplicationStatus>(initialStatus);
   const [saving, setSaving] = useState(false);
 
@@ -40,11 +42,9 @@ export function ApplicantStatus({
       disabled={saving}
       className="border border-[var(--color-line)] bg-[var(--color-paper)] px-2.5 py-1.5 text-sm disabled:opacity-50"
     >
-      {(
-        Object.entries(STATUS_LABELS) as [ApplicationStatus, string][]
-      ).map(([value, label]) => (
+      {STATUS_VALUES.map((value) => (
         <option key={value} value={value}>
-          {label}
+          {t(`status.${value}`)}
         </option>
       ))}
     </select>

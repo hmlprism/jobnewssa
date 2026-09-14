@@ -1,9 +1,10 @@
 "use client";
 
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "@/lib/navigation";
+import { useTranslations } from "next-intl";
 import {
   SA_PROVINCES,
-  CONTRACT_TYPE_LABELS,
   type ContractType,
 } from "@/types/database";
 import type { Sector } from "@/types/database";
@@ -11,10 +12,16 @@ import { slugify } from "@/lib/slug";
 
 const SALARY_BANDS = [12000, 24000, 36000, 48000];
 
+const CONTRACT_TYPES: ContractType[] = [
+  "permanent", "part_time", "temporary", "contract", "internship", "volunteer",
+];
+
 export function JobFilters({ sectors }: { sectors: Sector[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const t = useTranslations("Jobs.filters");
+  const tc = useTranslations("Jobs.contractTypes");
 
   function setParam(key: string, value: string | null) {
     const params = new URLSearchParams(searchParams.toString());
@@ -39,23 +46,23 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
     <aside className="w-full shrink-0 md:w-60 lg:w-64">
       <div className="mb-5 flex items-center justify-between">
         <h2 className="text-xs font-semibold text-[var(--color-muted)]">
-          Filters
+          {t("title")}
         </h2>
         {hasFilters && (
           <button
             onClick={() => router.push(pathname)}
             className="cursor-pointer text-xs font-medium text-[var(--color-rust)] hover:underline"
           >
-            Clear all
+            {t("clearAll")}
           </button>
         )}
       </div>
 
-      <FilterGroup label="Minimum salary / month">
+      <FilterGroup label={t("salary")}>
         <div className="space-y-1.5">
           <RadioRow
             checked={!activeSalary}
-            label="Any"
+            label={t("anySalary")}
             onSelect={() => setParam("min_salary", null)}
           />
           {SALARY_BANDS.map((band) => (
@@ -69,14 +76,14 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
         </div>
       </FilterGroup>
 
-      <FilterGroup label="Province">
+      <FilterGroup label={t("province")}>
         <select
-          aria-label="Province"
+          aria-label={t("province")}
           value={activeProvince ?? ""}
           onChange={(e) => setParam("province", e.target.value || null)}
           className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-sm"
         >
-          <option value="">Any province</option>
+          <option value="">{t("anyProvince")}</option>
           {SA_PROVINCES.map((p) => (
             <option key={p} value={slugify(p)}>
               {p}
@@ -85,14 +92,14 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
         </select>
       </FilterGroup>
 
-      <FilterGroup label="Sector">
+      <FilterGroup label={t("sector")}>
         <select
-          aria-label="Sector"
+          aria-label={t("sector")}
           value={activeSector ?? ""}
           onChange={(e) => setParam("sector", e.target.value || null)}
           className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-sm"
         >
-          <option value="">Any sector</option>
+          <option value="">{t("anySector")}</option>
           {sectors.map((s) => (
             <option key={s.id} value={s.slug}>
               {s.name}
@@ -101,18 +108,18 @@ export function JobFilters({ sectors }: { sectors: Sector[] }) {
         </select>
       </FilterGroup>
 
-      <FilterGroup label="Contract type" noBorder>
+      <FilterGroup label={t("contractType")} noBorder>
         <div className="space-y-1.5">
           <RadioRow
             checked={!activeContract}
-            label="Any"
+            label={t("anyContract")}
             onSelect={() => setParam("contract", null)}
           />
-          {(Object.keys(CONTRACT_TYPE_LABELS) as ContractType[]).map((ct) => (
+          {CONTRACT_TYPES.map((ct) => (
             <RadioRow
               key={ct}
               checked={activeContract === ct}
-              label={CONTRACT_TYPE_LABELS[ct]}
+              label={tc(ct)}
               onSelect={() => setParam("contract", ct)}
             />
           ))}

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
+import { useTranslations } from "next-intl";
 
 type ApplyStatus = "signed_out" | "no_resume" | "ready" | "applied" | "submitting";
 
@@ -16,6 +17,7 @@ export function ApplyPanel({
   userId: string | null;
   initialStatus: Exclude<ApplyStatus, "submitting">;
 }) {
+  const t = useTranslations("Jobs.apply");
   const [status, setStatus] = useState<ApplyStatus>(initialStatus);
   const [coverNote, setCoverNote] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -41,14 +43,14 @@ export function ApplyPanel({
     return (
       <div>
         <p className="mb-3 text-sm text-[var(--color-muted)]">
-          Sign in to apply for this job.
+          {t("signedOutNote")}
         </p>
         <Link
           href="/auth/login"
           prefetch={false}
           className="inline-flex w-full justify-center bg-[var(--color-rust)] px-4 py-2.5 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
         >
-          Sign in to apply
+          {t("signInToApply")}
         </Link>
       </div>
     );
@@ -58,14 +60,14 @@ export function ApplyPanel({
     return (
       <div>
         <p className="mb-3 text-sm text-[var(--color-muted)]">
-          You need to upload a resume before you can apply.
+          {t("noResumeNote")}
         </p>
         <Link
           href="/profile/edit"
           prefetch={false}
           className="inline-flex w-full justify-center bg-[var(--color-rust)] px-4 py-2.5 text-sm font-medium text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)]"
         >
-          Complete your profile
+          {t("completeProfile")}
         </Link>
       </div>
     );
@@ -75,19 +77,20 @@ export function ApplyPanel({
     return (
       <div>
         <p className="font-display text-lg text-[var(--color-gold)]">
-          Your application is in.
+          {t("appliedTitle")}
         </p>
         <p className="mt-2 text-sm text-[var(--color-muted)]">
-          The employer will be in touch if your profile is a match. In the
-          meantime,{" "}
-          <Link
-            href="/jobs"
-            prefetch={false}
-            className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
-          >
-            browse more vacancies
-          </Link>
-          .
+          {t.rich("appliedBody", {
+            link: (chunks) => (
+              <Link
+                href="/jobs"
+                prefetch={false}
+                className="text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)]"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
         </p>
       </div>
     );
@@ -96,8 +99,8 @@ export function ApplyPanel({
   return (
     <div>
       <label htmlFor="cover-note" className="mb-2 block text-sm font-medium">
-        Cover note{" "}
-        <span className="font-normal text-[var(--color-muted)]">(optional)</span>
+        {t("coverNoteLabel")}{" "}
+        <span className="font-normal text-[var(--color-muted)]">{t("coverNoteOptional")}</span>
       </label>
       <textarea
         id="cover-note"
@@ -105,7 +108,7 @@ export function ApplyPanel({
         onChange={(e) => setCoverNote(e.target.value)}
         rows={5}
         className="mb-3 w-full border border-[var(--color-line)] bg-[var(--color-paper)] p-3 text-sm"
-        placeholder="Briefly say why you're a fit for this role"
+        placeholder={t("coverNotePlaceholder")}
       />
       {error && (
         <p className="mb-2 text-sm text-[var(--color-rust)]">{error}</p>
@@ -115,7 +118,7 @@ export function ApplyPanel({
         disabled={status === "submitting"}
         className="w-full justify-center"
       >
-        {status === "submitting" ? "Submitting\u2026" : "Submit application"}
+        {status === "submitting" ? t("submitting") : t("submit")}
       </Button>
     </div>
   );

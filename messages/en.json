@@ -1,0 +1,609 @@
+{
+  "Header": {
+    "logoAlt": "Job News SA",
+    "nav": {
+      "home": "Home",
+      "findJobs": "Find Jobs",
+      "tools": "Tools",
+      "saved": "Saved",
+      "applications": "Applications",
+      "news": "News",
+      "newsLong": "Job market news",
+      "messages": "Messages",
+      "postJob": "Post a Job"
+    },
+    "auth": {
+      "signIn": "Sign in",
+      "createAccount": "Create account",
+      "createAccountFree": "Create free account",
+      "signOut": "Sign out"
+    },
+    "userMenu": {
+      "employerDashboard": "Employer dashboard",
+      "myApplications": "My applications",
+      "myProfile": "My profile",
+      "accountSettings": "Account settings"
+    },
+    "mobileNav": {
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "panelTitle": "Menu"
+    }
+  },
+  "Auth": {
+    "logoAlt": "Job News SA",
+    "fields": {
+      "email": "Email",
+      "emailAddress": "Email address",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "fullName": "Full name",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Welcome back. Search and apply for jobs across South Africa.",
+      "forgotPassword": "Forgot password?",
+      "signingIn": "Signing in\u2026",
+      "submit": "Sign in",
+      "noAccount": "Don\u2019t have an account?",
+      "createOne": "Create one"
+    },
+    "signup": {
+      "title": "Create your account",
+      "subtitle": "Free for job seekers and employers.",
+      "roleSeeker": "I\u2019m looking for work",
+      "roleEmployer": "I\u2019m hiring",
+      "passwordsMismatch": "Passwords don\u2019t match.",
+      "consent": "I agree to the <terms>Terms & Conditions</terms> and <privacy>Privacy Policy</privacy>.",
+      "creating": "Creating account\u2026",
+      "submit": "Create account",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "emailSentTitle": "Check your email",
+      "emailSentBody": "We\u2019ve sent a confirmation link to {email}. Click it to activate your account.",
+      "accountExistsTitle": "Account already exists",
+      "accountExistsBody": "An account already exists with <bold>{email}</bold>.",
+      "forgotPassword": "Forgot your password?"
+    },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter your email address and we\u2019ll send you a reset link.",
+      "sending": "Sending\u2026",
+      "submit": "Send reset link",
+      "remembered": "Remembered it?",
+      "backToSignIn": "Back to sign in",
+      "emailSentTitle": "Check your email",
+      "emailSentBody": "If an account exists for <bold>{email}</bold>, we\u2019ve sent a password reset link. Check your inbox (and spam folder)."
+    },
+    "resetPassword": {
+      "title": "Set a new password",
+      "subtitle": "Choose a new password for your account.",
+      "newPassword": "New password",
+      "confirmNewPassword": "Confirm new password",
+      "updating": "Updating\u2026",
+      "submit": "Set new password",
+      "updatedTitle": "Password updated",
+      "updatedBody": "Your password has been changed. Redirecting you to sign in\u2026",
+      "passwordsMismatch": "Passwords don\u2019t match.",
+      "passwordTooShort": "Password must be at least 6 characters.",
+      "expiredError": "This reset link has expired or already been used. Request a new one.",
+      "requestNewLink": "Request a new reset link"
+    },
+    "confirmed": {
+      "title": "Email confirmed",
+      "signedInBody": "You\u2019re signed in. Start browsing jobs across South Africa.",
+      "browseJobs": "Browse jobs",
+      "notSignedInBody": "Your account is active. Sign in to start browsing jobs across South Africa.",
+      "signIn": "Sign in to your account"
+    }
+  },
+  "Home": {
+    "dateline": "South Africa Employment Listings",
+    "hero": {
+      "statSrOnly": " job vacancies in South Africa",
+      "vacanciesListed": "vacancies listed",
+      "acrossProvinces": "across all nine provinces",
+      "tagline": "Real opportunities. A stronger South Africa.",
+      "searchInput": "Job title, keyword, or company",
+      "searchButton": "Search",
+      "browseByProvince": "Browse by province"
+    },
+    "pills": {
+      "government": "Government",
+      "learnerships": "Learnerships",
+      "internships": "Internships",
+      "graduate": "Graduate",
+      "apprenticeships": "Apprenticeships",
+      "bursaries": "Bursaries",
+      "partTime": "Part-Time",
+      "remote": "Remote"
+    },
+    "sections": {
+      "latestListings": "Latest listings",
+      "vacanciesCount": "{count} vacancies",
+      "govVacancies": "Government vacancies",
+      "learnerships": "Learnerships",
+      "internships": "Internships",
+      "gradProgrammes": "Graduate programmes",
+      "viewAll": "All {title}"
+    },
+    "cta": {
+      "heading": "Hiring in South Africa?",
+      "body": "Post a vacancy and reach job seekers across every province, free.",
+      "button": "Post a job"
+    }
+  },
+  "Jobs": {
+    "listing": {
+      "dateline": "South Africa Employment Listings",
+      "positions": "{count, plural, one {position} other {positions}}",
+      "sortNewest": "Newest",
+      "sortClosing": "Closing soon",
+      "searchInput": "Job title, keyword, or company",
+      "locationInput": "City or province",
+      "searchButton": "Search",
+      "chips": {
+        "government": "Government",
+        "learnerships": "Learnerships",
+        "internships": "Internships",
+        "graduate": "Graduate",
+        "apprenticeships": "Apprenticeships",
+        "bursaries": "Bursaries",
+        "partTime": "Part-Time",
+        "remote": "Remote"
+      },
+      "empty": {
+        "heading": "No jobs found",
+        "body": "Try adjusting your search terms or clearing your filters.",
+        "clearFilters": "Clear all filters",
+        "alertText": "Set up a job alert \u2014 <link>create a free account</link> to get notified when matching vacancies are posted."
+      },
+      "pagination": {
+        "previous": "\u2190 Previous",
+        "next": "Next \u2192",
+        "page": "Page {page} of {total}"
+      }
+    },
+    "contractTypes": {
+      "permanent": "Permanent",
+      "part_time": "Part-time",
+      "temporary": "Temporary",
+      "contract": "Contract",
+      "internship": "Internship",
+      "volunteer": "Volunteer"
+    },
+    "filters": {
+      "title": "Filters",
+      "clearAll": "Clear all",
+      "salary": "Minimum salary / month",
+      "anySalary": "Any",
+      "province": "Province",
+      "anyProvince": "Any province",
+      "sector": "Sector",
+      "anySector": "Any sector",
+      "contractType": "Contract type",
+      "anyContract": "Any"
+    },
+    "card": {
+      "confidentialCompany": "Confidential company",
+      "remote": "Remote",
+      "closed": "Closed",
+      "urgent": "Urgent",
+      "verifiedEmployer": "\u2713 Verified employer",
+      "closingSoon": "{daysNum, plural, =0 {Last day} one {# day left} other {# days left}}",
+      "daysLeft": "{n, plural, one {# day left} other {# days left}}"
+    },
+    "detail": {
+      "backToSearch": "\u2190 Back to search",
+      "remote": "Remote",
+      "verified": "\u2713 Verified",
+      "confidentialCompany": "Confidential company",
+      "postedAgo": "Posted {timeAgo}",
+      "daysLeft": "{n, plural, =0 {Last day} one {# day left} other {# days left}}",
+      "expired": "Expired",
+      "externalFeedNote": "This listing is from an external job feed. Apply on the original site.",
+      "applyOnSite": "Apply on original site",
+      "alreadyApplied": "Already applied?",
+      "tips": {
+        "heading": "Application tips",
+        "tip1": "Tailor your CV to the job title and key requirements. SA employers often screen by keyword.",
+        "tip2": "Include your ID number or work-permit status if the ad requests it; omitting it is a common rejection reason.",
+        "tip3": "Keep your cover letter under one page and open with a sentence on why this specific role, not a generic greeting."
+      }
+    },
+    "dpsa": {
+      "badge": "Government vacancy",
+      "intro": "Applications go directly to the department \u2014 not through this site.",
+      "closingDate": "Closing date",
+      "closingDateTime": "{date} at {time}",
+      "daysLeft": "{n, plural, =0 {Last day} one {# day left} other {# days left}}",
+      "expired": "Deadline passed",
+      "howToApply": "How to apply",
+      "enquiries": "Enquiries",
+      "fallback": "Refer to the official DPSA Public Service Vacancy Circular for application instructions."
+    },
+    "apply": {
+      "signedOutNote": "Sign in to apply for this job.",
+      "signInToApply": "Sign in to apply",
+      "noResumeNote": "You need to upload a resume before you can apply.",
+      "completeProfile": "Complete your profile",
+      "appliedTitle": "Your application is in.",
+      "appliedBody": "The employer will be in touch if your profile is a match. In the meantime, <link>browse more vacancies</link>.",
+      "coverNoteLabel": "Cover note",
+      "coverNoteOptional": "(optional)",
+      "coverNotePlaceholder": "Briefly say why you\u2019re a fit for this role",
+      "submitting": "Submitting\u2026",
+      "submit": "Submit application"
+    },
+    "save": {
+      "save": "Save",
+      "unsave": "Unsave",
+      "saveAria": "Save this job",
+      "unsaveAria": "Unsave this job"
+    },
+    "logApplied": {
+      "signInPrompt": "<link>Sign in</link> to track your applications.",
+      "markedAsApplied": "Marked as applied",
+      "saving": "Saving\u2026",
+      "markAsApplied": "Mark as applied"
+    },
+    "relative": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "daysAgo": "{n, plural, one {# day ago} other {# days ago}}",
+      "monthsAgo": "{n, plural, one {# month ago} other {# months ago}}"
+    },
+    "salary": {
+      "range": "R{min} \u2013 R{max}/month",
+      "from": "From R{min}/month",
+      "upTo": "Up to R{max}/month"
+    }
+  },
+  "Shared": {
+    "nqfLevels": {
+      "1": "Level 1: Grade 9",
+      "2": "Level 2: Grade 10",
+      "3": "Level 3: Grade 11",
+      "4": "Level 4: National Senior Certificate (Matric)",
+      "5": "Level 5: Higher Certificate",
+      "6": "Level 6: Diploma / Advanced Certificate",
+      "7": "Level 7: Bachelor's Degree / Advanced Diploma",
+      "8": "Level 8: Honours / Postgraduate Diploma",
+      "9": "Level 9: Master's Degree",
+      "10": "Level 10: Doctoral Degree"
+    },
+    "qualificationTypes": {
+      "Certificate": "Certificate",
+      "Higher Certificate": "Higher Certificate",
+      "Diploma": "Diploma",
+      "Advanced Certificate": "Advanced Certificate",
+      "Advanced Diploma": "Advanced Diploma",
+      "Bachelor's Degree": "Bachelor's Degree",
+      "Bachelor Honours Degree": "Bachelor Honours Degree",
+      "Postgraduate Diploma": "Postgraduate Diploma",
+      "Professional Degree": "Professional Degree",
+      "Master's Degree": "Master's Degree",
+      "Doctoral Degree": "Doctoral Degree",
+      "Other": "Other"
+    }
+  },
+  "Profile": {
+    "page": {
+      "title": "My profile"
+    },
+    "privateBadge": "Private (only visible to you)",
+    "resume": {
+      "sectionHeading": "Resume",
+      "label": "Resume",
+      "labelHint": "(PDF, max 5 MB)",
+      "onFile": "Resume on file",
+      "viewOpening": "Opening\u2026",
+      "view": "View resume",
+      "chooseFile": "Choose file",
+      "fileTooLarge": "File must be under 5 MB.",
+      "replaceHint": "Upload a new file to replace your existing resume.",
+      "requiredHint": "A resume is required before you can apply for jobs."
+    },
+    "basicInfo": {
+      "sectionHeading": "Basic information",
+      "headline": "Professional headline",
+      "headlinePlaceholder": "e.g. Senior Software Engineer",
+      "phone": "Phone number",
+      "phonePlaceholder": "e.g. 082 123 4567 or +27 82 123 4567",
+      "province": "Province",
+      "provinceSelect": "Select province",
+      "city": "City / Town",
+      "cityPlaceholder": "e.g. Cape Town"
+    },
+    "qualifications": {
+      "sectionHeading": "Qualifications",
+      "nqfLevel": "Highest NQF level",
+      "nqfSelect": "Select NQF level",
+      "qualTitle": "Qualification title",
+      "qualTitlePlaceholder": "e.g. Bachelor of Commerce in Accounting",
+      "qualType": "Qualification type",
+      "qualTypeSelect": "Select type",
+      "profReg": "Professional registration number",
+      "profRegPlaceholder": "e.g. HPCSA: PR123456 / SAICA: 12345678",
+      "profRegHint": "Include the registering body prefix (HPCSA, SAICA, ECSA, SACAP, etc.).",
+      "profRegSelfReported": "Self-reported, not independently verified."
+    },
+    "workAuth": {
+      "sectionHeading": "Work authorisation",
+      "label": "Work authorisation status",
+      "select": "Select status",
+      "citizen": "South African Citizen",
+      "permanent_resident": "Permanent Resident",
+      "work_permit": "Work Permit Holder",
+      "other": "Other"
+    },
+    "jobPrefs": {
+      "sectionHeading": "Job preferences",
+      "preferredProvince": "Preferred province",
+      "noPreference": "No preference",
+      "preferredContract": "Preferred contract type",
+      "desiredSalary": "Minimum desired salary (ZAR / month)"
+    },
+    "equity": {
+      "sectionHeading": "Employment equity",
+      "disclaimer": "This information is stored privately and is never shared with employers or visible to other users. It may be used in aggregate, anonymised reporting only.",
+      "disabilityStatus": "Disability status",
+      "disabilityPlaceholder": "e.g. None / Physical / Hearing / Visual / Cognitive / Prefer not to say",
+      "eeDesignation": "EE designation",
+      "preferNotToSay": "Prefer not to say",
+      "eeOptions": {
+        "African": "African",
+        "Coloured": "Coloured",
+        "Indian / Asian": "Indian / Asian",
+        "White": "White",
+        "Not specified": "Not specified"
+      },
+      "encouragement": "We encourage you to complete this section."
+    },
+    "errors": {
+      "phoneDigitsOnly": "Phone number must contain digits only.",
+      "phoneInvalid": "Enter a valid South African phone number. Use 10 digits starting with 0 (e.g. 082 123 4567) or international format (e.g. +27 82 123 4567).",
+      "saicaDigits": "SAICA membership numbers are 8 digits (e.g. SAICA: 12345678).",
+      "ecsaNumeric": "ECSA registration numbers are numeric (e.g. ECSA: 123456).",
+      "sacapFormat": "Check your SACAP number format (e.g. SACAP: 12345).",
+      "hpcsaPrefix": "Please include your HPCSA registration number after the prefix.",
+      "fixErrors": "Please fix the errors above before saving.",
+      "fileTooLarge": "File must be under 5 MB."
+    },
+    "save": {
+      "saving": "Saving\u2026",
+      "saveProfile": "Save profile",
+      "saved": "Profile saved."
+    }
+  },
+  "Employer": {
+    "dashboard": {
+      "heading": "Your job postings",
+      "postJob": "Post a job",
+      "unverifiedBanner": {
+        "heading": "Your employer account is unverified.",
+        "body": "Your jobs are visible but show an \u201cUnverified employer\u201d badge.",
+        "link": "Verify your account \u2192"
+      },
+      "verifiedBanner": {
+        "heading": "\u2713 Verified employer.",
+        "body": "Your jobs display a verified badge."
+      },
+      "empty": {
+        "heading": "No postings yet",
+        "body": "Post your first vacancy to start receiving applications.",
+        "button": "Post your first job"
+      },
+      "statusLive": "Live",
+      "postedAgo": "Posted {ago}",
+      "applicantsCount": "{count, plural, one {# applicant} other {# applicants}}",
+      "viewListingAria": "View listing"
+    },
+    "applicants": {
+      "backToDashboard": "Back to dashboard",
+      "metaTitle": "Applicants \u2014 {jobTitle}",
+      "metaTitleFallback": "Applicants",
+      "count": "{count, plural, one {# applicant} other {# applicants}}",
+      "empty": {
+        "heading": "No applications yet",
+        "body": "Applications will appear here as candidates apply."
+      },
+      "applicantFallback": "Applicant",
+      "appliedAgo": "Applied {ago}",
+      "resume": "Resume",
+      "noResume": "No resume",
+      "message": "Message",
+      "coverNote": "Cover note"
+    },
+    "verify": {
+      "backToDashboard": "Back to dashboard",
+      "heading": "Verify your employer account",
+      "noAccess": {
+        "heading": "Employer account required",
+        "body": "Sign in with an employer account to verify your company.",
+        "signIn": "Sign in"
+      },
+      "noCompany": {
+        "heading": "Post a job first",
+        "body": "Your company profile is created when you post your first job.",
+        "link": "Post a vacancy"
+      },
+      "verified": {
+        "heading": "\u2713 Your account is verified",
+        "body": "Your jobs display a verified badge.",
+        "verifiedOn": "Verified on {date}."
+      },
+      "description": "We check that your account email domain matches your company website. If they match, your account is verified instantly and your jobs show a verified badge.",
+      "websiteLabel": "Company website URL",
+      "websiteHint": "Must match your account email domain. For example, if your email is you@acme.co.za, enter acme.co.za.",
+      "checking": "Checking\u2026",
+      "verifyNow": "Verify now",
+      "successMessage": "Your employer account is now verified.",
+      "failedMessage": "Verification failed.",
+      "errorMessage": "Something went wrong. Try again."
+    },
+    "post": {
+      "signedOut": {
+        "heading": "Sign in to post a job",
+        "body": "You need an employer account to post vacancies.",
+        "createAccount": "Create employer account"
+      },
+      "wrongRole": {
+        "heading": "Employer account required",
+        "body": "Your account is registered as a job seeker. Contact support to switch to an employer account."
+      },
+      "success": {
+        "heading": "Job posted",
+        "body": "Your vacancy is live. Redirecting to your dashboard\u2026"
+      },
+      "heading": "Post a job",
+      "subheading": "Free to post. Live immediately, expires after 30 days.",
+      "mustBeSignedIn": "You must be signed in.",
+      "sections": {
+        "jobDetails": "Job details",
+        "location": "Location",
+        "classificationSalary": "Classification & salary",
+        "requirements": "Requirements",
+        "equity": "Equity & accessibility",
+        "optional": "(optional)"
+      },
+      "fields": {
+        "companyName": "Company name",
+        "jobTitle": "Job title",
+        "jobDescription": "Job description",
+        "province": "Province",
+        "city": "City / town",
+        "contractType": "Contract type",
+        "sector": "Sector",
+        "selectSector": "Select sector",
+        "nqfLevel": "Min. NQF level required",
+        "nqfNoMin": "No minimum",
+        "qualType": "Required qualification type",
+        "qualNoReq": "No specific requirement",
+        "eeNote": "Employment Equity / Affirmative Action statement",
+        "accommodation": "Accessibility accommodation contact",
+        "salaryMin": "Min salary (R/month)",
+        "salaryMax": "Max salary (R/month)"
+      },
+      "placeholders": {
+        "jobDescription": "Responsibilities, requirements, how to apply...",
+        "eeNote": "e.g. Preference will be given to candidates from designated groups as defined in the Employment Equity Act."
+      },
+      "checkboxes": {
+        "isRemote": "This is a remote position",
+        "marketRelated": "Salary is market related (don\u2019t specify a figure)"
+      },
+      "submit": "Post job",
+      "submitting": "Posting\u2026"
+    }
+  },
+  "News": {
+    "page": {
+      "title": "South Africa job market news"
+    },
+    "heading": "Job market news",
+    "description": "Labour market and hiring news relevant to South African job seekers, curated from public sources.",
+    "empty": {
+      "heading": "No articles yet",
+      "body": "News ingestion hasn\u2019t been configured yet. See lib/news-ingest.ts."
+    },
+    "imageCredit": "Image: {source}"
+  },
+  "Messaging": {
+    "page": {
+      "title": "Messages"
+    },
+    "empty": {
+      "heading": "No conversations yet",
+      "body": "Conversations start when an employer messages an applicant, or vice versa, after a job application is submitted.",
+      "findJobs": "Find jobs to apply for",
+      "myApplications": "My applications"
+    },
+    "noPreview": "No messages yet",
+    "noMessages": "No messages yet. Send one to get the conversation started.",
+    "rowGroupSeeker": "As job seeker",
+    "rowGroupEmployer": "As employer",
+    "roleEmployer": "Employer",
+    "roleApplicant": "Applicant",
+    "rePrefix": "Re:",
+    "backToApplicants": "Back to applicants",
+    "backToApplications": "Back to my applications",
+    "you": "You",
+    "failedToSend": "Failed to send. Please try again.",
+    "writePlaceholder": "Write your message\u2026",
+    "messageAriaLabel": "Message",
+    "sendAriaLabel": "Send message",
+    "sending": "Sending\u2026",
+    "send": "Send",
+    "yesterday": "Yesterday",
+    "todayAt": "Today at {time}",
+    "dateAt": "{date} at {time}"
+  },
+  "Saved": {
+    "page": {
+      "title": "Saved jobs"
+    },
+    "empty": {
+      "heading": "No saved jobs yet",
+      "browse": "Browse vacancies",
+      "body": "and tap the bookmark icon on any listing to save it here."
+    }
+  },
+  "Applications": {
+    "page": {
+      "title": "My applications"
+    },
+    "empty": {
+      "heading": "No applications yet",
+      "browse": "Browse vacancies",
+      "body": "and apply. Your applications will appear here."
+    },
+    "jobRemoved": "Job removed",
+    "appliedAgo": "Applied {ago}",
+    "messages": "Messages",
+    "status": {
+      "submitted": "Submitted",
+      "viewed": "Viewed",
+      "shortlisted": "Shortlisted",
+      "rejected": "Rejected",
+      "hired": "Hired"
+    }
+  },
+  "AccountSettings": {
+    "page": {
+      "title": "Account settings"
+    },
+    "profile": {
+      "sectionHeading": "Profile",
+      "picLabel": "Profile picture",
+      "picAlt": "Profile picture",
+      "changePic": "Change picture",
+      "uploadPic": "Upload picture",
+      "picHint": "JPEG, PNG or WebP \u00b7 max 2 MB",
+      "picTooLarge": "Image must be under 2 MB.",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Your full name",
+      "emailAddress": "Email address",
+      "emailHint": "Email cannot be changed here. Contact support if you need to update it.",
+      "saved": "Changes saved.",
+      "saving": "Saving\u2026",
+      "save": "Save changes"
+    },
+    "password": {
+      "sectionHeading": "Change password",
+      "current": "Current password",
+      "new": "New password",
+      "confirm": "Confirm new password",
+      "show": "Show password",
+      "hide": "Hide password",
+      "mismatch": "Passwords don\u2019t match.",
+      "tooShort": "New password must be at least 6 characters.",
+      "incorrect": "Current password is incorrect.",
+      "updated": "Password updated.",
+      "updating": "Updating\u2026",
+      "update": "Update password"
+    }
+  }
+}

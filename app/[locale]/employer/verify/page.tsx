@@ -1,0 +1,233 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useTranslations, useLocale } from "next-intl";
+import { createClient } from "@/lib/supabase/client";
+import { SiteFooter } from "@/components/layout/footer";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/lib/navigation";
+import type { Company } from "@/types/database";
+import { ArrowLeft } from "lucide-react";
+
+type PageState =
+  | "loading"
+  | "no_access"
+  | "no_company"
+  | "verified"
+  | "unverified";
+
+export default function EmployerVerifyPage() {
+  const t = useTranslations("Employer.verify");
+  const locale = useLocale();
+  const [pageState, setPageState] = useState<PageState>("loading");
+  const [company, setCompany] = useState<Company | null>(null);
+  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<{
+    ok: boolean;
+    message: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) {
+        setPageState("no_access");
+        return;
+      }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      if (profile?.role !== "employer" && profile?.role !== "admin") {
+        setPageState("no_access");
+        return;
+      }
+      const { data: co } = await supabase
+        .from("companies")
+        .select(
+          "id, name, website, verified, verification_method, verified_at, owner_id, slug, logo_url, description, province, city, created_at"
+        )
+        .eq("owner_id", user.id)
+        .maybeSingle();
+      if (!co) {
+        setPageState("no_company");
+        return;
+      }
+      setCompany(co as Company);
+      setWebsiteUrl(co.website ?? "");
+      setPageState(co.verified ? "verified" : "unverified");
+    });
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    setResult(null);
+    try {
+      const res = await fetch("/api/employer/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ websiteUrl }),
+      });
+      const json = await res.json();
+      if (json.verified) {
+        setPageState("verified");
+        setResult({ ok: true, message: t("successMessage") });
+      } else {
+        setResult({
+          ok: false,
+          message: json.message ?? json.error ?? t("failedMessage"),
+        });
+      }
+    } catch {
+      setResult({ ok: false, message: t("errorMessage") });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (pageState === "loading") {
+    return (
+      <>
+        <main className="mx-auto max-w-lg px-4 py-16 sm:px-6">
+          <div className="h-40 animate-pulse bg-[var(--color-paper-dim)]" />
+        </main>
+        <SiteFooter />
+      </>
+    );
+  }
+
+  if (pageState === "no_access") {
+    return (
+      <>
+        <main className="mx-auto max-w-lg px-4 py-16 text-center sm:px-6">
+          <h1 className="font-display text-2xl font-semibold">
+            {t("noAccess.heading")}
+          </h1>
+          <p className="mt-2 text-sm text-[var(--color-muted)]">
+            {t("noAccess.body")}
+          </p>
+          <Link
+            href="/auth/login"
+            prefetch={false}
+            className="mt-6 inline-block text-sm font-medium text-[var(--color-rust)] underline underline-offset-2"
+          >
+            {t("noAccess.signIn")}
+          </Link>
+        </main>
+        <SiteFooter />
+      </>
+    );
+  }
+
+  if (pageState === "no_company") {
+    return (
+      <>
+        <main className="mx-auto max-w-lg px-4 py-16 text-center sm:px-6">
+          <h1 className="font-display text-2xl font-semibold">
+            {t("noCompany.heading")}
+          </h1>
+          <p className="mt-2 text-sm text-[var(--color-muted)]">
+            {t("noCompany.body")}
+          </p>
+          <Link
+            href="/employer/post"
+            prefetch={false}
+            className="mt-6 inline-block text-sm font-medium text-[var(--color-rust)] underline underline-offset-2"
+          >
+            {t("noCompany.link")}
+          </Link>
+        </main>
+        <SiteFooter />
+      </>
+    );
+  }
+
+  const dateFmtLocale = locale === "af" ? "af-ZA" : "en-ZA";
+
+  return (
+    <>
+      <main className="mx-auto max-w-lg px-4 py-10 sm:px-6 sm:py-12">
+        <Link
+          href="/employer/dashboard"
+          prefetch={false}
+          className="mb-6 inline-flex items-center gap-1.5 text-sm text-[var(--color-muted)] hover:text-[var(--color-rust)]"
+        >
+          <ArrowLeft size={14} />
+          {t("backToDashboard")}
+        </Link>
+
+        <h1 className="font-display text-2xl font-semibold">
+          {t("heading")}
+        </h1>
+
+        {pageState === "verified" ? (
+          <div className="mt-6 border border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] px-5 py-4 text-sm text-[var(--color-indigo)]">
+            <p className="font-semibold">{t("verified.heading")}</p>
+            <p className="mt-1">
+              {t("verified.body")}
+              {company?.verified_at && (
+                <>
+                  {" "}
+                  {t("verified.verifiedOn", {
+                    date: new Date(company.verified_at).toLocaleDateString(
+                      dateFmtLocale
+                    ),
+                  })}
+                </>
+              )}
+            </p>
+          </div>
+        ) : (
+          <>
+            <p className="mt-2 text-sm text-[var(--color-muted)]">
+              {t("description")}
+            </p>
+
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-medium">
+                  {t("websiteLabel")}
+                </span>
+                <input
+                  type="text"
+                  value={websiteUrl}
+                  onChange={(e) => setWebsiteUrl(e.target.value)}
+                  required
+                  placeholder="https://yourcompany.co.za"
+                  className="w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm"
+                />
+                <p className="mt-1.5 text-xs text-[var(--color-muted)]">
+                  {t("websiteHint")}
+                </p>
+              </label>
+
+              {result && (
+                <div
+                  className={`border px-4 py-3 text-sm ${
+                    result.ok
+                      ? "border-[var(--color-indigo)] bg-[var(--color-indigo-dim)] text-[var(--color-indigo)]"
+                      : "border-[var(--color-clay)] bg-[var(--color-clay-dim)] text-[var(--color-ink)]"
+                  }`}
+                >
+                  {result.message}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="w-full justify-center"
+              >
+                {submitting ? t("checking") : t("verifyNow")}
+              </Button>
+            </form>
+          </>
+        )}
+      </main>
+      <SiteFooter />
+    </>
+  );
+}

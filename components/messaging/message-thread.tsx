@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Send } from "lucide-react";
@@ -13,25 +14,29 @@ export type MsgRow = {
   senderName: string | null;
 };
 
-function formatMsgTime(iso: string): string {
+function formatMsgTime(
+  iso: string,
+  dateFmtLocale: string,
+  todayAt: (time: string) => string,
+  dateAt: (date: string, time: string) => string
+): string {
   const d = new Date(iso);
   const today = new Date();
   const isToday =
     d.getFullYear() === today.getFullYear() &&
     d.getMonth() === today.getMonth() &&
     d.getDate() === today.getDate();
-  const timeStr = d.toLocaleTimeString("en-ZA", {
+  const timeStr = d.toLocaleTimeString(dateFmtLocale, {
     hour: "2-digit",
     minute: "2-digit",
   });
-  if (isToday) return `Today at ${timeStr}`;
-  return (
-    d.toLocaleDateString("en-ZA", {
-      day: "numeric",
-      month: "short",
-      year: d.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
-    }) + ` at ${timeStr}`
-  );
+  if (isToday) return todayAt(timeStr);
+  const dateStr = d.toLocaleDateString(dateFmtLocale, {
+    day: "numeric",
+    month: "short",
+    year: d.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
+  });
+  return dateAt(dateStr, timeStr);
 }
 
 export function MessageThread({
@@ -45,6 +50,10 @@ export function MessageThread({
   otherPartyName: string;
   initialMessages: MsgRow[];
 }) {
+  const t = useTranslations("Messaging");
+  const locale = useLocale();
+  const dateFmtLocale = locale === "af" ? "af-ZA" : "en-ZA";
+
   const [optimisticMessages, setOptimisticMessages] = useState<MsgRow[]>([]);
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
@@ -77,7 +86,7 @@ export function MessageThread({
       .single();
 
     if (err || !data) {
-      setError("Failed to send. Please try again.");
+      setError(t("failedToSend"));
       setSending(false);
       return;
     }
@@ -115,7 +124,7 @@ export function MessageThread({
       <div className="mb-6 min-h-[8rem]">
         {displayMessages.length === 0 ? (
           <p className="py-10 text-center text-sm text-[var(--color-muted)]">
-            No messages yet. Send one to get the conversation started.
+            {t("noMessages")}
           </p>
         ) : (
           <div className="space-y-4">
@@ -138,8 +147,13 @@ export function MessageThread({
                     <p className="whitespace-pre-wrap">{msg.body}</p>
                   </div>
                   <p className="mt-1 text-xs text-[var(--color-muted)]">
-                    {isMine ? "You" : (msg.senderName ?? otherPartyName)} ·{" "}
-                    {formatMsgTime(msg.created_at)}
+                    {isMine ? t("you") : (msg.senderName ?? otherPartyName)} ·{" "}
+                    {formatMsgTime(
+                      msg.created_at,
+                      dateFmtLocale,
+                      (time) => t("todayAt", { time }),
+                      (date, time) => t("dateAt", { date, time })
+                    )}
                   </p>
                 </div>
               );
@@ -158,8 +172,8 @@ export function MessageThread({
             value={body}
             onChange={(e) => setBody(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Write your message…"
-            aria-label="Message"
+            placeholder={t("writePlaceholder")}
+            aria-label={t("messageAriaLabel")}
             rows={3}
             disabled={sending}
             className="w-full resize-none border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-3 pr-12 text-sm placeholder:text-[var(--color-muted)] disabled:opacity-50"
@@ -168,7 +182,7 @@ export function MessageThread({
             type="submit"
             disabled={sending || !body.trim()}
             className="absolute bottom-3 right-3 flex h-8 w-8 cursor-pointer items-center justify-center bg-[var(--color-rust)] text-[var(--color-paper)] hover:bg-[var(--color-rust-dark)] disabled:opacity-50 disabled:pointer-events-none"
-            aria-label="Send message"
+            aria-label={t("sendAriaLabel")}
           >
             <Send size={14} />
           </button>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
+import { getLocale } from "next-intl/server";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -26,11 +27,12 @@ export const metadata: Metadata = {
     "Job News SA connects people with opportunities, keeps South Africans informed, and contributes to a brighter, more inclusive future. Real vacancies across all nine provinces, free for job seekers.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getLocale();
   return (
-    <html lang="en-ZA" className={`${fraunces.variable} ${inter.variable}`}>
+    <html lang={locale} className={`${fraunces.variable} ${inter.variable}`}>
       <body>{children}</body>
     </html>
   );

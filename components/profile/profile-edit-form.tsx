@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,18 +11,8 @@ import {
   type ContractType,
 } from "@/types/database";
 
-const NQF_LEVELS = [
-  { value: "1", label: "Level 1: Grade 9" },
-  { value: "2", label: "Level 2: Grade 10" },
-  { value: "3", label: "Level 3: Grade 11" },
-  { value: "4", label: "Level 4: National Senior Certificate (Matric)" },
-  { value: "5", label: "Level 5: Higher Certificate" },
-  { value: "6", label: "Level 6: Diploma / Advanced Certificate" },
-  { value: "7", label: "Level 7: Bachelor's Degree / Advanced Diploma" },
-  { value: "8", label: "Level 8: Honours / Postgraduate Diploma" },
-  { value: "9", label: "Level 9: Master's Degree" },
-  { value: "10", label: "Level 10: Doctoral Degree" },
-];
+// Labels now come from Shared.nqfLevels translations
+const NQF_LEVELS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const;
 
 const QUALIFICATION_TYPES = [
   "Certificate",
@@ -36,14 +27,7 @@ const QUALIFICATION_TYPES = [
   "Master's Degree",
   "Doctoral Degree",
   "Other",
-];
-
-const WORK_AUTHORIZATION_LABELS: Record<string, string> = {
-  citizen: "South African Citizen",
-  permanent_resident: "Permanent Resident",
-  work_permit: "Work Permit Holder",
-  other: "Other",
-};
+] as const;
 
 const SA_CITIES = [
   "Johannesburg", "Pretoria", "Tshwane", "Centurion", "Sandton", "Soweto",
@@ -63,13 +47,14 @@ const SA_CITIES = [
   "Kimberley", "Upington", "Springbok", "De Aar", "Kuruman",
 ];
 
+// Returns a Profile.errors.* key, or null
 function validatePhone(value: string): string | null {
   if (!value.trim()) return null;
-  if (/[a-zA-Z]/.test(value)) return "Phone number must contain digits only.";
+  if (/[a-zA-Z]/.test(value)) return "errors.phoneDigitsOnly";
   const stripped = value.replace(/[\s\-().]/g, "");
   if (/^\+27[0-9]{9}$/.test(stripped)) return null;
   if (/^0[0-9]{9}$/.test(stripped)) return null;
-  return "Enter a valid South African phone number. Use 10 digits starting with 0 (e.g. 082 123 4567) or international format (e.g. +27 82 123 4567).";
+  return "errors.phoneInvalid";
 }
 
 function validateProfReg(value: string): string | null {
@@ -79,25 +64,25 @@ function validateProfReg(value: string): string | null {
   if (upper.startsWith("SAICA")) {
     const digits = value.replace(/[^0-9]/g, "");
     if (digits.length > 0 && digits.length !== 8) {
-      return "SAICA membership numbers are 8 digits (e.g. SAICA: 12345678).";
+      return "errors.saicaDigits";
     }
   }
   if (upper.startsWith("ECSA")) {
     const rest = value.replace(/^ECSA[:\s]*/i, "").trim();
     if (rest && !/^[0-9]+$/.test(rest)) {
-      return "ECSA registration numbers are numeric (e.g. ECSA: 123456).";
+      return "errors.ecsaNumeric";
     }
   }
   if (upper.startsWith("SACAP")) {
     const rest = value.replace(/^SACAP[:\s]*/i, "").trim();
     if (rest && !/^[A-Z0-9/\-]+$/i.test(rest)) {
-      return "Check your SACAP number format (e.g. SACAP: 12345).";
+      return "errors.sacapFormat";
     }
   }
   if (upper.startsWith("HPCSA")) {
     const rest = value.replace(/^HPCSA[:\s]*/i, "").trim();
     if (!rest)
-      return "Please include your HPCSA registration number after the prefix.";
+      return "errors.hpcsaPrefix";
   }
 
   return null;
@@ -115,9 +100,10 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 }
 
 function PrivateBadge() {
+  const t = useTranslations("Profile");
   return (
     <span className="ml-2 text-xs font-normal normal-case tracking-normal text-[var(--color-muted)]">
-      Private (only visible to you)
+      {t("privateBadge")}
     </span>
   );
 }
@@ -129,6 +115,9 @@ export function ProfileEditForm({
   profile: Profile;
   userId: string;
 }) {
+  const t = useTranslations("Profile");
+  const tShared = useTranslations("Shared");
+  const tJobs = useTranslations("Jobs");
   const isEmployer = profile.role === "employer";
 
   const [headline, setHeadline] = useState(profile.headline ?? "");
@@ -198,12 +187,12 @@ export function ProfileEditForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const phoneErr = validatePhone(phone);
-    const profRegErr = validateProfReg(professionalRegistration);
-    setPhoneError(phoneErr);
-    setProfRegError(profRegErr);
-    if (phoneErr || profRegErr) {
-      setError("Please fix the errors above before saving.");
+    const phoneErrKey = validatePhone(phone);
+    const profRegErrKey = validateProfReg(professionalRegistration);
+    setPhoneError(phoneErrKey ? t(phoneErrKey) : null);
+    setProfRegError(profRegErrKey ? t(profRegErrKey) : null);
+    if (phoneErrKey || profRegErrKey) {
+      setError(t("errors.fixErrors"));
       setSaveStatus("error");
       return;
     }
@@ -270,18 +259,18 @@ export function ProfileEditForm({
       {/* Resume */}
       {!isEmployer && (
         <div className="space-y-4">
-          <SectionHeading>Resume</SectionHeading>
+          <SectionHeading>{t("resume.sectionHeading")}</SectionHeading>
           <div>
             <label className="mb-1.5 block text-sm font-medium">
-              Resume{" "}
+              {t("resume.label")}{" "}
               <span className="font-normal text-[var(--color-muted)]">
-                (PDF, max 5 MB)
+                {t("resume.labelHint")}
               </span>
             </label>
             {hasResume && (
               <div className="mb-3 flex items-center gap-3">
                 <p className="text-sm text-[var(--color-green)]">
-                  Resume on file
+                  {t("resume.onFile")}
                 </p>
                 <button
                   type="button"
@@ -289,7 +278,7 @@ export function ProfileEditForm({
                   disabled={viewingResume}
                   className="cursor-pointer text-sm font-medium text-[var(--color-rust)] underline underline-offset-2 hover:text-[var(--color-rust-dark)] disabled:opacity-50"
                 >
-                  {viewingResume ? "Opening…" : "View resume"}
+                  {viewingResume ? t("resume.viewOpening") : t("resume.view")}
                 </button>
               </div>
             )}
@@ -298,7 +287,7 @@ export function ProfileEditForm({
                 htmlFor="resume-upload"
                 className="inline-flex cursor-pointer items-center border border-[var(--color-ink)] bg-[var(--color-paper)] px-3 py-1.5 text-sm font-medium text-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)]"
               >
-                Choose file
+                {t("resume.chooseFile")}
               </label>
               {resumeFile && (
                 <span className="text-sm text-[var(--color-muted)]">
@@ -315,7 +304,7 @@ export function ProfileEditForm({
               onChange={(e) => {
                 const file = e.target.files?.[0] ?? null;
                 if (file && file.size > 5 * 1024 * 1024) {
-                  setError("File must be under 5 MB.");
+                  setError(t("errors.fileTooLarge"));
                   e.target.value = "";
                   return;
                 }
@@ -324,9 +313,7 @@ export function ProfileEditForm({
               }}
             />
             <p className="mt-1 text-xs text-[var(--color-muted)]">
-              {hasResume
-                ? "Upload a new file to replace your existing resume."
-                : "A resume is required before you can apply for jobs."}
+              {hasResume ? t("resume.replaceHint") : t("resume.requiredHint")}
             </p>
           </div>
         </div>
@@ -334,25 +321,25 @@ export function ProfileEditForm({
 
       {/* Basic info */}
       <div className="space-y-4">
-        <SectionHeading>Basic information</SectionHeading>
+        <SectionHeading>{t("basicInfo.sectionHeading")}</SectionHeading>
 
         <div>
           <label htmlFor="headline" className="mb-1.5 block text-sm font-medium">
-            Professional headline
+            {t("basicInfo.headline")}
           </label>
           <input
             id="headline"
             type="text"
             value={headline}
             onChange={(e) => setHeadline(e.target.value)}
-            placeholder="e.g. Senior Software Engineer"
+            placeholder={t("basicInfo.headlinePlaceholder")}
             className={inputClass}
           />
         </div>
 
         <div>
           <label htmlFor="phone" className="mb-1.5 block text-sm font-medium">
-            Phone number
+            {t("basicInfo.phone")}
           </label>
           <input
             id="phone"
@@ -360,9 +347,10 @@ export function ProfileEditForm({
             value={phone}
             onChange={(e) => {
               setPhone(e.target.value);
-              setPhoneError(validatePhone(e.target.value));
+              const errKey = validatePhone(e.target.value);
+              setPhoneError(errKey ? t(errKey) : null);
             }}
-            placeholder="e.g. 082 123 4567 or +27 82 123 4567"
+            placeholder={t("basicInfo.phonePlaceholder")}
             className={inputClass}
           />
           {phoneError && (
@@ -378,7 +366,7 @@ export function ProfileEditForm({
               htmlFor="province"
               className="mb-1.5 block text-sm font-medium"
             >
-              Province
+              {t("basicInfo.province")}
             </label>
             <select
               id="province"
@@ -386,7 +374,7 @@ export function ProfileEditForm({
               onChange={(e) => setProvince(e.target.value)}
               className={inputClass}
             >
-              <option value="">Select province</option>
+              <option value="">{t("basicInfo.provinceSelect")}</option>
               {SA_PROVINCES.map((p) => (
                 <option key={p} value={p}>
                   {p}
@@ -397,14 +385,14 @@ export function ProfileEditForm({
 
           <div>
             <label htmlFor="city" className="mb-1.5 block text-sm font-medium">
-              City / Town
+              {t("basicInfo.city")}
             </label>
             <input
               id="city"
               type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              placeholder="e.g. Cape Town"
+              placeholder={t("basicInfo.cityPlaceholder")}
               list="sa-cities"
               className={inputClass}
             />
@@ -419,14 +407,14 @@ export function ProfileEditForm({
 
       {/* Qualifications */}
       <div className="space-y-4">
-        <SectionHeading>Qualifications</SectionHeading>
+        <SectionHeading>{t("qualifications.sectionHeading")}</SectionHeading>
 
         <div>
           <label
             htmlFor="nqf-level"
             className="mb-1.5 block text-sm font-medium"
           >
-            Highest NQF level
+            {t("qualifications.nqfLevel")}
           </label>
           <select
             id="nqf-level"
@@ -434,10 +422,10 @@ export function ProfileEditForm({
             onChange={(e) => setNqfLevel(e.target.value)}
             className={inputClass}
           >
-            <option value="">Select NQF level</option>
-            {NQF_LEVELS.map(({ value, label }) => (
+            <option value="">{t("qualifications.nqfSelect")}</option>
+            {NQF_LEVELS.map((value) => (
               <option key={value} value={value}>
-                {label}
+                {tShared(`nqfLevels.${value}`)}
               </option>
             ))}
           </select>
@@ -448,14 +436,14 @@ export function ProfileEditForm({
             htmlFor="qual-title"
             className="mb-1.5 block text-sm font-medium"
           >
-            Qualification title
+            {t("qualifications.qualTitle")}
           </label>
           <input
             id="qual-title"
             type="text"
             value={qualificationTitle}
             onChange={(e) => setQualificationTitle(e.target.value)}
-            placeholder="e.g. Bachelor of Commerce in Accounting"
+            placeholder={t("qualifications.qualTitlePlaceholder")}
             className={inputClass}
           />
         </div>
@@ -465,7 +453,7 @@ export function ProfileEditForm({
             htmlFor="qual-type"
             className="mb-1.5 block text-sm font-medium"
           >
-            Qualification type
+            {t("qualifications.qualType")}
           </label>
           <select
             id="qual-type"
@@ -473,10 +461,10 @@ export function ProfileEditForm({
             onChange={(e) => setQualificationType(e.target.value)}
             className={inputClass}
           >
-            <option value="">Select type</option>
-            {QUALIFICATION_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t}
+            <option value="">{t("qualifications.qualTypeSelect")}</option>
+            {QUALIFICATION_TYPES.map((qualType) => (
+              <option key={qualType} value={qualType}>
+                {tShared(`qualificationTypes.${qualType}`)}
               </option>
             ))}
           </select>
@@ -487,7 +475,7 @@ export function ProfileEditForm({
             htmlFor="prof-reg"
             className="mb-1.5 block text-sm font-medium"
           >
-            Professional registration number
+            {t("qualifications.profReg")}
           </label>
           <input
             id="prof-reg"
@@ -495,9 +483,10 @@ export function ProfileEditForm({
             value={professionalRegistration}
             onChange={(e) => {
               setProfessionalRegistration(e.target.value);
-              setProfRegError(validateProfReg(e.target.value));
+              const errKey = validateProfReg(e.target.value);
+              setProfRegError(errKey ? t(errKey) : null);
             }}
-            placeholder="e.g. HPCSA: PR123456 / SAICA: 12345678"
+            placeholder={t("qualifications.profRegPlaceholder")}
             className={inputClass}
           />
           {profRegError && (
@@ -506,10 +495,9 @@ export function ProfileEditForm({
             </p>
           )}
           <p className="mt-1 text-xs text-[var(--color-muted)]">
-            Include the registering body prefix (HPCSA, SAICA, ECSA, SACAP,
-            etc.).{" "}
+            {t("qualifications.profRegHint")}{" "}
             <span className="font-medium">
-              Self-reported, not independently verified.
+              {t("qualifications.profRegSelfReported")}
             </span>
           </p>
         </div>
@@ -517,13 +505,13 @@ export function ProfileEditForm({
 
       {/* Work authorisation */}
       <div className="space-y-4">
-        <SectionHeading>Work authorisation</SectionHeading>
+        <SectionHeading>{t("workAuth.sectionHeading")}</SectionHeading>
         <div>
           <label
             htmlFor="work-auth"
             className="mb-1.5 block text-sm font-medium"
           >
-            Work authorisation status
+            {t("workAuth.label")}
           </label>
           <select
             id="work-auth"
@@ -531,14 +519,12 @@ export function ProfileEditForm({
             onChange={(e) => setWorkAuthorization(e.target.value)}
             className={inputClass}
           >
-            <option value="">Select status</option>
-            {Object.entries(WORK_AUTHORIZATION_LABELS).map(
-              ([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              )
-            )}
+            <option value="">{t("workAuth.select")}</option>
+            {(["citizen", "permanent_resident", "work_permit", "other"] as const).map((key) => (
+              <option key={key} value={key}>
+                {t(`workAuth.${key}`)}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -546,14 +532,14 @@ export function ProfileEditForm({
       {/* Job preferences */}
       {!isEmployer && (
         <div className="space-y-4">
-          <SectionHeading>Job preferences</SectionHeading>
+          <SectionHeading>{t("jobPrefs.sectionHeading")}</SectionHeading>
 
           <div>
             <label
               htmlFor="pref-province"
               className="mb-1.5 block text-sm font-medium"
             >
-              Preferred province
+              {t("jobPrefs.preferredProvince")}
             </label>
             <select
               id="pref-province"
@@ -561,7 +547,7 @@ export function ProfileEditForm({
               onChange={(e) => setPreferredProvince(e.target.value)}
               className={inputClass}
             >
-              <option value="">No preference</option>
+              <option value="">{t("jobPrefs.noPreference")}</option>
               {SA_PROVINCES.map((p) => (
                 <option key={p} value={p}>
                   {p}
@@ -575,7 +561,7 @@ export function ProfileEditForm({
               htmlFor="pref-contract"
               className="mb-1.5 block text-sm font-medium"
             >
-              Preferred contract type
+              {t("jobPrefs.preferredContract")}
             </label>
             <select
               id="pref-contract"
@@ -583,15 +569,10 @@ export function ProfileEditForm({
               onChange={(e) => setPreferredContractType(e.target.value)}
               className={inputClass}
             >
-              <option value="">No preference</option>
-              {(
-                Object.entries(CONTRACT_TYPE_LABELS) as [
-                  ContractType,
-                  string,
-                ][]
-              ).map(([value, label]) => (
+              <option value="">{t("jobPrefs.noPreference")}</option>
+              {(Object.keys(CONTRACT_TYPE_LABELS) as ContractType[]).map((value) => (
                 <option key={value} value={value}>
-                  {label}
+                  {tJobs(`contractTypes.${value}`)}
                 </option>
               ))}
             </select>
@@ -602,7 +583,7 @@ export function ProfileEditForm({
               htmlFor="salary-min"
               className="mb-1.5 block text-sm font-medium"
             >
-              Minimum desired salary (ZAR / month)
+              {t("jobPrefs.desiredSalary")}
             </label>
             <input
               id="salary-min"
@@ -621,13 +602,11 @@ export function ProfileEditForm({
       {/* Employment equity */}
       <div className="space-y-4">
         <SectionHeading>
-          Employment equity
+          {t("equity.sectionHeading")}
           <PrivateBadge />
         </SectionHeading>
         <p className="text-xs text-[var(--color-muted)]">
-          This information is stored privately and is never shared with
-          employers or visible to other users. It may be used in aggregate,
-          anonymised reporting only.
+          {t("equity.disclaimer")}
         </p>
 
         <div>
@@ -635,7 +614,7 @@ export function ProfileEditForm({
             htmlFor="disability"
             className="mb-1.5 block text-sm font-medium"
           >
-            Disability status
+            {t("equity.disabilityStatus")}
             <PrivateBadge />
           </label>
           <input
@@ -643,7 +622,7 @@ export function ProfileEditForm({
             type="text"
             value={disabilityStatus}
             onChange={(e) => setDisabilityStatus(e.target.value)}
-            placeholder="e.g. None / Physical / Hearing / Visual / Cognitive / Prefer not to say"
+            placeholder={t("equity.disabilityPlaceholder")}
             className={inputClass}
           />
         </div>
@@ -653,7 +632,7 @@ export function ProfileEditForm({
             htmlFor="ee-designation"
             className="mb-1.5 block text-sm font-medium"
           >
-            EE designation
+            {t("equity.eeDesignation")}
             <PrivateBadge />
           </label>
           <select
@@ -662,15 +641,15 @@ export function ProfileEditForm({
             onChange={(e) => setEeDesignation(e.target.value)}
             className={inputClass}
           >
-            <option value="">Prefer not to say</option>
-            <option value="African">African</option>
-            <option value="Coloured">Coloured</option>
-            <option value="Indian / Asian">Indian / Asian</option>
-            <option value="White">White</option>
-            <option value="Not specified">Not specified</option>
+            <option value="">{t("equity.preferNotToSay")}</option>
+            {(["African", "Coloured", "Indian / Asian", "White", "Not specified"] as const).map((val) => (
+              <option key={val} value={val}>
+                {t(`equity.eeOptions.${val}`)}
+              </option>
+            ))}
           </select>
           <p className="mt-1 text-xs text-[var(--color-muted)]">
-            We encourage you to complete this section.
+            {t("equity.encouragement")}
           </p>
         </div>
       </div>
@@ -680,11 +659,11 @@ export function ProfileEditForm({
       )}
 
       {saveStatus === "saved" && (
-        <p className="text-sm text-[var(--color-green)]">Profile saved.</p>
+        <p className="text-sm text-[var(--color-green)]">{t("save.saved")}</p>
       )}
 
       <Button type="submit" disabled={saveStatus === "saving"}>
-        {saveStatus === "saving" ? "Saving…" : "Save profile"}
+        {saveStatus === "saving" ? t("save.saving") : t("save.saveProfile")}
       </Button>
     </form>
   );

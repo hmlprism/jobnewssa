@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
   // pdfjs-dist uses Node.js-specific APIs (worker threads, file system).
@@ -8,4 +11,4 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["pdfjs-dist", "@react-pdf/renderer"],
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

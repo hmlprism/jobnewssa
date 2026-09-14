@@ -1,0 +1,609 @@
+{
+  "Header": {
+    "logoAlt": "Job News SA",
+    "nav": {
+      "home": "Tuis",
+      "findJobs": "Soek Werk",
+      "tools": "Gereedskap",
+      "saved": "Gestoor",
+      "applications": "Aansoeke",
+      "news": "Nuus",
+      "newsLong": "Werksmark nuus",
+      "messages": "Boodskappe",
+      "postJob": "Plaas \u2019n Pos"
+    },
+    "auth": {
+      "signIn": "Teken in",
+      "createAccount": "Skep rekening",
+      "createAccountFree": "Skep gratis rekening",
+      "signOut": "Teken uit"
+    },
+    "userMenu": {
+      "employerDashboard": "Werkgewer-dashboard",
+      "myApplications": "My aansoeke",
+      "myProfile": "My profiel",
+      "accountSettings": "Rekening-instellings"
+    },
+    "mobileNav": {
+      "openMenu": "Maak kieslys oop",
+      "closeMenu": "Maak kieslys toe",
+      "panelTitle": "Kieslys"
+    }
+  },
+  "Auth": {
+    "logoAlt": "Job News SA",
+    "fields": {
+      "email": "E-pos",
+      "emailAddress": "E-posadres",
+      "password": "Wagwoord",
+      "confirmPassword": "Bevestig wagwoord",
+      "fullName": "Volle naam",
+      "showPassword": "Wys wagwoord",
+      "hidePassword": "Verberg wagwoord"
+    },
+    "login": {
+      "title": "Teken in",
+      "subtitle": "Welkom terug. Soek en doen aansoek vir werk regoor Suid-Afrika.",
+      "forgotPassword": "Wagwoord vergeet?",
+      "signingIn": "Besig om in te teken\u2026",
+      "submit": "Teken in",
+      "noAccount": "Het jy nie \u2019n rekening nie?",
+      "createOne": "Skep een"
+    },
+    "signup": {
+      "title": "Skep jou rekening",
+      "subtitle": "Gratis vir werksoekers en werkgewers.",
+      "roleSeeker": "Ek soek werk",
+      "roleEmployer": "Ek is op soek na werknemers",
+      "passwordsMismatch": "Wagwoorde stem nie ooreen nie.",
+      "consent": "Ek stem in tot die <terms>Bepalings en Voorwaardes</terms> en die <privacy>Privaatheidsbeleid</privacy>.",
+      "creating": "Besig om rekening te skep\u2026",
+      "submit": "Skep rekening",
+      "alreadyHaveAccount": "Het jy reeds \u2019n rekening?",
+      "signIn": "Teken in",
+      "emailSentTitle": "Gaan kyk jou e-pos",
+      "emailSentBody": "Ons het \u2019n bevestigingsskakel na {email} gestuur. Klik daarop om jou rekening te aktiveer.",
+      "accountExistsTitle": "Rekening bestaan reeds",
+      "accountExistsBody": "\u2019n Rekening met <bold>{email}</bold> bestaan reeds.",
+      "forgotPassword": "Wagwoord vergeet?"
+    },
+    "forgotPassword": {
+      "title": "Wagwoord vergeet?",
+      "subtitle": "Voer jou e-posadres in en ons stuur vir jou \u2019n herstelskakel.",
+      "sending": "Besig om te stuur\u2026",
+      "submit": "Stuur herstelskakel",
+      "remembered": "Het jy dit onthou?",
+      "backToSignIn": "Terug na Teken in",
+      "emailSentTitle": "Gaan kyk jou e-pos",
+      "emailSentBody": "As \u2019n rekening vir <bold>{email}</bold> bestaan, het ons \u2019n wagwoordherstelskakel gestuur. Gaan kyk jou inkassie (en strooipos-vouer)."
+    },
+    "resetPassword": {
+      "title": "Stel \u2019n nuwe wagwoord in",
+      "subtitle": "Kies \u2019n nuwe wagwoord vir jou rekening.",
+      "newPassword": "Nuwe wagwoord",
+      "confirmNewPassword": "Bevestig nuwe wagwoord",
+      "updating": "Besig om op te dateer\u2026",
+      "submit": "Stel nuwe wagwoord in",
+      "updatedTitle": "Wagwoord opgedateer",
+      "updatedBody": "Jou wagwoord is verander. Jy word aangestuur na Teken in\u2026",
+      "passwordsMismatch": "Wagwoorde stem nie ooreen nie.",
+      "passwordTooShort": "Wagwoord moet ten minste 6 karakters wees.",
+      "expiredError": "Hierdie herstelskakel het verval of is reeds gebruik. Versoek \u2019n nuwe een.",
+      "requestNewLink": "Versoek \u2019n nuwe herstelskakel"
+    },
+    "confirmed": {
+      "title": "E-pos bevestig",
+      "signedInBody": "Jy is ingeteken. Begin om werk regoor Suid-Afrika te blaai.",
+      "browseJobs": "Blaai werk",
+      "notSignedInBody": "Jou rekening is aktief. Teken in om werk regoor Suid-Afrika te blaai.",
+      "signIn": "Teken in tot jou rekening"
+    }
+  },
+  "Home": {
+    "dateline": "Suid-Afrika Werksgeleenthede",
+    "hero": {
+      "statSrOnly": " werksvakatures in Suid-Afrika",
+      "vacanciesListed": "vakatures gelys",
+      "acrossProvinces": "oor al nege provinsies",
+      "tagline": "Ware geleenthede. \u2019n Sterker Suid-Afrika.",
+      "searchInput": "Poststitel, sleutelwoord of maatskappy",
+      "searchButton": "Soek",
+      "browseByProvince": "Blaai per provinsie"
+    },
+    "pills": {
+      "government": "Staatsdiens",
+      "learnerships": "Leerlingskappe",
+      "internships": "Internskappe",
+      "graduate": "Gegradueerd",
+      "apprenticeships": "Vakleerlingskap",
+      "bursaries": "Beurse",
+      "partTime": "Deeltyds",
+      "remote": "Afstandswerk"
+    },
+    "sections": {
+      "latestListings": "Jongste plasings",
+      "vacanciesCount": "{count} vakatures",
+      "govVacancies": "Staatsdiensposte",
+      "learnerships": "Leerlingskappe",
+      "internships": "Internskappe",
+      "gradProgrammes": "Gegradueerde programme",
+      "viewAll": "Alle {title}"
+    },
+    "cta": {
+      "heading": "Huur jy in Suid-Afrika?",
+      "body": "Plaas \u2019n vakature en bereik werksoekers oor elke provinsie, gratis.",
+      "button": "Plaas \u2019n pos"
+    }
+  },
+  "Jobs": {
+    "listing": {
+      "dateline": "Suid-Afrika Werksgeleenthede",
+      "positions": "{count, plural, one {pos} other {poste}}",
+      "sortNewest": "Nuutste",
+      "sortClosing": "Sluit binnekort",
+      "searchInput": "Postitel, sleutelwoord of maatskappy",
+      "locationInput": "Stad of provinsie",
+      "searchButton": "Soek",
+      "chips": {
+        "government": "Staatsdiens",
+        "learnerships": "Leerlingskappe",
+        "internships": "Internskappe",
+        "graduate": "Gegradueerd",
+        "apprenticeships": "Vakleerlingskap",
+        "bursaries": "Beurse",
+        "partTime": "Deeltyds",
+        "remote": "Afstandswerk"
+      },
+      "empty": {
+        "heading": "Geen werk gevind nie",
+        "body": "Pas jou soekterme aan of verwyder jou filters.",
+        "clearFilters": "Verwyder alle filters",
+        "alertText": "Stel \u2019n werkskennis in \u2014 <link>skep \u2019n gratis rekening</link> om in kennis gestel te word wanneer nuwe vakatures geplaas word."
+      },
+      "pagination": {
+        "previous": "\u2190 Vorige",
+        "next": "Volgende \u2192",
+        "page": "Bladsy {page} van {total}"
+      }
+    },
+    "contractTypes": {
+      "permanent": "Permanent",
+      "part_time": "Deeltyds",
+      "temporary": "Tydelik",
+      "contract": "Kontrak",
+      "internship": "Internskappos",
+      "volunteer": "Vrywilliger"
+    },
+    "filters": {
+      "title": "Filters",
+      "clearAll": "Verwyder alles",
+      "salary": "Minimum salaris / maand",
+      "anySalary": "Enige",
+      "province": "Provinsie",
+      "anyProvince": "Enige provinsie",
+      "sector": "Sektor",
+      "anySector": "Enige sektor",
+      "contractType": "Kontraktipe",
+      "anyContract": "Enige"
+    },
+    "card": {
+      "confidentialCompany": "Vertroulike maatskappy",
+      "remote": "Afstandswerk",
+      "closed": "Gesluit",
+      "urgent": "Dringend",
+      "verifiedEmployer": "\u2713 Geverifieerde werkgewer",
+      "closingSoon": "{daysNum, plural, =0 {Laaste dag} one {Nog # dag} other {Nog # dae}}",
+      "daysLeft": "{n, plural, one {Nog # dag} other {Nog # dae}}"
+    },
+    "detail": {
+      "backToSearch": "\u2190 Terug na soek",
+      "remote": "Afstandswerk",
+      "verified": "\u2713 Geverifieer",
+      "confidentialCompany": "Vertroulike maatskappy",
+      "postedAgo": "Geplaas {timeAgo}",
+      "daysLeft": "{n, plural, =0 {Laaste dag} one {Nog # dag} other {Nog # dae}}",
+      "expired": "Verval",
+      "externalFeedNote": "Hierdie plasing is van \u2019n eksterne werksfeed. Doen aansoek op die oorspronklike webwerf.",
+      "applyOnSite": "Doen aansoek op oorspronklike webwerf",
+      "alreadyApplied": "Al aansoek gedoen?",
+      "tips": {
+        "heading": "Aansoektips",
+        "tip1": "Pas jou CV aan vir die postitel en sleutelvereistes. SA-werkgewers soek dikwels op sleutelwoorde.",
+        "tip2": "Sluit jou ID-nommer of werkspermit-status in as die advertensie dit vereis; weglating is \u2019n algemene afwysingsrede.",
+        "tip3": "Hou jou voorblad onder een bladsy en begin met \u2019n sin oor waarom jy hierdie spesifieke rol wil h\u00ea, nie \u2019n generiese groet nie."
+      }
+    },
+    "dpsa": {
+      "badge": "Staatsdiensvakature",
+      "intro": "Aansoeke gaan direk na die departement \u2014 nie deur hierdie webwerf nie.",
+      "closingDate": "Sluitingsdatum",
+      "closingDateTime": "{date} om {time}",
+      "daysLeft": "{n, plural, =0 {Laaste dag} one {Nog # dag} other {Nog # dae}}",
+      "expired": "Sluitingsdatum verstreke",
+      "howToApply": "Hoe om aansoek te doen",
+      "enquiries": "Navrae",
+      "fallback": "Verwys na die amptelike DPSA Staatsdiens Vakature-omsendbrief vir aansoek-instruksies."
+    },
+    "apply": {
+      "signedOutNote": "Teken in om vir hierdie werk aansoek te doen.",
+      "signInToApply": "Teken in om aansoek te doen",
+      "noResumeNote": "Jy moet \u2019n CV oplaai voordat jy aansoek kan doen.",
+      "completeProfile": "Voltooi jou profiel",
+      "appliedTitle": "Jou aansoek is ingestuur.",
+      "appliedBody": "Die werkgewer sal in aanraking kom as jou profiel \u2019n treffer is. Intussen, <link>blaai meer vakatures</link>.",
+      "coverNoteLabel": "Dekkingsbrief",
+      "coverNoteOptional": "(opsioneel)",
+      "coverNotePlaceholder": "S\u00ea kortliks waarom jy geskik is vir hierdie rol",
+      "submitting": "Besig om in te stuur\u2026",
+      "submit": "Stuur aansoek"
+    },
+    "save": {
+      "save": "Stoor",
+      "unsave": "Verwyder",
+      "saveAria": "Stoor hierdie werk",
+      "unsaveAria": "Verwyder hierdie werk"
+    },
+    "logApplied": {
+      "signInPrompt": "<link>Teken in</link> om jou aansoeke na te spoor.",
+      "markedAsApplied": "Gemerk as aansoek gedoen",
+      "saving": "Besig om te stoor\u2026",
+      "markAsApplied": "Merk as aansoek gedoen"
+    },
+    "relative": {
+      "today": "Vandag",
+      "yesterday": "Gister",
+      "daysAgo": "{n, plural, one {# dag gelede} other {# dae gelede}}",
+      "monthsAgo": "{n, plural, one {# maand gelede} other {# maande gelede}}"
+    },
+    "salary": {
+      "range": "R{min} \u2013 R{max}/maand",
+      "from": "Van R{min}/maand",
+      "upTo": "Tot R{max}/maand"
+    }
+  },
+  "Shared": {
+    "nqfLevels": {
+      "1": "Vlak 1: Graad 9",
+      "2": "Vlak 2: Graad 10",
+      "3": "Vlak 3: Graad 11",
+      "4": "Vlak 4: Nasionale Senior Sertifikaat (Matriek)",
+      "5": "Vlak 5: Hoër Sertifikaat",
+      "6": "Vlak 6: Diploma / Gevorderde Sertifikaat",
+      "7": "Vlak 7: Baccalaureusgraad / Gevorderde Diploma",
+      "8": "Vlak 8: Honneurs / Nagraadse Diploma",
+      "9": "Vlak 9: Meestersgraad",
+      "10": "Vlak 10: Doktorsgraad"
+    },
+    "qualificationTypes": {
+      "Certificate": "Sertifikaat",
+      "Higher Certificate": "Hoër Sertifikaat",
+      "Diploma": "Diploma",
+      "Advanced Certificate": "Gevorderde Sertifikaat",
+      "Advanced Diploma": "Gevorderde Diploma",
+      "Bachelor's Degree": "Baccalaureusgraad",
+      "Bachelor Honours Degree": "Honneurs-baccalaureusgraad",
+      "Postgraduate Diploma": "Nagraadse Diploma",
+      "Professional Degree": "Professionele Graad",
+      "Master's Degree": "Meestersgraad",
+      "Doctoral Degree": "Doktorsgraad",
+      "Other": "Ander"
+    }
+  },
+  "Profile": {
+    "page": {
+      "title": "My profiel"
+    },
+    "privateBadge": "Privaat (slegs sigbaar vir jou)",
+    "resume": {
+      "sectionHeading": "CV",
+      "label": "CV",
+      "labelHint": "(PDF, maks 5 MB)",
+      "onFile": "CV in l\u00eaer",
+      "viewOpening": "Besig om oop te maak\u2026",
+      "view": "Bekyk CV",
+      "chooseFile": "Kies l\u00eaer",
+      "fileTooLarge": "L\u00eaer moet onder 5 MB wees.",
+      "replaceHint": "Laai \u2019n nuwe l\u00eaer op om jou bestaande CV te vervang.",
+      "requiredHint": "Jy moet eers \u2019n CV oplaai voordat jy aansoek kan doen."
+    },
+    "basicInfo": {
+      "sectionHeading": "Basiese inligting",
+      "headline": "Professionele opskrif",
+      "headlinePlaceholder": "bv. Senior Sagteware-ingenieur",
+      "phone": "Telefoonnommer",
+      "phonePlaceholder": "bv. 082 123 4567 of +27 82 123 4567",
+      "province": "Provinsie",
+      "provinceSelect": "Kies provinsie",
+      "city": "Stad / Dorp",
+      "cityPlaceholder": "bv. Kaapstad"
+    },
+    "qualifications": {
+      "sectionHeading": "Kwalifikasies",
+      "nqfLevel": "Hoogste NKR-vlak",
+      "nqfSelect": "Kies NKR-vlak",
+      "qualTitle": "Kwalifikasie-titel",
+      "qualTitlePlaceholder": "bv. Baccalaureus in Rekeningkunde",
+      "qualType": "Kwalifikasie-tipe",
+      "qualTypeSelect": "Kies tipe",
+      "profReg": "Professionele registrasienommer",
+      "profRegPlaceholder": "bv. HPCSA: PR123456 / SAICA: 12345678",
+      "profRegHint": "Sluit die registrerende liggaam se voorvoegsel in (HPCSA, SAICA, ECSA, SACAP, ens.).",
+      "profRegSelfReported": "Self-gerapporteer, nie onafhanklik geverifieer nie."
+    },
+    "workAuth": {
+      "sectionHeading": "Werkmagtiging",
+      "label": "Werkmagtigingstatus",
+      "select": "Kies status",
+      "citizen": "Suid-Afrikaanse Burger",
+      "permanent_resident": "Permanente Inwoner",
+      "work_permit": "Werkspermit-houer",
+      "other": "Ander"
+    },
+    "jobPrefs": {
+      "sectionHeading": "Werkvoorkeure",
+      "preferredProvince": "Voorkeurprovinsie",
+      "noPreference": "Geen voorkeur",
+      "preferredContract": "Voorkeur kontraktipe",
+      "desiredSalary": "Minimum gewenste salaris (ZAR / maand)"
+    },
+    "equity": {
+      "sectionHeading": "Indiensnemingsgelykheid",
+      "disclaimer": "Hierdie inligting word privaat gestoor en word nooit met werkgewers gedeel of vir ander gebruikers sigbaar nie. Dit kan slegs gebruik word in geaggregeerde, geanonimiseerde verslagdoening.",
+      "disabilityStatus": "Gestremdheids-status",
+      "disabilityPlaceholder": "bv. Geen / Fisies / Gehoor / Visueel / Kognitief / Verkies om nie te s\u00ea nie",
+      "eeDesignation": "BV-aanwysing",
+      "preferNotToSay": "Verkies om nie te s\u00ea nie",
+      "eeOptions": {
+        "African": "Swart",
+        "Coloured": "Kleurling",
+        "Indian / Asian": "Indi\u00ebr / Asiaat",
+        "White": "Wit",
+        "Not specified": "Nie gespesifiseer nie"
+      },
+      "encouragement": "Ons moedig jou aan om hierdie afdeling te voltooi."
+    },
+    "errors": {
+      "phoneDigitsOnly": "Telefoonnommer moet slegs syfers bevat.",
+      "phoneInvalid": "Voer \u2019n geldige Suid-Afrikaanse telefoonnommer in. Gebruik 10 syfers wat met 0 begin (bv. 082 123 4567) of internasionale formaat (bv. +27 82 123 4567).",
+      "saicaDigits": "SAICA-lidmaatskapsnommers bestaan uit 8 syfers (bv. SAICA: 12345678).",
+      "ecsaNumeric": "ECSA-registrasienommers is numeries (bv. ECSA: 123456).",
+      "sacapFormat": "Kontroleer jou SACAP-nommer-formaat (bv. SACAP: 12345).",
+      "hpcsaPrefix": "Sluit asseblief jou HPCSA-registrasienommer in na die voorvoegsel.",
+      "fixErrors": "Maak asseblief die foute hierbo reg voor jy stoor.",
+      "fileTooLarge": "L\u00eaer moet onder 5 MB wees."
+    },
+    "save": {
+      "saving": "Besig om te stoor\u2026",
+      "saveProfile": "Stoor profiel",
+      "saved": "Profiel gestoor."
+    }
+  },
+  "Employer": {
+    "dashboard": {
+      "heading": "Jou werksinskrywings",
+      "postJob": "Plaas \u2019n pos",
+      "unverifiedBanner": {
+        "heading": "Jou werkgewer-rekening is nie geverifieer nie.",
+        "body": "Jou poste is sigbaar maar wys \u2019n \u201eOngetoetste werkgewer\u201c kenteken.",
+        "link": "Verifieer jou rekening \u2192"
+      },
+      "verifiedBanner": {
+        "heading": "\u2713 Geverifieerde werkgewer.",
+        "body": "Jou poste wys \u2019n geverifieerde kenteken."
+      },
+      "empty": {
+        "heading": "Nog geen inskrywings nie",
+        "body": "Plaas jou eerste vakature om aansoeke te begin ontvang.",
+        "button": "Plaas jou eerste pos"
+      },
+      "statusLive": "Lewendig",
+      "postedAgo": "Geplaas {ago}",
+      "applicantsCount": "{count, plural, one {# aansoeknemer} other {# aansoeknemers}}",
+      "viewListingAria": "Bekyk inskrywing"
+    },
+    "applicants": {
+      "backToDashboard": "Terug na dashboard",
+      "metaTitle": "Aansoekers \u2014 {jobTitle}",
+      "metaTitleFallback": "Aansoekers",
+      "count": "{count, plural, one {# aansoeknemer} other {# aansoeknemers}}",
+      "empty": {
+        "heading": "Nog geen aansoeke nie",
+        "body": "Aansoeke sal hier verskyn soos kandidate aansoek doen."
+      },
+      "applicantFallback": "Aansoeknemer",
+      "appliedAgo": "Aansoek gedoen {ago}",
+      "resume": "CV",
+      "noResume": "Geen CV nie",
+      "message": "Boodskap",
+      "coverNote": "Dekkingsbrief"
+    },
+    "verify": {
+      "backToDashboard": "Terug na dashboard",
+      "heading": "Verifieer jou werkgewer-rekening",
+      "noAccess": {
+        "heading": "Werkgewer-rekening benodig",
+        "body": "Teken in met \u2019n werkgewer-rekening om jou maatskappy te verifieer.",
+        "signIn": "Teken in"
+      },
+      "noCompany": {
+        "heading": "Plaas eers \u2019n pos",
+        "body": "Jou maatskappyprofiel word geskep wanneer jy jou eerste pos plaas.",
+        "link": "Plaas \u2019n vakature"
+      },
+      "verified": {
+        "heading": "\u2713 Jou rekening is geverifieer",
+        "body": "Jou poste wys \u2019n geverifieerde kenteken.",
+        "verifiedOn": "Geverifieer op {date}."
+      },
+      "description": "Ons kontroleer dat jou rekening se e-posdomein ooreenstem met jou maatskappy-webwerf. As hulle ooreenstem, word jou rekening onmiddellik geverifieer en jou poste wys \u2019n geverifieerde kenteken.",
+      "websiteLabel": "Maatskappy-webwerf-URL",
+      "websiteHint": "Moet ooreenstem met jou rekening se e-posdomein. Byvoorbeeld, as jou e-pos you@acme.co.za is, voer acme.co.za in.",
+      "checking": "Besig om te kontroleer\u2026",
+      "verifyNow": "Verifieer nou",
+      "successMessage": "Jou werkgewer-rekening is nou geverifieer.",
+      "failedMessage": "Verifikasie het misluk.",
+      "errorMessage": "Iets het verkeerd gegaan. Probeer weer."
+    },
+    "post": {
+      "signedOut": {
+        "heading": "Teken in om \u2019n pos te plaas",
+        "body": "Jy benodig \u2019n werkgewer-rekening om vakatures te plaas.",
+        "createAccount": "Skep werkgewer-rekening"
+      },
+      "wrongRole": {
+        "heading": "Werkgewer-rekening benodig",
+        "body": "Jou rekening is geregistreer as werksoeker. Kontak ondersteuning om na \u2019n werkgewer-rekening oor te skakel."
+      },
+      "success": {
+        "heading": "Pos geplaas",
+        "body": "Jou vakature is lewendig. Jy word aangestuur na jou dashboard\u2026"
+      },
+      "heading": "Plaas \u2019n pos",
+      "subheading": "Gratis om te plaas. Onmiddellik lewendig, verval na 30 dae.",
+      "mustBeSignedIn": "Jy moet ingeteken wees.",
+      "sections": {
+        "jobDetails": "Posbesonderhede",
+        "location": "Ligging",
+        "classificationSalary": "Klassifikasie & salaris",
+        "requirements": "Vereistes",
+        "equity": "Billikheid & toeganklikheid",
+        "optional": "(opsioneel)"
+      },
+      "fields": {
+        "companyName": "Maatskappynaam",
+        "jobTitle": "Postitel",
+        "jobDescription": "Posbeskrywing",
+        "province": "Provinsie",
+        "city": "Stad / dorp",
+        "contractType": "Kontraktipe",
+        "sector": "Sektor",
+        "selectSector": "Kies sektor",
+        "nqfLevel": "Min. NKR-vlak benodig",
+        "nqfNoMin": "Geen minimum",
+        "qualType": "Vereiste kwalifikasietipe",
+        "qualNoReq": "Geen spesifieke vereiste",
+        "eeNote": "Indiensnemingsbillikheid / Regstellende aksie-verklaring",
+        "accommodation": "Toeganklikheidsakkommodasie-kontak",
+        "salaryMin": "Min salaris (R/maand)",
+        "salaryMax": "Maks salaris (R/maand)"
+      },
+      "placeholders": {
+        "jobDescription": "Verantwoordelikhede, vereistes, hoe om aansoek te doen...",
+        "eeNote": "bv. Voorkeur sal gegee word aan kandidate van aangewese groepe soos omskryf in die Wet op Indiensnemingsbillikheid."
+      },
+      "checkboxes": {
+        "isRemote": "Dit is \u2019n afstandspos",
+        "marketRelated": "Salaris is markverband (moenie \u2019n bedrag spesifiseer nie)"
+      },
+      "submit": "Plaas pos",
+      "submitting": "Besig om te plaas\u2026"
+    }
+  },
+  "News": {
+    "page": {
+      "title": "Suid-Afrika werksmark nuus"
+    },
+    "heading": "Werksmark nuus",
+    "description": "Arbeidsmark- en wervingsnuus relevant vir Suid-Afrikaanse werksoekers, saamgestel uit openbare bronne.",
+    "empty": {
+      "heading": "Nog geen artikels nie",
+      "body": "Nuusinname is nog nie opgestel nie. Sien lib/news-ingest.ts."
+    },
+    "imageCredit": "Prent: {source}"
+  },
+  "Messaging": {
+    "page": {
+      "title": "Boodskappe"
+    },
+    "empty": {
+      "heading": "Nog geen gesprekke nie",
+      "body": "Gesprekke begin wanneer \u2019n werkgewer \u2019n aansoeknemer of omgekeerd boodskap stuur, nadat \u2019n werksaansoek ingestuur is.",
+      "findJobs": "Soek werke om aansoek te doen",
+      "myApplications": "My aansoeke"
+    },
+    "noPreview": "Nog geen boodskappe nie",
+    "noMessages": "Nog geen boodskappe nie. Stuur een om die gesprek te begin.",
+    "rowGroupSeeker": "As werksoeker",
+    "rowGroupEmployer": "As werkgewer",
+    "roleEmployer": "Werkgewer",
+    "roleApplicant": "Aansoeknemer",
+    "rePrefix": "Re:",
+    "backToApplicants": "Terug na aansoekers",
+    "backToApplications": "Terug na my aansoeke",
+    "you": "Jy",
+    "failedToSend": "Kon nie stuur nie. Probeer asseblief weer.",
+    "writePlaceholder": "Skryf jou boodskap\u2026",
+    "messageAriaLabel": "Boodskap",
+    "sendAriaLabel": "Stuur boodskap",
+    "sending": "Besig om te stuur\u2026",
+    "send": "Stuur",
+    "yesterday": "Gister",
+    "todayAt": "Vandag om {time}",
+    "dateAt": "{date} om {time}"
+  },
+  "Saved": {
+    "page": {
+      "title": "Gestore werke"
+    },
+    "empty": {
+      "heading": "Nog geen gestore werke nie",
+      "browse": "Blaai vakatures",
+      "body": "en tik op die boekmerkie-ikoon op enige plasing om dit hier te stoor."
+    }
+  },
+  "Applications": {
+    "page": {
+      "title": "My aansoeke"
+    },
+    "empty": {
+      "heading": "Nog geen aansoeke nie",
+      "browse": "Blaai vakatures",
+      "body": "en doen aansoek. Jou aansoeke sal hier verskyn."
+    },
+    "jobRemoved": "Pos verwyder",
+    "appliedAgo": "Aansoek gedoen {ago}",
+    "messages": "Boodskappe",
+    "status": {
+      "submitted": "Ingedien",
+      "viewed": "Bekyk",
+      "shortlisted": "Kortgelys",
+      "rejected": "Afgekeur",
+      "hired": "Aangestel"
+    }
+  },
+  "AccountSettings": {
+    "page": {
+      "title": "Rekening-instellings"
+    },
+    "profile": {
+      "sectionHeading": "Profiel",
+      "picLabel": "Profielfoto",
+      "picAlt": "Profielfoto",
+      "changePic": "Verander foto",
+      "uploadPic": "Laai foto op",
+      "picHint": "JPEG, PNG of WebP \u00b7 maks 2 MB",
+      "picTooLarge": "Prent moet onder 2 MB wees.",
+      "fullName": "Volle naam",
+      "fullNamePlaceholder": "Jou volle naam",
+      "emailAddress": "E-posadres",
+      "emailHint": "E-posadres kan nie hier verander word nie. Kontak ondersteuning as jy dit wil wysig.",
+      "saved": "Veranderings gestoor.",
+      "saving": "Besig om te stoor\u2026",
+      "save": "Stoor veranderings"
+    },
+    "password": {
+      "sectionHeading": "Verander wagwoord",
+      "current": "Huidige wagwoord",
+      "new": "Nuwe wagwoord",
+      "confirm": "Bevestig nuwe wagwoord",
+      "show": "Wys wagwoord",
+      "hide": "Verberg wagwoord",
+      "mismatch": "Wagwoorde stem nie ooreen nie.",
+      "tooShort": "Nuwe wagwoord moet ten minste 6 karakters wees.",
+      "incorrect": "Huidige wagwoord is verkeerd.",
+      "updated": "Wagwoord opgedateer.",
+      "updating": "Besig om op te dateer\u2026",
+      "update": "Dateer wagwoord op"
+    }
+  }
+}

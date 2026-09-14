@@ -1,12 +1,15 @@
 import { Suspense } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/lib/navigation";
 import { LinkButton } from "@/components/ui/button";
 import { getAuthUser, getAuthProfile, createClient } from "@/lib/supabase/server";
 import { UserMenu } from "@/components/layout/user-menu";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { LocaleSwitcher } from "@/components/layout/locale-switcher";
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const t = await getTranslations("Header");
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--color-line)] bg-[var(--color-paper)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
@@ -14,7 +17,7 @@ export function SiteHeader() {
         <Link href="/" prefetch={false} className="flex items-center gap-2.5">
           <Image
             src="/logo-mark.png"
-            alt="Job News SA"
+            alt={t("logoAlt")}
             width={455}
             height={450}
             className="h-8 w-auto"
@@ -32,22 +35,23 @@ export function SiteHeader() {
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-0.5 lg:flex">
-          <NavLink href="/">Home</NavLink>
-          <NavLink href="/jobs">Find Jobs</NavLink>
-          <NavLink href="/tools">Tools</NavLink>
-          <NavLink href="/saved">Saved</NavLink>
-          <NavLink href="/applications">Applications</NavLink>
-          <NavLink href="/news">News</NavLink>
+          <NavLink href="/">{t("nav.home")}</NavLink>
+          <NavLink href="/jobs">{t("nav.findJobs")}</NavLink>
+          <NavLink href="/tools">{t("nav.tools")}</NavLink>
+          <NavLink href="/saved">{t("nav.saved")}</NavLink>
+          <NavLink href="/applications">{t("nav.applications")}</NavLink>
+          <NavLink href="/news">{t("nav.news")}</NavLink>
           <Suspense fallback={<AuthNavItemsSkeleton />}>
             <AuthNavItems />
           </Suspense>
           {/* Hairline — seeker nav / employer CTA */}
           <span className="mx-1.5 h-3.5 w-px bg-[var(--color-line)]" aria-hidden />
-          <NavLink href="/employer/post">Post a Job</NavLink>
+          <NavLink href="/employer/post">{t("nav.postJob")}</NavLink>
         </nav>
 
-        {/* Right side: auth controls + mobile hamburger */}
+        {/* Right side: locale switcher + auth controls + mobile hamburger */}
         <div className="flex items-center gap-3">
+          <LocaleSwitcher className="hidden lg:flex" />
           <Suspense fallback={<AuthControlsSkeleton />}>
             <AuthControls />
           </Suspense>
@@ -61,6 +65,8 @@ async function AuthNavItems() {
   const user = await getAuthUser();
   if (!user) return null;
 
+  const t = await getTranslations("Header");
+
   // Fetch unread count server-side — piggybacks on the already-resolved auth
   // session. Eliminates the client-side fetch + its middleware auth round-trip.
   const supabase = await createClient();
@@ -72,7 +78,7 @@ async function AuthNavItems() {
 
   return (
     <NavLink href="/messages">
-      Messages
+      {t("nav.messages")}
       {count != null && count > 0 && (
         <span className="ml-1.5 inline-flex items-center justify-center bg-[var(--color-rust)] px-1.5 py-px text-[10px] font-bold leading-none text-[var(--color-paper)]">
           {count > 99 ? "99+" : count}
@@ -84,6 +90,7 @@ async function AuthNavItems() {
 
 async function AuthControls() {
   const user = await getAuthUser();
+  const t = await getTranslations("Header");
 
   if (!user) {
     return (
@@ -94,10 +101,10 @@ async function AuthControls() {
             prefetch={false}
             className="text-sm font-medium text-[var(--color-muted)] transition-colors duration-100 hover:text-[var(--color-ink)]"
           >
-            Sign in
+            {t("auth.signIn")}
           </Link>
           <LinkButton href="/auth/signup" size="sm">
-            Create account
+            {t("auth.createAccount")}
           </LinkButton>
         </div>
         <MobileNav isLoggedIn={false} unreadCount={0} />
