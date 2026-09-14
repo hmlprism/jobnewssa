@@ -292,10 +292,10 @@ export default function PrivacyPage() {
           <p className="mt-4 leading-relaxed">
             To exercise these rights, contact us at{" "}
             <a
-              href="mailto:privacy@jobnewssa.com"
+              href="mailto:contactjobnewssa@gmail.com"
               className="underline hover:text-[var(--color-rust)]"
             >
-              privacy@jobnewssa.com
+              contactjobnewssa@gmail.com
             </a>
             .
           </p>
@@ -332,10 +332,10 @@ export default function PrivacyPage() {
             objection to processing that this Site does not yet fully support in a self-service
             way. Until this is built, contact us at{" "}
             <a
-              href="mailto:privacy@jobnewssa.com"
+              href="mailto:contactjobnewssa@gmail.com"
               className="underline hover:text-[var(--color-rust)]"
             >
-              privacy@jobnewssa.com
+              contactjobnewssa@gmail.com
             </a>{" "}
             to request deletion.
           </p>
@@ -377,10 +377,10 @@ export default function PrivacyPage() {
             HML Prism (operating as Job News SA)
             <br />
             <a
-              href="mailto:privacy@jobnewssa.com"
+              href="mailto:contactjobnewssa@gmail.com"
               className="underline hover:text-[var(--color-rust)]"
             >
-              privacy@jobnewssa.com
+              contactjobnewssa@gmail.com
             </a>
           </p>
           <p className="mt-3">

@@ -289,10 +289,10 @@ export default function TermsPage() {
           <p className="mt-4 leading-relaxed">Questions about these terms? Contact us at:</p>
           <p className="mt-3">
             <a
-              href="mailto:privacy@jobnewssa.com"
+              href="mailto:contactjobnewssa@gmail.com"
               className="underline hover:text-[var(--color-rust)]"
             >
-              privacy@jobnewssa.com
+              contactjobnewssa@gmail.com
             </a>
           </p>
         </section>
