@@ -215,11 +215,13 @@ interface Props {
 
 const inputOk =
   "w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:border-[var(--color-ink)] focus:outline-none";
-const inputWarn =
-  "w-full border border-[var(--color-amber)] bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:border-[var(--color-amber)] focus:outline-none";
+const inputErr =
+  "w-full border border-[var(--color-rust)] bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:border-[var(--color-rust)] focus:outline-none";
 
 // Matches "14 September 2026", "1 Jan 2025", "31 December 2024", etc.
+// Empty string passes (blank = intentionally unsigned, fill by hand).
 const DATE_RE = /^\d{1,2}\s+[A-Za-z]+\s+\d{4}$/;
+const dateValid = (v: string) => !v || DATE_RE.test(v.trim());
 
 export function StepPreview({
   page1Initials,
@@ -295,10 +297,9 @@ export function StepPreview({
           Declaration date
         </h2>
         {(() => {
-          const dateWarn =
-            declarationDate && !DATE_RE.test(declarationDate.trim())
-              ? "Format should be day, month name, year — e.g. 14 September 2026"
-              : undefined;
+          const dateErr = !dateValid(declarationDate)
+            ? "Format must be day, month name, year — e.g. 14 September 2026"
+            : undefined;
           return (
             <div>
               <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
@@ -306,14 +307,14 @@ export function StepPreview({
               </label>
               <input
                 type="text"
-                className={dateWarn ? inputWarn : inputOk}
+                className={dateErr ? inputErr : inputOk}
                 placeholder="14 September 2026"
                 value={declarationDate}
                 onChange={(e) => onDeclarationDateChange(e.target.value)}
                 style={{ maxWidth: "16rem" }}
               />
-              {dateWarn ? (
-                <p className="mt-1 text-xs text-[var(--color-amber)]">{dateWarn}</p>
+              {dateErr ? (
+                <p className="mt-1 text-xs text-[var(--color-rust)]">{dateErr}</p>
               ) : (
                 <p className="mt-1 text-xs text-[var(--color-muted)]">
                   Enter the date as it should appear on the form — e.g. 14 September 2026
@@ -326,7 +327,11 @@ export function StepPreview({
 
       {/* ── Download ─────────────────────────────────────────────────── */}
       <div className="space-y-3 border-t border-[var(--color-line)] pt-6">
-        <Button type="button" onClick={onDownload} disabled={downloading}>
+        <Button
+          type="button"
+          onClick={onDownload}
+          disabled={downloading || !dateValid(declarationDate)}
+        >
           {downloading ? "Generating…" : "Download Z83 PDF"}
         </Button>
         {downloadError && (
