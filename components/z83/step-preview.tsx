@@ -215,6 +215,11 @@ interface Props {
 
 const inputOk =
   "w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:border-[var(--color-ink)] focus:outline-none";
+const inputWarn =
+  "w-full border border-[var(--color-amber)] bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:border-[var(--color-amber)] focus:outline-none";
+
+// Matches "14 September 2026", "1 Jan 2025", "31 December 2024", etc.
+const DATE_RE = /^\d{1,2}\s+[A-Za-z]+\s+\d{4}$/;
 
 export function StepPreview({
   page1Initials,
@@ -289,22 +294,34 @@ export function StepPreview({
         <h2 className="mb-4 text-base font-semibold text-[var(--color-ink)]">
           Declaration date
         </h2>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-            Date
-          </label>
-          <input
-            type="text"
-            className={inputOk}
-            placeholder="14 September 2026"
-            value={declarationDate}
-            onChange={(e) => onDeclarationDateChange(e.target.value)}
-            style={{ maxWidth: "16rem" }}
-          />
-          <p className="mt-1 text-xs text-[var(--color-muted)]">
-            Enter the date as it should appear on the form — e.g. 14 September 2026
-          </p>
-        </div>
+        {(() => {
+          const dateWarn =
+            declarationDate && !DATE_RE.test(declarationDate.trim())
+              ? "Format should be day, month name, year — e.g. 14 September 2026"
+              : undefined;
+          return (
+            <div>
+              <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
+                Date
+              </label>
+              <input
+                type="text"
+                className={dateWarn ? inputWarn : inputOk}
+                placeholder="14 September 2026"
+                value={declarationDate}
+                onChange={(e) => onDeclarationDateChange(e.target.value)}
+                style={{ maxWidth: "16rem" }}
+              />
+              {dateWarn ? (
+                <p className="mt-1 text-xs text-[var(--color-amber)]">{dateWarn}</p>
+              ) : (
+                <p className="mt-1 text-xs text-[var(--color-muted)]">
+                  Enter the date as it should appear on the form — e.g. 14 September 2026
+                </p>
+              )}
+            </div>
+          );
+        })()}
       </section>
 
       {/* ── Download ─────────────────────────────────────────────────── */}

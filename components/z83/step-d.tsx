@@ -114,10 +114,45 @@ export function StepD({
   const setB = <K extends keyof Z83SectionB>(k: K, v: Z83SectionB[K]) =>
     onSectionBChange({ ...sectionB, [k]: v });
 
+  // Validates a 4-digit year in the range 1966–2026 (year SA PSAP began).
+  // Empty string is valid (field is optional).
+  const validProfYear = (v: string) => {
+    if (!v) return true;
+    const y = parseInt(v, 10);
+    return /^\d{4}$/.test(v) && y >= 1966 && y <= 2026;
+  };
+
   const errs = attempted
     ? {
         communication_pref: !sectionB.communication_pref ? "Required" : undefined,
-        contact_details: !sectionB.contact_details.trim() ? "Required" : undefined,
+        contact_details: !sectionB.contact_details.trim()
+          ? "Required"
+          : sectionB.communication_pref === "Post" &&
+            sectionB.contact_details.trim().length < 10
+          ? "Address too short — include street, suburb, and postal code"
+          : undefined,
+        preferred_language:
+          sectionB.preferred_language && /\d/.test(sectionB.preferred_language)
+            ? "Language name cannot contain numbers"
+            : undefined,
+        nationality:
+          sectionB.nationality &&
+          (!/[a-zA-Z]/.test(sectionB.nationality) || /\d/.test(sectionB.nationality))
+            ? "Nationality must contain letters only"
+            : undefined,
+        years_private_sector:
+          sectionB.years_private_sector &&
+          parseInt(sectionB.years_private_sector, 10) > 60
+            ? "Maximum 60 years"
+            : undefined,
+        years_public_sector:
+          sectionB.years_public_sector &&
+          parseInt(sectionB.years_public_sector, 10) > 60
+            ? "Maximum 60 years"
+            : undefined,
+        professional_reg_date: !validProfYear(sectionB.professional_reg_date)
+          ? "Enter a 4-digit year between 1966 and 2026"
+          : undefined,
       }
     : {};
 
@@ -211,11 +246,14 @@ export function StepD({
             </label>
             <input
               type="text"
-              className={inputOk}
+              className={errs.preferred_language ? inputErr : inputOk}
               placeholder="English"
               value={sectionB.preferred_language}
-              onChange={(e) => setB("preferred_language", e.target.value)}
+              onChange={(e) =>
+                setB("preferred_language", e.target.value.replace(/\d/g, ""))
+              }
             />
+            <FieldError msg={errs.preferred_language} />
           </div>
         </div>
       </section>
@@ -232,11 +270,14 @@ export function StepD({
             </label>
             <input
               type="text"
-              className={inputOk}
+              className={errs.nationality ? inputErr : inputOk}
               placeholder="South African"
               value={sectionB.nationality}
-              onChange={(e) => setB("nationality", e.target.value)}
+              onChange={(e) =>
+                setB("nationality", e.target.value.replace(/\d/g, ""))
+              }
             />
+            <FieldError msg={errs.nationality} />
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2">
@@ -247,13 +288,16 @@ export function StepD({
               <input
                 type="text"
                 inputMode="numeric"
-                className={inputOk}
+                className={errs.years_private_sector ? inputErr : inputOk}
                 placeholder="3"
                 value={sectionB.years_private_sector}
-                onChange={(e) =>
-                  setB("years_private_sector", e.target.value.replace(/\D/g, ""))
-                }
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, "");
+                  const n = parseInt(digits, 10);
+                  setB("years_private_sector", digits && n > 60 ? "60" : digits);
+                }}
               />
+              <FieldError msg={errs.years_private_sector} />
             </div>
 
             <div>
@@ -263,13 +307,16 @@ export function StepD({
               <input
                 type="text"
                 inputMode="numeric"
-                className={inputOk}
+                className={errs.years_public_sector ? inputErr : inputOk}
                 placeholder="7"
                 value={sectionB.years_public_sector}
-                onChange={(e) =>
-                  setB("years_public_sector", e.target.value.replace(/\D/g, ""))
-                }
+                onChange={(e) => {
+                  const digits = e.target.value.replace(/\D/g, "");
+                  const n = parseInt(digits, 10);
+                  setB("years_public_sector", digits && n > 60 ? "60" : digits);
+                }}
               />
+              <FieldError msg={errs.years_public_sector} />
             </div>
 
             <div>
@@ -278,14 +325,24 @@ export function StepD({
               </label>
               <input
                 type="text"
-                className={inputOk}
+                inputMode="numeric"
+                className={errs.professional_reg_date ? inputErr : inputOk}
                 placeholder="2018"
                 value={sectionB.professional_reg_date}
-                onChange={(e) => setB("professional_reg_date", e.target.value)}
+                onChange={(e) =>
+                  setB(
+                    "professional_reg_date",
+                    e.target.value.replace(/\D/g, "").slice(0, 4)
+                  )
+                }
               />
-              <p className="mt-1 text-xs text-[var(--color-muted)]">
-                Year registered with your professional body
-              </p>
+              {errs.professional_reg_date ? (
+                <FieldError msg={errs.professional_reg_date} />
+              ) : (
+                <p className="mt-1 text-xs text-[var(--color-muted)]">
+                  Year registered with your professional body
+                </p>
+              )}
             </div>
 
             <div>
@@ -317,7 +374,12 @@ export function StepD({
         </p>
 
         <div className="space-y-4">
-          {sectionD.map((lang, i) => (
+          {sectionD.map((lang, i) => {
+            const langNameErr =
+              attempted && lang.language && /\d/.test(lang.language)
+                ? "Language name cannot contain numbers"
+                : undefined;
+            return (
             <div key={i} className="border border-[var(--color-line)] p-4">
               <div className="flex items-start gap-3">
                 <div className="flex-1">
@@ -326,13 +388,16 @@ export function StepD({
                   </label>
                   <input
                     type="text"
-                    className={inputOk}
+                    className={langNameErr ? inputErr : inputOk}
                     placeholder={
                       i === 0 ? "e.g. Zulu" : i === 1 ? "e.g. English" : "e.g. Sotho"
                     }
                     value={lang.language}
-                    onChange={(e) => updateLang(i, { language: e.target.value })}
+                    onChange={(e) =>
+                      updateLang(i, { language: e.target.value.replace(/\d/g, "") })
+                    }
                   />
+                  <FieldError msg={langNameErr} />
                 </div>
                 <button
                   type="button"
@@ -369,7 +434,8 @@ export function StepD({
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
 
           {sectionD.length < 5 && (
             <button

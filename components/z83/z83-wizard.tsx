@@ -190,7 +190,22 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
     }
     if (step === 4) {
       const b = data.section_b;
-      return !!b.communication_pref && b.contact_details.trim().length > 0;
+      const validProfYear = (v: string) => {
+        if (!v) return true;
+        const y = parseInt(v, 10);
+        return /^\d{4}$/.test(v) && y >= 1966 && y <= 2026;
+      };
+      return (
+        !!b.communication_pref &&
+        b.contact_details.trim().length > 0 &&
+        (b.communication_pref !== "Post" || b.contact_details.trim().length >= 10) &&
+        (!b.preferred_language || !/\d/.test(b.preferred_language)) &&
+        (!b.nationality || (/[a-zA-Z]/.test(b.nationality) && !/\d/.test(b.nationality))) &&
+        (!b.years_private_sector || parseInt(b.years_private_sector, 10) <= 60) &&
+        (!b.years_public_sector || parseInt(b.years_public_sector, 10) <= 60) &&
+        validProfYear(b.professional_reg_date) &&
+        data.section_d.every((l) => !l.language || !/\d/.test(l.language))
+      );
     }
 
     const validText = (v: string) =>
