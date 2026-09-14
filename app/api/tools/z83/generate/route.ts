@@ -5,11 +5,24 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { fillZ83 } from "@/lib/z83-fill";
 import type { Z83FillData } from "@/types/z83";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  // 10 PDF renders / IP / minute — compute-heavy, no auth required.
+  const rl = await checkRateLimit(getClientIp(req), 10, "1 m");
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please wait before generating another Z83." },
+      {
+        status: 429,
+        headers: rl.retryAfter ? { "Retry-After": String(rl.retryAfter) } : {},
+      }
+    );
+  }
+
   let data: Z83FillData;
   try {
     data = await req.json();

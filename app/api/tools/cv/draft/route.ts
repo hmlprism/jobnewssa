@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUser, createClient } from "@/lib/supabase/server";
 import type { CvData } from "@/types/cv";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,6 +14,18 @@ export async function PUT(req: NextRequest) {
   const user = await getAuthUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // 60 auto-saves / user / minute — generous to cover rapid step navigation.
+  const rl = await checkRateLimit(`user:${user.id}`, 60, "1 m");
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests." },
+      {
+        status: 429,
+        headers: rl.retryAfter ? { "Retry-After": String(rl.retryAfter) } : {},
+      }
+    );
   }
 
   let data: CvData;

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   // 1. Auth check — middleware already validated + refreshed the session,
@@ -12,6 +13,20 @@ export async function POST(request: Request) {
 
   if (!user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // 1b. Rate limit — 5 attempts per user per 10 minutes.
+  // This endpoint makes an outbound HTTP fetch to a user-supplied hostname;
+  // without a limit it could act as an amplifier for DoS or SSRF probing.
+  const rl = await checkRateLimit(`user:${user.id}`, 5, "10 m");
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many verification attempts. Please try again later." },
+      {
+        status: 429,
+        headers: rl.retryAfter ? { "Retry-After": String(rl.retryAfter) } : {},
+      }
+    );
   }
 
   // 2. Parse body

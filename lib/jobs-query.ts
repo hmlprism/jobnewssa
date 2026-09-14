@@ -65,8 +65,15 @@ async function _searchJobsImpl(filterJson: string) {
     query = query.gte("salary_min", parseInt(filters.min_salary, 10));
   }
   if (filters.location) {
+    // Strip PostgREST filter-string special characters before interpolating.
+    // Comma (,) is the field separator; period (.) is the relation traversal
+    // operator. Neither can cause SQL injection (PostgREST parameterises the
+    // final query), but a crafted value could confuse the filter parser and
+    // return unexpected results. Replacing with a space is semantically neutral
+    // for a location search.
+    const safeLocation = filters.location.replace(/[,.]/g, " ").trim();
     query = query.or(
-      `city.ilike.%${filters.location}%,province.ilike.%${filters.location}%`
+      `city.ilike.%${safeLocation}%,province.ilike.%${safeLocation}%`
     );
   }
   if (filters.remote === "true") {
