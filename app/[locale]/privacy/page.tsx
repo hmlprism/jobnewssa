@@ -4,15 +4,6 @@ import { Link } from "@/lib/navigation";
 
 export const metadata = { title: "Privacy Policy — Job News SA" };
 
-// Inline notation helpers — no border-radius per design rules
-function Gap({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="bg-[var(--color-amber-dim)] px-1.5 py-0.5 text-sm font-medium text-[var(--color-amber)]">
-      ⚑ PLACEHOLDER: {children}
-    </span>
-  );
-}
-
 function LegalReview({ children }: { children: React.ReactNode }) {
   return (
     <span className="bg-[var(--color-clay-dim)] px-1.5 py-0.5 text-xs font-medium text-[var(--color-clay)]">
@@ -33,8 +24,8 @@ export default function PrivacyPage() {
         <section className="mt-10 border-t border-[var(--color-line)] pt-8">
           <h2 className="font-display text-xl font-semibold">1. Who we are</h2>
           <p className="mt-4 leading-relaxed">
-            Job News SA ("we", "us", "the Site") operates a free job listing website for South
-            Africa at{" "}
+            Job News SA ("we", "us", "the Site") is operated by HML Prism, a sole proprietorship.
+            The Site is a free job listing website for South Africa at{" "}
             <a
               href="https://jobnewssa.com"
               className="underline hover:text-[var(--color-rust)]"
@@ -300,7 +291,13 @@ export default function PrivacyPage() {
           </ul>
           <p className="mt-4 leading-relaxed">
             To exercise these rights, contact us at{" "}
-            <Gap>contact email address</Gap>.
+            <a
+              href="mailto:privacy@jobnewssa.com"
+              className="underline hover:text-[var(--color-rust)]"
+            >
+              privacy@jobnewssa.com
+            </a>
+            .
           </p>
           <p className="mt-3">
             <LegalReview>
@@ -334,7 +331,13 @@ export default function PrivacyPage() {
             associated data. This is a known gap — POPIA gives you rights around deletion and
             objection to processing that this Site does not yet fully support in a self-service
             way. Until this is built, contact us at{" "}
-            <Gap>contact email address</Gap> to request deletion.
+            <a
+              href="mailto:privacy@jobnewssa.com"
+              className="underline hover:text-[var(--color-rust)]"
+            >
+              privacy@jobnewssa.com
+            </a>{" "}
+            to request deletion.
           </p>
         </section>
 
@@ -367,11 +370,25 @@ export default function PrivacyPage() {
         <section className="mt-10 border-t border-[var(--color-line)] pt-8">
           <h2 className="font-display text-xl font-semibold">12. Contact us</h2>
           <p className="mt-4 leading-relaxed">
-            If you have questions about this policy or how we handle your information, contact us
-            at:
+            If you have questions about this policy or how we handle your information, or to reach
+            the POPIA Information Officer, contact:
+          </p>
+          <p className="mt-3 leading-relaxed">
+            HML Prism (operating as Job News SA)
+            <br />
+            <a
+              href="mailto:privacy@jobnewssa.com"
+              className="underline hover:text-[var(--color-rust)]"
+            >
+              privacy@jobnewssa.com
+            </a>
           </p>
           <p className="mt-3">
-            <Gap>contact email address</Gap>
+            <LegalReview>
+              lawyer to advise on whether a physical address is also required in this section for
+              full POPIA Information Officer compliance (POPIA s.55). HML Prism is a sole
+              proprietorship with no registered company address.
+            </LegalReview>
           </p>
         </section>
       </main>

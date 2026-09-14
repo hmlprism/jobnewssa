@@ -4,14 +4,6 @@ import { Link } from "@/lib/navigation";
 
 export const metadata = { title: "Terms & Conditions — Job News SA" };
 
-function Gap({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="bg-[var(--color-amber-dim)] px-1.5 py-0.5 text-sm font-medium text-[var(--color-amber)]">
-      ⚑ PLACEHOLDER: {children}
-    </span>
-  );
-}
-
 function LegalReview({ children }: { children: React.ReactNode }) {
   return (
     <span className="bg-[var(--color-clay-dim)] px-1.5 py-0.5 text-xs font-medium text-[var(--color-clay)]">
@@ -56,7 +48,8 @@ export default function TermsPage() {
             builder and a Z83 government form filler).
           </p>
           <p className="mt-4 leading-relaxed">
-            We are not affiliated with Careers24, Indeed, or any other job board.
+            The Site is operated by HML Prism, a sole proprietorship. We are not affiliated with
+            Careers24, Indeed, or any other job board.
           </p>
         </section>
 
@@ -295,7 +288,12 @@ export default function TermsPage() {
           <h2 className="font-display text-xl font-semibold">12. Contact us</h2>
           <p className="mt-4 leading-relaxed">Questions about these terms? Contact us at:</p>
           <p className="mt-3">
-            <Gap>contact email address</Gap>
+            <a
+              href="mailto:privacy@jobnewssa.com"
+              className="underline hover:text-[var(--color-rust)]"
+            >
+              privacy@jobnewssa.com
+            </a>
           </p>
         </section>
       </main>
