@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/lib/navigation";
 import { SA_PROVINCES } from "@/types/database";
 import { slugify } from "@/lib/slug";
 
@@ -98,10 +98,22 @@ export function SiteFooter() {
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
               About
             </h3>
-            <p className="text-sm text-[var(--color-muted)]">
+            <p className="mb-3 text-sm text-[var(--color-muted)]">
               Job News SA is not affiliated with Careers24, Indeed, or any
               other job board. Built in South Africa.
             </p>
+            <ul className="space-y-2 text-sm text-[var(--color-ink)]">
+              <li>
+                <Link href="/privacy" prefetch={false} className="hover:text-[var(--color-rust)]">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" prefetch={false} className="hover:text-[var(--color-rust)]">
+                  Terms &amp; Conditions
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
 
