@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import { DeleteDataPanel } from "@/components/account/delete-data-panel";
+import { DeleteAccountPanel } from "@/components/account/delete-account-panel";
 
 const inputClass =
   "w-full border border-[var(--color-line)] bg-[var(--color-paper)] px-3 py-2.5 text-sm";
@@ -330,6 +332,10 @@ export function AccountSettingsForm({
           {passwordStatus === "saving" ? t("password.updating") : t("password.update")}
         </Button>
       </form>
+
+      {/* Data & account deletion */}
+      <DeleteDataPanel />
+      <DeleteAccountPanel />
     </div>
   );
 }
