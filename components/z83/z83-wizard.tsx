@@ -6,6 +6,9 @@ import { StepA } from "./step-a";
 import { StepB } from "./step-b";
 import { StepC } from "./step-c";
 import { StepD } from "./step-d";
+import { StepE } from "./step-e";
+import { StepF } from "./step-f";
+import { StepPreview } from "./step-preview";
 import type { Z83FillData, Z83DraftData, Z83SectionB, Z83Declarations } from "@/types/z83";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -189,9 +192,39 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
       const b = data.section_b;
       return !!b.communication_pref && b.contact_details.trim().length > 0;
     }
-    // Remaining steps: always valid for now (individual steps add their own rules)
+
+    const validText = (v: string) =>
+      v === "" || (v.trim().length >= 3 && /[a-zA-Z]/.test(v));
+    const validYear = (v: string) => {
+      if (v === "") return true;
+      const y = parseInt(v, 10);
+      return /^\d{4}$/.test(v) && y >= 1950 && y <= 2026;
+    };
+    const validTel = (v: string) =>
+      v === "" || v.replace(/\D/g, "").length >= 9;
+
+    if (step === 5) {
+      return data.section_e.every(
+        (q) =>
+          validText(q.institution) &&
+          validText(q.qualification) &&
+          validYear(q.year)
+      );
+    }
+    if (step === 6) {
+      return (
+        data.section_f.every(
+          (w) =>
+            validText(w.employer) &&
+            validText(w.post) &&
+            validYear(w.from_year) &&
+            validYear(w.to_year)
+        ) &&
+        data.section_g.every((r) => validText(r.name) && validTel(r.tel))
+      );
+    }
     return true;
-  }, [step, data.section_a, data.section_b, data.dob, data.id_number, data.section_b_declarations, data.section_f_ps_reappointment]);
+  }, [step, data.section_a, data.section_b, data.dob, data.id_number, data.section_b_declarations, data.section_f_ps_reappointment, data.section_e, data.section_f, data.section_g]);
 
   // ── PDF download ──────────────────────────────────────────────────────────
   const handleDownload = useCallback(async () => {
@@ -343,31 +376,50 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
           />
         )}
 
-        {/* Steps 5–6 will be added in subsequent build phases */}
-        {step > 4 && step < TOTAL_STEPS && (
-          <div className="flex items-center justify-center py-20 border border-dashed border-[var(--color-line)]">
-            <p className="text-sm text-[var(--color-muted)]">
-              Step {step} — coming soon
-            </p>
-          </div>
+        {step === 5 && (
+          <StepE
+            sectionE={data.section_e}
+            sectionECurrent={data.section_e_current}
+            attempted={attempted}
+            onSectionEChange={(section_e) => setData((d) => ({ ...d, section_e }))}
+            onSectionECurrentChange={(section_e_current) =>
+              setData((d) => ({ ...d, section_e_current }))
+            }
+          />
+        )}
+
+        {step === 6 && (
+          <StepF
+            sectionF={data.section_f}
+            sectionG={data.section_g}
+            attempted={attempted}
+            onSectionFChange={(section_f) => setData((d) => ({ ...d, section_f }))}
+            onSectionGChange={(section_g) => setData((d) => ({ ...d, section_g }))}
+          />
         )}
 
         {step === TOTAL_STEPS && (
-          <div className="space-y-6">
-            <p className="text-sm text-[var(--color-muted)]">
-              Preview and download your Z83 form.
-            </p>
-            <Button
-              type="button"
-              onClick={handleDownload}
-              disabled={downloading}
-            >
-              {downloading ? "Generating…" : "Download Z83 PDF"}
-            </Button>
-            {downloadError && (
-              <p className="text-sm text-[var(--color-rust)]">{downloadError}</p>
-            )}
-          </div>
+          <StepPreview
+            page1Initials={data.page1_initials}
+            page2Initials={data.page2_initials}
+            signature={data.signature}
+            declarationDate={data.declaration_date}
+            downloading={downloading}
+            downloadError={downloadError}
+            onPage1InitialsChange={(page1_initials) =>
+              setData((d) => ({ ...d, page1_initials }))
+            }
+            onPage2InitialsChange={(page2_initials) =>
+              setData((d) => ({ ...d, page2_initials }))
+            }
+            onSignatureChange={(signature) =>
+              setData((d) => ({ ...d, signature }))
+            }
+            onDeclarationDateChange={(declaration_date) =>
+              setData((d) => ({ ...d, declaration_date }))
+            }
+            onDownload={handleDownload}
+          />
         )}
       </div>
 

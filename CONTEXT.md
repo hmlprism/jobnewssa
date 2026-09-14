@@ -420,12 +420,12 @@ legal declarations on a government form.
 | 2 | Personal details — identity, demographics, citizenship (Section B) | Committed |
 | 3 | Declarations — 9 Yes/No questions, never saved (Section B) | Committed |
 | 4 | Contact, profile details, language proficiency (Sections B + D) | Committed |
-| 5 | Qualifications (Section E) | Committed |
-| 6 | Work experience + references (Sections F + G) | Committed |
-| 7 | Signature canvas + declaration date + PDF download | **NOT YET COMMITTED** — next task |
+| 5 | Qualifications (Section E) | **NOT YET COMMITTED** |
+| 6 | Work experience + references (Sections F + G) | **NOT YET COMMITTED** |
+| 7 | Signature canvas + declaration date + PDF download | **NOT YET COMMITTED** |
 
-`components/z83/step-preview.tsx` exists and is wired into the wizard but the
-commit for Steps 5–7 has not been made. Resume here next session.
+Steps 5–7 are built and wired (`step-e.tsx`, `step-f.tsx`, `step-preview.tsx`,
+`z83-wizard.tsx` updated). Awaiting commit after pre-commit review of Step 7.
 
 ---
 
