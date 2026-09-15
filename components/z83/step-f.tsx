@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Z83WorkEntry, Z83Reference } from "@/types/z83";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -25,21 +26,6 @@ const EMPTY_WORK: Z83WorkEntry = {
 };
 
 const EMPTY_REF: Z83Reference = { name: "", relationship: "", tel: "" };
-
-const MONTHS = [
-  { value: "1", label: "January" },
-  { value: "2", label: "February" },
-  { value: "3", label: "March" },
-  { value: "4", label: "April" },
-  { value: "5", label: "May" },
-  { value: "6", label: "June" },
-  { value: "7", label: "July" },
-  { value: "8", label: "August" },
-  { value: "9", label: "September" },
-  { value: "10", label: "October" },
-  { value: "11", label: "November" },
-  { value: "12", label: "December" },
-];
 
 // ─── Validation helpers ───────────────────────────────────────────────────────
 
@@ -79,6 +65,24 @@ export function StepF({
   onSectionFChange,
   onSectionGChange,
 }: Props) {
+  const t = useTranslations("Z83.stepF");
+
+  // Month labels — values stay "1"–"12" (numeric string stored in state / sent to PDF)
+  const MONTHS = [
+    { value: "1", label: t("monthJan") },
+    { value: "2", label: t("monthFeb") },
+    { value: "3", label: t("monthMar") },
+    { value: "4", label: t("monthApr") },
+    { value: "5", label: t("monthMay") },
+    { value: "6", label: t("monthJun") },
+    { value: "7", label: t("monthJul") },
+    { value: "8", label: t("monthAug") },
+    { value: "9", label: t("monthSep") },
+    { value: "10", label: t("monthOct") },
+    { value: "11", label: t("monthNov") },
+    { value: "12", label: t("monthDec") },
+  ];
+
   // Work entry helpers
   const addWork = () => {
     if (sectionF.length < 3) onSectionFChange([...sectionF, { ...EMPTY_WORK }]);
@@ -100,29 +104,17 @@ export function StepF({
   // Per-row errors — only computed after first failed Next attempt
   const workErrs = attempted
     ? sectionF.map((w) => ({
-        employer: !validText(w.employer)
-          ? "At least 3 characters and must include a letter"
-          : undefined,
-        post: !validText(w.post)
-          ? "At least 3 characters and must include a letter"
-          : undefined,
-        from_year: !validYear(w.from_year)
-          ? "Enter a 4-digit year between 1950 and 2026"
-          : undefined,
-        to_year: !validYear(w.to_year)
-          ? "Enter a 4-digit year between 1950 and 2026"
-          : undefined,
+        employer: !validText(w.employer) ? t("errText") : undefined,
+        post: !validText(w.post) ? t("errText") : undefined,
+        from_year: !validYear(w.from_year) ? t("errYear") : undefined,
+        to_year: !validYear(w.to_year) ? t("errYear") : undefined,
       }))
     : sectionF.map(() => ({} as Record<string, undefined>));
 
   const refErrs = attempted
     ? sectionG.map((r) => ({
-        name: !validText(r.name)
-          ? "At least 3 characters and must include a letter"
-          : undefined,
-        tel: !validTel(r.tel)
-          ? "Enter a valid phone number (at least 9 digits)"
-          : undefined,
+        name: !validText(r.name) ? t("errText") : undefined,
+        tel: !validTel(r.tel) ? t("errTel") : undefined,
       }))
     : sectionG.map(() => ({} as Record<string, undefined>));
 
@@ -131,11 +123,10 @@ export function StepF({
       {/* ── Work experience ───────────────────────────────────────────── */}
       <section>
         <h2 className="mb-1 text-base font-semibold text-[var(--color-ink)]">
-          Work experience
+          {t("workHeading")}
         </h2>
         <p className="mb-5 text-sm text-[var(--color-muted)]">
-          Up to 3 entries. List most recent first. Leave the To fields blank for
-          your current position.
+          {t("workHint")}
         </p>
 
         <div className="space-y-4">
@@ -146,21 +137,21 @@ export function StepF({
               <div key={i} className="border border-[var(--color-line)] p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                    Position {i + 1}
+                    {t("positionN", { n: i + 1 })}
                   </span>
                   <button
                     type="button"
                     onClick={() => removeWork(i)}
                     className="text-xs text-[var(--color-muted)] hover:text-[var(--color-rust)] transition-colors"
                   >
-                    Remove
+                    {t("posRemove")}
                   </button>
                 </div>
 
                 <div className="space-y-3">
                   <div>
                     <label className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                      Employer
+                      {t("employer")}
                     </label>
                     <input
                       type="text"
@@ -174,7 +165,7 @@ export function StepF({
 
                   <div>
                     <label className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                      Post held
+                      {t("postHeld")}
                     </label>
                     <input
                       type="text"
@@ -190,7 +181,7 @@ export function StepF({
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
                       <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                        From
+                        {t("from")}
                       </p>
                       <div className="flex gap-2">
                         <select
@@ -200,7 +191,7 @@ export function StepF({
                             updateWork(i, { from_month: ev.target.value })
                           }
                         >
-                          <option value="">Month</option>
+                          <option value="">{t("month")}</option>
                           {MONTHS.map((m) => (
                             <option key={m.value} value={m.value}>
                               {m.label}
@@ -227,9 +218,9 @@ export function StepF({
 
                     <div>
                       <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                        To{" "}
+                        {t("to")}{" "}
                         <span className="normal-case font-normal text-[var(--color-muted)]">
-                          — blank if current
+                          {t("toBlank")}
                         </span>
                       </p>
                       <div className="flex gap-2">
@@ -240,7 +231,7 @@ export function StepF({
                             updateWork(i, { to_month: ev.target.value })
                           }
                         >
-                          <option value="">Month</option>
+                          <option value="">{t("month")}</option>
                           {MONTHS.map((m) => (
                             <option key={m.value} value={m.value}>
                               {m.label}
@@ -268,12 +259,12 @@ export function StepF({
 
                   <div>
                     <label className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                      Reason for leaving
+                      {t("reasonForLeaving")}
                     </label>
                     <input
                       type="text"
                       className={inputOk}
-                      placeholder={isCurrent ? "Currently employed" : "Career advancement"}
+                      placeholder={isCurrent ? t("reasonCurrent") : t("reasonLeft")}
                       value={work.reason}
                       onChange={(ev) => updateWork(i, { reason: ev.target.value })}
                     />
@@ -289,7 +280,7 @@ export function StepF({
               onClick={addWork}
               className="w-full border border-dashed border-[var(--color-line)] py-2.5 text-sm text-[var(--color-muted)] hover:border-[var(--color-line-hover)] hover:text-[var(--color-ink)] transition-colors"
             >
-              + Add position
+              {t("addPosition")}
             </button>
           )}
         </div>
@@ -298,10 +289,10 @@ export function StepF({
       {/* ── References ────────────────────────────────────────────────── */}
       <section>
         <h2 className="mb-1 text-base font-semibold text-[var(--color-ink)]">
-          References
+          {t("refsHeading")}
         </h2>
         <p className="mb-5 text-sm text-[var(--color-muted)]">
-          Up to 3 professional references. Use office hours telephone numbers.
+          {t("refsHint")}
         </p>
 
         <div className="space-y-4">
@@ -311,21 +302,21 @@ export function StepF({
               <div key={i} className="border border-[var(--color-line)] p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                    Reference {i + 1}
+                    {t("referenceN", { n: i + 1 })}
                   </span>
                   <button
                     type="button"
                     onClick={() => removeRef(i)}
                     className="text-xs text-[var(--color-muted)] hover:text-[var(--color-rust)] transition-colors"
                   >
-                    Remove
+                    {t("refRemove")}
                   </button>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="sm:col-span-2">
                     <label className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                      Name
+                      {t("refName")}
                     </label>
                     <input
                       type="text"
@@ -339,7 +330,7 @@ export function StepF({
 
                   <div>
                     <label className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                      Relationship to you
+                      {t("refRelationship")}
                     </label>
                     <input
                       type="text"
@@ -352,7 +343,7 @@ export function StepF({
 
                   <div>
                     <label className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                      Telephone (office hours)
+                      {t("refTel")}
                     </label>
                     <input
                       type="tel"
@@ -375,7 +366,7 @@ export function StepF({
               onClick={addRef}
               className="w-full border border-dashed border-[var(--color-line)] py-2.5 text-sm text-[var(--color-muted)] hover:border-[var(--color-line-hover)] hover:text-[var(--color-ink)] transition-colors"
             >
-              + Add reference
+              {t("addReference")}
             </button>
           )}
         </div>
