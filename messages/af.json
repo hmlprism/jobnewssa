@@ -97,6 +97,21 @@
       "browseJobs": "Blaai werk",
       "notSignedInBody": "Jou rekening is aktief. Teken in om werk regoor Suid-Afrika te blaai.",
       "signIn": "Teken in tot jou rekening"
+    },
+    "deactivated": {
+      "loginTitle": "Rekening is verwyder",
+      "loginBody": "Hierdie rekening is voorheen verwyder. As dit \u2019n fout was, versoek heraktivering en ons stuur vir jou \u2019n skakel.",
+      "requestButton": "Versoek heraktivering",
+      "requesting": "Besig om te stuur\u2026",
+      "sentTitle": "Gaan kyk jou e-pos",
+      "sentBody": "As \u2019n verwyderde rekening vir {email} bestaan, het ons \u2019n heraktiveringskakel gestuur. Gaan kyk jou inkassie (en strooipos-vouer).",
+      "linkExpired": "Hierdie heraktiveringskakel het verval of is reeds gebruik. Jy kan \u2019n nuwe een versoek deur in te teken.",
+      "signupPrompt": "Het jy jou rekening per abuis verwyder?"
+    },
+    "reactivated": {
+      "title": "Rekening heraktiveer",
+      "body": "Jou rekening is weer aktief. Jy kan nou inteken.",
+      "signIn": "Teken in"
     }
   },
   "Home": {

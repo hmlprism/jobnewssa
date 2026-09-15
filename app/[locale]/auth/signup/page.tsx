@@ -65,6 +65,9 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [accountExists, setAccountExists] = useState(false);
+  const [reactivationState, setReactivationState] = useState<
+    "idle" | "requesting" | "sent"
+  >("idle");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -118,7 +121,36 @@ export default function SignupPage() {
     );
   }
 
+  async function handleRequestReactivation() {
+    setReactivationState("requesting");
+    try {
+      await fetch("/api/account/reactivate/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+    } catch {
+      // Silently ignore — always show "sent" so as not to reveal server state.
+    }
+    setReactivationState("sent");
+  }
+
   if (accountExists) {
+    if (reactivationState === "sent") {
+      return (
+        <main className="w-full max-w-md px-4 py-16 sm:px-6">
+          <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 text-center sm:p-10">
+            <h1 className="font-display text-2xl font-semibold">
+              {t("deactivated.sentTitle")}
+            </h1>
+            <p className="mt-2 text-sm text-[var(--color-muted)]">
+              {t("deactivated.sentBody", { email })}
+            </p>
+          </div>
+        </main>
+      );
+    }
+
     return (
       <main className="w-full max-w-md px-4 py-16 sm:px-6">
         <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 text-center sm:p-10">
@@ -148,6 +180,23 @@ export default function SignupPage() {
             >
               {t("signup.forgotPassword")}
             </Link>
+          </div>
+
+          {/* Reactivation path — silently does nothing if account is not deactivated */}
+          <div className="mt-6 border-t border-[var(--color-line)] pt-5">
+            <p className="text-xs text-[var(--color-muted)]">
+              {t("deactivated.signupPrompt")}
+            </p>
+            <button
+              type="button"
+              onClick={handleRequestReactivation}
+              disabled={reactivationState === "requesting"}
+              className="mt-3 cursor-pointer text-sm font-medium text-[var(--color-ink)] underline underline-offset-2 hover:text-[var(--color-rust)] disabled:cursor-default disabled:opacity-50"
+            >
+              {reactivationState === "requesting"
+                ? t("deactivated.requesting")
+                : t("deactivated.requestButton")}
+            </button>
           </div>
         </div>
       </main>

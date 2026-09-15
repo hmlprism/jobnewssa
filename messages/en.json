@@ -97,6 +97,21 @@
       "browseJobs": "Browse jobs",
       "notSignedInBody": "Your account is active. Sign in to start browsing jobs across South Africa.",
       "signIn": "Sign in to your account"
+    },
+    "deactivated": {
+      "loginTitle": "Account was deleted",
+      "loginBody": "This account was previously deleted. If that was a mistake, request reactivation and we\u2019ll email you a link.",
+      "requestButton": "Request reactivation",
+      "requesting": "Sending\u2026",
+      "sentTitle": "Check your email",
+      "sentBody": "If a deleted account exists for {email}, we\u2019ve sent a reactivation link. Check your inbox (and spam folder).",
+      "linkExpired": "This reactivation link has expired or already been used. You can request a new one by signing in.",
+      "signupPrompt": "Previously deleted your account by mistake?"
+    },
+    "reactivated": {
+      "title": "Account reactivated",
+      "body": "Your account is active again. You can now sign in.",
+      "signIn": "Sign in"
     }
   },
   "Home": {

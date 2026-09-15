@@ -9,10 +9,13 @@ import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { Eye, EyeOff } from "lucide-react";
 
+type ReactivationState = "idle" | "requesting" | "sent";
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? "/jobs";
+  const reactivationParam = searchParams.get("reactivation");
   const t = useTranslations("Auth");
 
   const [email, setEmail] = useState("");
@@ -20,23 +23,95 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [deactivated, setDeactivated] = useState(false);
+  const [reactivationState, setReactivationState] =
+    useState<ReactivationState>("idle");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setDeactivated(false);
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     if (error) {
-      setError(error.message);
+      if (error.message === "User is banned") {
+        setDeactivated(true);
+      } else {
+        setError(error.message);
+      }
       setLoading(false);
       return;
     }
     router.refresh();
     router.push(next.startsWith("/") ? next : "/jobs");
+  }
+
+  async function handleRequestReactivation() {
+    setReactivationState("requesting");
+    try {
+      await fetch("/api/account/reactivate/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+    } catch {
+      // Silently ignore network errors — the UI always moves to "sent" state
+      // so as not to reveal whether the request reached the server.
+    }
+    setReactivationState("sent");
+  }
+
+  // Deactivated-account panel: shown after a "User is banned" login error.
+  if (deactivated) {
+    if (reactivationState === "sent") {
+      return (
+        <main className="w-full max-w-md px-4 py-16 sm:px-6">
+          <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 text-center sm:p-10">
+            <h1 className="font-display text-2xl font-semibold">
+              {t("deactivated.sentTitle")}
+            </h1>
+            <p className="mt-2 text-sm text-[var(--color-muted)]">
+              {t("deactivated.sentBody", { email })}
+            </p>
+          </div>
+        </main>
+      );
+    }
+
+    return (
+      <main className="w-full max-w-md px-4 py-16 sm:px-6">
+        <div className="border border-[var(--color-line)] bg-[var(--color-paper)] p-8 sm:p-10">
+          <h1 className="font-display text-2xl font-semibold">
+            {t("deactivated.loginTitle")}
+          </h1>
+          <p className="mt-2 text-sm text-[var(--color-muted)]">
+            {t("deactivated.loginBody")}
+          </p>
+          <div className="mt-6 flex flex-col gap-3">
+            <Button
+              onClick={handleRequestReactivation}
+              disabled={reactivationState === "requesting"}
+              className="w-full justify-center"
+            >
+              {reactivationState === "requesting"
+                ? t("deactivated.requesting")
+                : t("deactivated.requestButton")}
+            </Button>
+            <button
+              type="button"
+              onClick={() => setDeactivated(false)}
+              className="cursor-pointer text-sm text-[var(--color-muted)] underline underline-offset-2 hover:text-[var(--color-rust)]"
+            >
+              {t("login.submit")}
+            </button>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -53,6 +128,13 @@ function LoginForm() {
         <p className="mt-1.5 text-sm text-[var(--color-muted)]">
           {t("login.subtitle")}
         </p>
+
+        {/* Stale reactivation-link notice (from the confirm redirect) */}
+        {reactivationParam && reactivationParam !== "success" && (
+          <p className="mt-4 text-sm text-[var(--color-clay)]">
+            {t("deactivated.linkExpired")}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <Field

@@ -35,6 +35,13 @@ export async function POST() {
   }
   await Promise.allSettled(removals);
 
+  // Delete tool drafts — cv_drafts (0020, pending prod apply) and z83_drafts (0021,
+  // applied). Best-effort: if a table doesn't exist yet the error is swallowed.
+  await Promise.allSettled([
+    service.from("cv_drafts").delete().eq("user_id", userId),
+    service.from("z83_drafts").delete().eq("user_id", userId),
+  ]);
+
   // Clear all profile-specific fields.
   // Service client bypasses RLS and can write disability_status / ee_designation
   // (those columns have SELECT revoked from authenticated, but not UPDATE).
