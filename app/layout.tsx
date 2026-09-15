@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Fraunces, Inter } from "next/font/google";
 import { getLocale } from "next-intl/server";
 import "./globals.css";
@@ -67,6 +68,7 @@ export default async function RootLayout({
           }}
         />
         <div className="clever-core-ads"></div>
+        <Analytics />
       </body>
     </html>
   );
