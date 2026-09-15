@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Z83SectionB } from "@/types/z83";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -23,23 +24,6 @@ const RACES: Array<Z83SectionB["race"]> = [
   "Indian",
   "Other",
 ];
-
-// Display-only labels — the only strings that get translated in a future pass.
-// The data values (RACES entries, "Male"/"Female") are stored in state and fed
-// to lib/z83-fill.ts → RACE_CHOICE / GENDER_CHOICE. Never translate the
-// onChange argument — always close over the English constant from RACES.
-const RACE_LABELS: Record<string, string> = {
-  African: "African",
-  White: "White",
-  Coloured: "Coloured",
-  Indian: "Indian",
-  Other: "Other",
-};
-
-const GENDER_LABELS: Record<string, string> = {
-  Male: "Male",
-  Female: "Female",
-};
 
 // ─── Shared style helpers ─────────────────────────────────────────────────────
 
@@ -111,16 +95,20 @@ function YesNo({
   value,
   onChange,
   error,
+  yesLabel,
+  noLabel,
 }: {
   name: string;
   value: boolean;
   onChange: (v: boolean) => void;
   error?: boolean;
+  yesLabel: string;
+  noLabel: string;
 }) {
   return (
     <div className="flex gap-2">
       <OptionPill
-        label="Yes"
+        label={yesLabel}
         checked={value === true}
         name={name}
         value="yes"
@@ -128,7 +116,7 @@ function YesNo({
         error={error}
       />
       <OptionPill
-        label="No"
+        label={noLabel}
         checked={value === false}
         name={name}
         value="no"
@@ -141,10 +129,10 @@ function YesNo({
 
 // ─── Display-only badge ───────────────────────────────────────────────────────
 
-function DisplayOnlyNote() {
+function DisplayOnlyNote({ text }: { text: string }) {
   return (
     <span className="ml-2 text-[10px] font-normal uppercase tracking-wide text-[var(--color-muted)]">
-      PDF only — never saved
+      {text}
     </span>
   );
 }
@@ -160,6 +148,21 @@ export function StepB({
   onDobChange,
   onIdNumberChange,
 }: Props) {
+  const t = useTranslations("Z83");
+  // Display-only labels — translated here so data values (RACES / "Male"/"Female")
+  // fed to lib/z83-fill.ts remain the English constants.
+  const RACE_LABELS: Record<string, string> = {
+    African: t("stepB.raceAfrican"),
+    White: t("stepB.raceWhite"),
+    Coloured: t("stepB.raceColoured"),
+    Indian: t("stepB.raceIndian"),
+    Other: t("stepB.raceOther"),
+  };
+  const GENDER_LABELS: Record<string, string> = {
+    Male: t("stepB.genderMale"),
+    Female: t("stepB.genderFemale"),
+  };
+
   const set = <K extends keyof Z83SectionB>(k: K, v: Z83SectionB[K]) =>
     onSectionBChange({ ...sectionB, [k]: v });
 
@@ -167,26 +170,26 @@ export function StepB({
   const errs = attempted
     ? {
         name: !sectionB.name.trim()
-          ? "Required"
+          ? t("shared.required")
           : sectionB.name.trim().length < 2 || !/[a-zA-Z]/.test(sectionB.name)
-          ? "Enter surname and full names (must include letters)"
+          ? t("stepB.nameError")
           : undefined,
         dob: !dob.trim()
-          ? "Required"
+          ? t("shared.required")
           : !/^\d{6}$/.test(dob)
-          ? "Must be exactly 6 digits (DDMMYY)"
+          ? t("stepB.dobError")
           : undefined,
-        race: !sectionB.race ? "Required" : undefined,
-        gender: !sectionB.gender ? "Required" : undefined,
+        race: !sectionB.race ? t("shared.required") : undefined,
+        gender: !sectionB.gender ? t("shared.required") : undefined,
         id_number:
           idNumber && idNumber.length !== 13
-            ? "SA ID number must be exactly 13 digits"
+            ? t("stepB.idError")
             : undefined,
         passport_number:
           sectionB.passport_number.trim() &&
           (sectionB.passport_number.trim().length < 3 ||
             !/[a-zA-Z]/.test(sectionB.passport_number))
-            ? "Enter a valid passport number (e.g. A12345678)"
+            ? t("stepB.passportError")
             : undefined,
       }
     : {};
@@ -196,13 +199,13 @@ export function StepB({
       {/* ── Identity ─────────────────────────────────────────────────────── */}
       <section>
         <h2 className="mb-5 text-base font-semibold text-[var(--color-ink)]">
-          Identity
+          {t("stepB.identityHeading")}
         </h2>
         <div className="space-y-5">
           {/* Name */}
           <div>
             <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-              Surname and full names{" "}
+              {t("stepB.nameLabel")}{" "}
               <span className="text-[var(--color-rust)]" aria-hidden>*</span>
             </label>
             <input
@@ -213,7 +216,7 @@ export function StepB({
               onChange={(e) => set("name", e.target.value)}
             />
             <p className="mt-1 text-xs text-[var(--color-muted)]">
-              Surname first in capitals, then first names — e.g. DLAMINI Thabo Sipho
+              {t("stepB.nameHint")}
             </p>
             <FieldError msg={errs.name} />
           </div>
@@ -222,9 +225,9 @@ export function StepB({
             {/* Date of birth */}
             <div>
               <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                Date of birth{" "}
+                {t("stepB.dobLabel")}{" "}
                 <span className="text-[var(--color-rust)]" aria-hidden>*</span>
-                <DisplayOnlyNote />
+                <DisplayOnlyNote text={t("stepB.pdfOnlyNote")} />
               </label>
               <input
                 type="text"
@@ -236,7 +239,7 @@ export function StepB({
                 onChange={(e) => onDobChange(e.target.value.replace(/\D/g, ""))}
               />
               <p className="mt-1 text-xs text-[var(--color-muted)]">
-                DDMMYY — e.g. 150390 for 15 March 1990
+                {t("stepB.dobHint")}
               </p>
               <FieldError msg={errs.dob} />
             </div>
@@ -244,8 +247,8 @@ export function StepB({
             {/* ID number */}
             <div>
               <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                SA ID number
-                <DisplayOnlyNote />
+                {t("stepB.idLabel")}
+                <DisplayOnlyNote text={t("stepB.pdfOnlyNote")} />
               </label>
               <input
                 type="text"
@@ -259,7 +262,7 @@ export function StepB({
                 }
               />
               <p className="mt-1 text-xs text-[var(--color-muted)]">
-                13 digits. Leave blank if using a passport.
+                {t("stepB.idHint")}
               </p>
               <FieldError msg={errs.id_number} />
             </div>
@@ -267,9 +270,9 @@ export function StepB({
             {/* Passport number */}
             <div>
               <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                Passport number{" "}
+                {t("stepB.passportLabel")}{" "}
                 <span className="font-normal text-[var(--color-muted)]">
-                  (if no SA ID)
+                  {t("stepB.passportSuffix")}
                 </span>
               </label>
               <input
@@ -288,17 +291,17 @@ export function StepB({
       {/* ── Demographics ─────────────────────────────────────────────────── */}
       <section>
         <h2 className="mb-1 text-base font-semibold text-[var(--color-ink)]">
-          Demographics
+          {t("stepB.demographicsHeading")}
         </h2>
         <p className="mb-5 text-sm text-[var(--color-muted)]">
-          Required by the Z83 for equity reporting purposes.
+          {t("stepB.demographicsHint")}
         </p>
 
         <div className="space-y-6">
           {/* Race */}
           <div>
             <p className="mb-2 text-sm font-medium text-[var(--color-ink)]">
-              Race{" "}
+              {t("stepB.raceLabel")}{" "}
               <span className="text-[var(--color-rust)]" aria-hidden>*</span>
             </p>
             <div className="flex flex-wrap gap-2">
@@ -320,7 +323,7 @@ export function StepB({
           {/* Gender */}
           <div>
             <p className="mb-2 text-sm font-medium text-[var(--color-ink)]">
-              Gender{" "}
+              {t("stepB.genderLabel")}{" "}
               <span className="text-[var(--color-rust)]" aria-hidden>*</span>
             </p>
             <div className="flex gap-2">
@@ -342,12 +345,14 @@ export function StepB({
           {/* Disability */}
           <div>
             <p className="mb-2 text-sm font-medium text-[var(--color-ink)]">
-              Do you have a disability?
+              {t("stepB.disabilityQuestion")}
             </p>
             <YesNo
               name="z83-disability"
               value={sectionB.disability}
               onChange={(v) => set("disability", v)}
+              yesLabel={t("stepB.yes")}
+              noLabel={t("stepB.no")}
             />
           </div>
         </div>
@@ -356,18 +361,20 @@ export function StepB({
       {/* ── Citizenship ──────────────────────────────────────────────────── */}
       <section>
         <h2 className="mb-5 text-base font-semibold text-[var(--color-ink)]">
-          Citizenship
+          {t("stepB.citizenshipHeading")}
         </h2>
         <div className="space-y-6">
           {/* SA Citizen */}
           <div>
             <p className="mb-2 text-sm font-medium text-[var(--color-ink)]">
-              Are you a South African citizen?
+              {t("stepB.citizenQuestion")}
             </p>
             <YesNo
               name="z83-sa-citizen"
               value={sectionB.sa_citizen}
               onChange={(v) => set("sa_citizen", v)}
+              yesLabel={t("stepB.yes")}
+              noLabel={t("stepB.no")}
             />
           </div>
 
@@ -375,12 +382,14 @@ export function StepB({
           {!sectionB.sa_citizen && (
             <div>
               <p className="mb-2 text-sm font-medium text-[var(--color-ink)]">
-                Do you have a valid work permit?
+                {t("stepB.workPermitQuestion")}
               </p>
               <YesNo
                 name="z83-work-permit"
                 value={sectionB.work_permit}
                 onChange={(v) => set("work_permit", v)}
+                yesLabel={t("stepB.yes")}
+                noLabel={t("stepB.no")}
               />
             </div>
           )}
