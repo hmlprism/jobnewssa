@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Z83SectionA } from "@/types/z83";
 
 interface Props {
@@ -19,30 +20,31 @@ const inputErr =
   "w-full border border-[var(--color-rust)] bg-[var(--color-paper)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder-[var(--color-muted)] focus:border-[var(--color-rust)] focus:outline-none";
 
 export function StepA({ data, attempted, onChange }: Props) {
+  const t = useTranslations("Z83");
   const set = (k: keyof Z83SectionA, v: string) =>
     onChange({ ...data, [k]: v });
 
   const e = attempted
     ? {
         position: !data.position.trim()
-          ? "Required"
+          ? t("shared.required")
           : data.position.trim().length < 5 || !/[a-zA-Z]/.test(data.position)
-          ? "Enter the full position title (at least 5 characters)"
+          ? t("stepA.positionError")
           : undefined,
         department: !data.department.trim()
-          ? "Required"
+          ? t("shared.required")
           : data.department.trim().length < 5 || !/[a-zA-Z]/.test(data.department)
-          ? "Enter the full department name (at least 5 characters)"
+          ? t("stepA.departmentError")
           : undefined,
         ref_no: !data.ref_no.trim()
-          ? "Required"
+          ? t("shared.required")
           : data.ref_no.trim().length < 3 || /^(.)\1*$/.test(data.ref_no.trim())
-          ? "Enter a valid reference number (e.g. DPSA 01/2026/01)"
+          ? t("stepA.refNoError")
           : undefined,
         availability: !data.availability.trim()
-          ? "Required"
+          ? t("shared.required")
           : data.availability.trim().length < 5 || !/[a-zA-Z]/.test(data.availability)
-          ? "Enter your availability or notice period (at least 5 characters)"
+          ? t("stepA.availError")
           : undefined,
       }
     : {};
@@ -50,13 +52,12 @@ export function StepA({ data, attempted, onChange }: Props) {
   return (
     <div className="space-y-6">
       <p className="text-sm text-[var(--color-muted)]">
-        Copy these details exactly from the job advertisement. They appear verbatim
-        on page 1 of your Z83.
+        {t("stepA.intro")}
       </p>
 
       <div>
         <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-          Position applied for{" "}
+          {t("stepA.positionLabel")}{" "}
           <span className="text-[var(--color-rust)]" aria-hidden>*</span>
         </label>
         <textarea
@@ -71,7 +72,7 @@ export function StepA({ data, attempted, onChange }: Props) {
 
       <div>
         <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-          Department{" "}
+          {t("stepA.departmentLabel")}{" "}
           <span className="text-[var(--color-rust)]" aria-hidden>*</span>
         </label>
         <input
@@ -86,7 +87,7 @@ export function StepA({ data, attempted, onChange }: Props) {
 
       <div>
         <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-          Reference number{" "}
+          {t("stepA.refNoLabel")}{" "}
           <span className="text-[var(--color-rust)]" aria-hidden>*</span>
         </label>
         <input
@@ -101,7 +102,7 @@ export function StepA({ data, attempted, onChange }: Props) {
 
       <div>
         <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-          Availability / notice period{" "}
+          {t("stepA.availLabel")}{" "}
           <span className="text-[var(--color-rust)]" aria-hidden>*</span>
         </label>
         <input
@@ -112,8 +113,7 @@ export function StepA({ data, attempted, onChange }: Props) {
           onChange={(e) => set("availability", e.target.value)}
         />
         <p className="mt-1 text-xs text-[var(--color-muted)]">
-          e.g. &ldquo;Immediately&rdquo; or &ldquo;1 calendar month notice
-          period&rdquo;
+          {t("stepA.availHint")}
         </p>
         <FieldError msg={e.availability} />
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { StepA } from "./step-a";
 import { StepB } from "./step-b";
@@ -14,16 +15,6 @@ import type { Z83FillData, Z83DraftData, Z83SectionB, Z83Declarations } from "@/
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const TOTAL_STEPS = 7;
-
-const STEP_LABELS = [
-  "Job",
-  "Personal",
-  "Declarations",
-  "Contact",
-  "Qualifications",
-  "Experience",
-  "Preview",
-];
 
 // ─── Default state ────────────────────────────────────────────────────────────
 
@@ -113,6 +104,12 @@ interface Props {
 // ─── Wizard ───────────────────────────────────────────────────────────────────
 
 export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
+  const t = useTranslations("Z83.wizard");
+  const STEP_LABELS = [
+    t("step1"), t("step2"), t("step3"), t("step4"),
+    t("step5"), t("step6"), t("step7"),
+  ];
+
   const [step, setStep] = useState(1);
   const [data, setData] = useState<Z83FillData>(() => {
     if (initialDraft) {
@@ -264,7 +261,7 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
       URL.revokeObjectURL(url);
     } catch (err) {
       setDownloadError(
-        err instanceof Error ? err.message : "Download failed. Please try again."
+        err instanceof Error ? err.message : t("downloadError")
       );
     } finally {
       setDownloading(false);
@@ -294,7 +291,7 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
   return (
     <div>
       {/* Step indicator */}
-      <nav aria-label="Z83 form steps" className="mb-8">
+      <nav aria-label={t("ariaSteps")} className="mb-8">
         <ol className="flex gap-0 overflow-x-auto">
           {STEP_LABELS.map((label, idx) => {
             const n = idx + 1;
@@ -443,17 +440,17 @@ export function Z83Wizard({ initialDraft, isLoggedIn }: Props) {
         <div>
           {step > 1 && (
             <Button type="button" variant="ghost" onClick={goBack}>
-              Back
+              {t("back")}
             </Button>
           )}
         </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-[var(--color-muted)]">
-            Step {step} of {TOTAL_STEPS}
+            {t("stepCounter", { step, total: TOTAL_STEPS })}
           </span>
           {step < TOTAL_STEPS && (
             <Button type="button" onClick={goNext}>
-              {step === TOTAL_STEPS - 1 ? "Review" : "Next"}
+              {step === TOTAL_STEPS - 1 ? t("review") : t("next")}
             </Button>
           )}
         </div>

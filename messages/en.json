@@ -620,5 +620,37 @@
       "updating": "Updating\u2026",
       "update": "Update password"
     }
+  },
+  "Z83": {
+    "wizard": {
+      "step1": "Job",
+      "step2": "Personal",
+      "step3": "Declarations",
+      "step4": "Contact",
+      "step5": "Qualifications",
+      "step6": "Experience",
+      "step7": "Preview",
+      "back": "Back",
+      "next": "Next",
+      "review": "Review",
+      "stepCounter": "Step {step} of {total}",
+      "downloadError": "Download failed. Please try again.",
+      "ariaSteps": "Z83 form steps"
+    },
+    "shared": {
+      "required": "Required"
+    },
+    "stepA": {
+      "intro": "Copy these details exactly from the job advertisement. They appear verbatim on page 1 of your Z83.",
+      "positionLabel": "Position applied for",
+      "departmentLabel": "Department",
+      "refNoLabel": "Reference number",
+      "availLabel": "Availability / notice period",
+      "availHint": "e.g. \u201cImmediately\u201d or \u201c1 calendar month notice period\u201d",
+      "positionError": "Enter the full position title (at least 5 characters)",
+      "departmentError": "Enter the full department name (at least 5 characters)",
+      "refNoError": "Enter a valid reference number (e.g. DPSA 01/2026/01)",
+      "availError": "Enter your availability or notice period (at least 5 characters)"
+    }
   }
 }

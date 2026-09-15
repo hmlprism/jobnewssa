@@ -620,5 +620,37 @@
       "updating": "Besig om op te dateer\u2026",
       "update": "Dateer wagwoord op"
     }
+  },
+  "Z83": {
+    "wizard": {
+      "step1": "Pos",
+      "step2": "Persoonlik",
+      "step3": "Verklarings",
+      "step4": "Kontak",
+      "step5": "Kwalifikasies",
+      "step6": "Ondervinding",
+      "step7": "Voorskou",
+      "back": "Terug",
+      "next": "Volgende",
+      "review": "Hersien",
+      "stepCounter": "Stap {step} van {total}",
+      "downloadError": "Aflaai het misluk. Probeer asseblief weer.",
+      "ariaSteps": "Z83-formulier stappe"
+    },
+    "shared": {
+      "required": "Verplig"
+    },
+    "stepA": {
+      "intro": "Kopieer hierdie besonderhede presies uit die posadvertensie. Dit verskyn woordeliks op bladsy 1 van jou Z83.",
+      "positionLabel": "Pos waarvoor aansoek gedoen word",
+      "departmentLabel": "Departement",
+      "refNoLabel": "Verwysingsnommer",
+      "availLabel": "Beskikbaarheid / kennisgewingstydperk",
+      "availHint": "bv. \u201cOnmiddellik\u201d of \u201c1 kalendermaand kennisgewingstydperk\u201d",
+      "positionError": "Voer die volledige postitel in (minstens 5 karakters)",
+      "departmentError": "Voer die volledige departementnaam in (minstens 5 karakters)",
+      "refNoError": "Voer 'n geldige verwysingsnommer in (bv. DPSA 01/2026/01)",
+      "availError": "Voer jou beskikbaarheid of kennisgewingstydperk in (minstens 5 karakters)"
+    }
   }
 }
