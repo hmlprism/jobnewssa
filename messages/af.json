@@ -804,6 +804,25 @@
       "monthOct": "Oktober",
       "monthNov": "November",
       "monthDec": "Desember"
+    },
+    "stepPreview": {
+      "descPrimary": "Die Z83 vereis jou voorletters onderaan elke bladsy en jou volledige handtekening in die verklaringsafdeling van bladsy 2. Teken in die blokkies hieronder — dit word direk op die PDF gedruk.",
+      "descSecondary": "Al drie is opsioneel vir die aflaai; laat leeg as jy die gedrukte kopie met die hand wil teken.",
+      "initialsHeading": "Voorletters",
+      "page1Label": "Bladsy 1 voorletters",
+      "page2Label": "Bladsy 2 voorletters",
+      "initialsHint": "Teken jou voorletters — bv. T.S.D",
+      "sigHeading": "Verklaringshandtekening",
+      "sigLabel": "Handtekening",
+      "sigHint": "Teken jou volledige handtekening",
+      "clearBtn": "Vee uit",
+      "dateHeading": "Verklaringsdatum",
+      "dateLabel": "Datum",
+      "datePlaceholder": "14 September 2026",
+      "dateErr": "Formaat moet dag, maandnaam, jaar wees — bv. 14 September 2026",
+      "dateHint": "Voer die datum in soos dit op die vorm moet verskyn — bv. 14 September 2026",
+      "downloadBtn": "Laai Z83 PDF af",
+      "generating": "Genereer\u2026"
     }
   }
 }

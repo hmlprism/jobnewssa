@@ -804,6 +804,25 @@
       "monthOct": "October",
       "monthNov": "November",
       "monthDec": "December"
+    },
+    "stepPreview": {
+      "descPrimary": "The Z83 requires your initials at the foot of each page and your full signature on the declaration section of page 2. Draw in the boxes below — they are printed directly onto the PDF.",
+      "descSecondary": "All three are optional for the download; leave blank if you intend to sign the printed copy by hand.",
+      "initialsHeading": "Initials",
+      "page1Label": "Page 1 initials",
+      "page2Label": "Page 2 initials",
+      "initialsHint": "Draw your initials — e.g. T.S.D",
+      "sigHeading": "Declaration signature",
+      "sigLabel": "Signature",
+      "sigHint": "Draw your full signature",
+      "clearBtn": "Clear",
+      "dateHeading": "Declaration date",
+      "dateLabel": "Date",
+      "datePlaceholder": "14 September 2026",
+      "dateErr": "Format must be day, month name, year — e.g. 14 September 2026",
+      "dateHint": "Enter the date as it should appear on the form — e.g. 14 September 2026",
+      "downloadBtn": "Download Z83 PDF",
+      "generating": "Generating\u2026"
     }
   }
 }

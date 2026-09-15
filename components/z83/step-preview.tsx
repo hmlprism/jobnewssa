@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
 // ─── Ink pad canvas ───────────────────────────────────────────────────────────
@@ -161,6 +162,8 @@ function InkPad({
     };
   }, [exportCanvas]);
 
+  const t = useTranslations("Z83.stepPreview");
+
   const clear = () => {
     const ctx = canvasRef.current?.getContext("2d");
     if (ctx) ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -177,7 +180,7 @@ function InkPad({
             onClick={clear}
             className="text-xs text-[var(--color-muted)] hover:text-[var(--color-rust)] transition-colors"
           >
-            Clear
+            {t("clearBtn")}
           </button>
         )}
       </div>
@@ -236,38 +239,37 @@ export function StepPreview({
   onDeclarationDateChange,
   onDownload,
 }: Props) {
+  const t = useTranslations("Z83.stepPreview");
+
   return (
     <div className="space-y-8">
       {/* ── Explanation ───────────────────────────────────────────────── */}
       <div className="border-l-2 border-[var(--color-line)] px-4 py-3">
         <p className="text-sm text-[var(--color-ink)]">
-          The Z83 requires your initials at the foot of each page and your full
-          signature on the declaration section of page 2. Draw in the boxes
-          below — they are printed directly onto the PDF.
+          {t("descPrimary")}
         </p>
         <p className="mt-1 text-xs text-[var(--color-muted)]">
-          All three are optional for the download; leave blank if you intend to
-          sign the printed copy by hand.
+          {t("descSecondary")}
         </p>
       </div>
 
       {/* ── Initials ─────────────────────────────────────────────────── */}
       <section>
         <h2 className="mb-4 text-base font-semibold text-[var(--color-ink)]">
-          Initials
+          {t("initialsHeading")}
         </h2>
         <div className="grid gap-6 sm:grid-cols-2">
           <InkPad
-            label="Page 1 initials"
-            hint="Draw your initials — e.g. T.S.D"
+            label={t("page1Label")}
+            hint={t("initialsHint")}
             value={page1Initials}
             onChange={onPage1InitialsChange}
             canvasWidth={400}
             canvasHeight={80}
           />
           <InkPad
-            label="Page 2 initials"
-            hint="Draw your initials — e.g. T.S.D"
+            label={t("page2Label")}
+            hint={t("initialsHint")}
             value={page2Initials}
             onChange={onPage2InitialsChange}
             canvasWidth={400}
@@ -279,11 +281,11 @@ export function StepPreview({
       {/* ── Signature ────────────────────────────────────────────────── */}
       <section>
         <h2 className="mb-4 text-base font-semibold text-[var(--color-ink)]">
-          Declaration signature
+          {t("sigHeading")}
         </h2>
         <InkPad
-          label="Signature"
-          hint="Draw your full signature"
+          label={t("sigLabel")}
+          hint={t("sigHint")}
           value={signature}
           onChange={onSignatureChange}
           canvasWidth={600}
@@ -294,21 +296,21 @@ export function StepPreview({
       {/* ── Declaration date ─────────────────────────────────────────── */}
       <section>
         <h2 className="mb-4 text-base font-semibold text-[var(--color-ink)]">
-          Declaration date
+          {t("dateHeading")}
         </h2>
         {(() => {
           const dateErr = !dateValid(declarationDate)
-            ? "Format must be day, month name, year — e.g. 14 September 2026"
+            ? t("dateErr")
             : undefined;
           return (
             <div>
               <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                Date
+                {t("dateLabel")}
               </label>
               <input
                 type="text"
                 className={dateErr ? inputErr : inputOk}
-                placeholder="14 September 2026"
+                placeholder={t("datePlaceholder")}
                 value={declarationDate}
                 onChange={(e) => onDeclarationDateChange(e.target.value)}
                 style={{ maxWidth: "16rem" }}
@@ -317,7 +319,7 @@ export function StepPreview({
                 <p className="mt-1 text-xs text-[var(--color-rust)]">{dateErr}</p>
               ) : (
                 <p className="mt-1 text-xs text-[var(--color-muted)]">
-                  Enter the date as it should appear on the form — e.g. 14 September 2026
+                  {t("dateHint")}
                 </p>
               )}
             </div>
@@ -332,7 +334,7 @@ export function StepPreview({
           onClick={onDownload}
           disabled={downloading || !dateValid(declarationDate)}
         >
-          {downloading ? "Generating…" : "Download Z83 PDF"}
+          {downloading ? t("generating") : t("downloadBtn")}
         </Button>
         {downloadError && (
           <p className="text-sm text-[var(--color-rust)]">{downloadError}</p>
