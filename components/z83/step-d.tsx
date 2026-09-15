@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Z83SectionB, Z83Language } from "@/types/z83";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -14,32 +15,16 @@ interface Props {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
+// Data values fed to lib/z83-fill.ts → COMM_CHOICE — never translated.
 const COMM_PREFS = ["Post", "Email", "Fax", "Tel"] as const;
 
-// Display-only labels — the only strings that get translated in a future pass.
-// Data values (COMM_PREFS entries) are fed to lib/z83-fill.ts → COMM_CHOICE.
-// Never translate the onChange argument — always close over the English constant.
-const COMM_PREF_LABELS: Record<string, string> = {
-  Post: "Post",
-  Email: "Email",
-  Fax: "Fax",
-  Tel: "Tel",
-};
-
-const CONTACT_LABEL: Record<(typeof COMM_PREFS)[number] | "", string> = {
-  Post: "Postal address",
-  Email: "Email address",
-  Fax: "Fax number",
-  Tel: "Telephone number",
-  "": "Contact details",
-};
-
+// Placeholder examples (names, addresses, numbers) stay English by policy.
 const CONTACT_PLACEHOLDER: Record<(typeof COMM_PREFS)[number] | "", string> = {
   Post: "123 Main Street, Johannesburg, Gauteng, 2001",
   Email: "thabo.dlamini@email.co.za",
   Fax: "011 234 5678",
   Tel: "082 345 6789",
-  "": "Select a contact method above",
+  "": "",
 };
 
 const PROF_KEYS = ["read", "write", "speak", "understand"] as const;
@@ -123,6 +108,34 @@ export function StepD({
   onSectionBChange,
   onSectionDChange,
 }: Props) {
+  const t = useTranslations("Z83.stepD");
+  const tShared = useTranslations("Z83.shared");
+
+  // Display labels driven by translations — data values (COMM_PREFS entries) stay English.
+  const COMM_PREF_LABELS: Record<string, string> = {
+    Post: t("commPrefPost"),
+    Email: t("commPrefEmail"),
+    Fax: t("commPrefFax"),
+    Tel: t("commPrefTel"),
+  };
+
+  const CONTACT_LABEL: Record<(typeof COMM_PREFS)[number] | "", string> = {
+    Post: t("contactLabelPost"),
+    Email: t("contactLabelEmail"),
+    Fax: t("contactLabelFax"),
+    Tel: t("contactLabelTel"),
+    "": t("contactLabelEmpty"),
+  };
+
+  // Proficiency column header labels — data values ("Good"/"Fair"/"Poor") stay English
+  // because z83-fill.ts feeds them to form.getDropdown(name).select(val).
+  const PROF_LABELS: Record<string, string> = {
+    read: t("profRead"),
+    write: t("profWrite"),
+    speak: t("profSpeak"),
+    understand: t("profUnderstand"),
+  };
+
   const setB = <K extends keyof Z83SectionB>(k: K, v: Z83SectionB[K]) =>
     onSectionBChange({ ...sectionB, [k]: v });
 
@@ -136,34 +149,34 @@ export function StepD({
 
   const errs = attempted
     ? {
-        communication_pref: !sectionB.communication_pref ? "Required" : undefined,
+        communication_pref: !sectionB.communication_pref ? tShared("required") : undefined,
         contact_details: !sectionB.contact_details.trim()
-          ? "Required"
+          ? tShared("required")
           : sectionB.communication_pref === "Post" &&
             sectionB.contact_details.trim().length < 10
-          ? "Address too short — include street, suburb, and postal code"
+          ? t("errContactShort")
           : undefined,
         preferred_language:
           sectionB.preferred_language && /\d/.test(sectionB.preferred_language)
-            ? "Language name cannot contain numbers"
+            ? t("errPrefLang")
             : undefined,
         nationality:
           sectionB.nationality &&
           (!/[a-zA-Z]/.test(sectionB.nationality) || /\d/.test(sectionB.nationality))
-            ? "Nationality must contain letters only"
+            ? t("errNationality")
             : undefined,
         years_private_sector:
           sectionB.years_private_sector &&
           parseInt(sectionB.years_private_sector, 10) > 60
-            ? "Maximum 60 years"
+            ? t("errMaxYears")
             : undefined,
         years_public_sector:
           sectionB.years_public_sector &&
           parseInt(sectionB.years_public_sector, 10) > 60
-            ? "Maximum 60 years"
+            ? t("errMaxYears")
             : undefined,
         professional_reg_date: !validProfYear(sectionB.professional_reg_date)
-          ? "Enter a 4-digit year between 1966 and 2026"
+          ? t("errProfRegDate")
           : undefined,
       }
     : {};
@@ -185,13 +198,13 @@ export function StepD({
       {/* ── Contact ──────────────────────────────────────────────────── */}
       <section>
         <h2 className="mb-5 text-base font-semibold text-[var(--color-ink)]">
-          Contact
+          {t("contactHeading")}
         </h2>
         <div className="space-y-6">
           {/* Communication preference */}
           <div>
             <p className="mb-2 text-sm font-medium text-[var(--color-ink)]">
-              Preferred method of communication{" "}
+              {t("commPrefLabel")}{" "}
               <span className="text-[var(--color-rust)]" aria-hidden>
                 *
               </span>
@@ -244,7 +257,7 @@ export function StepD({
                     : undefined
                 }
                 className={errs.contact_details ? inputErr : inputOk}
-                placeholder={CONTACT_PLACEHOLDER[commPref || ""]}
+                placeholder={commPref ? CONTACT_PLACEHOLDER[commPref] : t("contactPlaceholderEmpty")}
                 value={sectionB.contact_details}
                 onChange={(e) => setB("contact_details", e.target.value)}
               />
@@ -255,7 +268,7 @@ export function StepD({
           {/* Preferred language */}
           <div>
             <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-              Preferred language for correspondence
+              {t("prefLangLabel")}
             </label>
             <input
               type="text"
@@ -274,12 +287,12 @@ export function StepD({
       {/* ── Profile details ───────────────────────────────────────────── */}
       <section>
         <h2 className="mb-5 text-base font-semibold text-[var(--color-ink)]">
-          Profile details
+          {t("profileHeading")}
         </h2>
         <div className="space-y-5">
           <div>
             <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-              Nationality
+              {t("nationalityLabel")}
             </label>
             <input
               type="text"
@@ -296,7 +309,7 @@ export function StepD({
           <div className="grid gap-5 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                Years in private sector
+                {t("yearsPrivateLabel")}
               </label>
               <input
                 type="text"
@@ -315,7 +328,7 @@ export function StepD({
 
             <div>
               <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                Years in public sector
+                {t("yearsPublicLabel")}
               </label>
               <input
                 type="text"
@@ -334,7 +347,7 @@ export function StepD({
 
             <div>
               <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                Professional registration date
+                {t("profRegDateLabel")}
               </label>
               <input
                 type="text"
@@ -353,14 +366,14 @@ export function StepD({
                 <FieldError msg={errs.professional_reg_date} />
               ) : (
                 <p className="mt-1 text-xs text-[var(--color-muted)]">
-                  Year registered with your professional body
+                  {t("profRegDateHint")}
                 </p>
               )}
             </div>
 
             <div>
               <label className="mb-1 block text-sm font-medium text-[var(--color-ink)]">
-                Professional registration number
+                {t("profRegNumberLabel")}
               </label>
               <input
                 type="text"
@@ -379,25 +392,24 @@ export function StepD({
       {/* ── Language proficiency (Section D) ─────────────────────────── */}
       <section>
         <h2 className="mb-1 text-base font-semibold text-[var(--color-ink)]">
-          Language proficiency
+          {t("langHeading")}
         </h2>
         <p className="mb-5 text-sm text-[var(--color-muted)]">
-          Up to 5 languages. The Z83 PDF prints proficiency columns (Read / Write
-          / Speak / Understand) for the first two rows only.
+          {t("langHint")}
         </p>
 
         <div className="space-y-4">
           {sectionD.map((lang, i) => {
             const langNameErr =
               attempted && lang.language && /\d/.test(lang.language)
-                ? "Language name cannot contain numbers"
+                ? t("errLangName")
                 : undefined;
             return (
             <div key={i} className="border border-[var(--color-line)] p-4">
               <div className="flex items-start gap-3">
                 <div className="flex-1">
                   <label className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                    Language {i + 1}
+                    {t("langN", { n: i + 1 })}
                   </label>
                   <input
                     type="text"
@@ -417,7 +429,7 @@ export function StepD({
                   onClick={() => removeLang(i)}
                   className="mt-5 shrink-0 text-xs text-[var(--color-muted)] hover:text-[var(--color-rust)] transition-colors"
                 >
-                  Remove
+                  {t("langRemove")}
                 </button>
               </div>
 
@@ -426,7 +438,7 @@ export function StepD({
                   {PROF_KEYS.map((key) => (
                     <div key={key}>
                       <label className="mb-0.5 block text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                        {PROF_LABELS[key]}
                       </label>
                       <select
                         className={selectOk}
@@ -438,9 +450,9 @@ export function StepD({
                         }
                       >
                         <option value="">—</option>
-                        <option value="Good">Good</option>
-                        <option value="Fair">Fair</option>
-                        <option value="Poor">Poor</option>
+                        <option value="Good">{t("profGood")}</option>
+                        <option value="Fair">{t("profFair")}</option>
+                        <option value="Poor">{t("profPoor")}</option>
                       </select>
                     </div>
                   ))}
@@ -456,7 +468,7 @@ export function StepD({
               onClick={addLang}
               className="w-full border border-dashed border-[var(--color-line)] py-2.5 text-sm text-[var(--color-muted)] hover:border-[var(--color-line-hover)] hover:text-[var(--color-ink)] transition-colors"
             >
-              + Add language
+              {t("langAdd")}
             </button>
           )}
         </div>
