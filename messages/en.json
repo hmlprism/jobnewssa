@@ -684,6 +684,33 @@
       "citizenshipHeading": "Citizenship",
       "citizenQuestion": "Are you a South African citizen?",
       "workPermitQuestion": "Do you have a valid work permit?"
+    },
+    "stepC": {
+      "noticePrimary": "These answers are never saved — not even when you are signed in.",
+      "noticeSecondary": "Criminal record, disciplinary history, and business-interest disclosures are treated as sensitive by design. They are cleared when you close this tab and must be re-entered each session.",
+      "pastConductHeading": "Past conduct",
+      "businessHeading": "Business interests",
+      "prevPublicHeading": "Previous public service",
+      "selectError": "Please select Yes or No",
+      "yes": "Yes",
+      "no": "No",
+      "q1": "Have you been convicted of a criminal offence?",
+      "q1Detail": "Provide details — nature of the offence, date, and sentence imposed",
+      "q2": "Do you have any pending criminal charges against you?",
+      "q2Detail": "Provide details of the pending charges",
+      "q3": "Have you been dismissed from employment due to misconduct in the last 5 years?",
+      "q3Detail": "Provide details — employer, date, and nature of misconduct",
+      "q4": "Are there any pending disciplinary proceedings against you?",
+      "q4Detail": "Provide details of the pending proceedings",
+      "q5": "Have you resigned from employment while disciplinary proceedings were pending against you?",
+      "q5Detail": "Provide details — employer, position, date, and nature of proceedings",
+      "q6": "Have you been discharged from the public service on grounds of ill health?",
+      "q7": "Do you conduct business with the state, or are you a director of a company that conducts business with the state?",
+      "q7Detail": "Provide details — nature of the business and name of the state entity",
+      "q8": "If appointed, will you relinquish those business interests?",
+      "q9": "Were you previously employed in the public service?",
+      "q9Hint": "Includes national or provincial government, municipalities, and state entities.",
+      "q9Detail": "Provide details — department, period of employment, reason for leaving"
     }
   }
 }

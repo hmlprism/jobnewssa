@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Z83Declarations } from "@/types/z83";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -86,10 +87,11 @@ function YesNo({
   onChange: (v: boolean) => void;
   error?: boolean;
 }) {
+  const t = useTranslations("Z83.stepC");
   return (
     <div className="flex gap-2">
       <OptionPill
-        label="Yes"
+        label={t("yes")}
         checked={value === true}
         name={name}
         value="yes"
@@ -97,7 +99,7 @@ function YesNo({
         error={error}
       />
       <OptionPill
-        label="No"
+        label={t("no")}
         checked={value === false}
         name={name}
         value="no"
@@ -133,6 +135,7 @@ function DeclQuestion({
   onDetailChange?: (v: string) => void;
   error?: boolean;
 }) {
+  const t = useTranslations("Z83.stepC");
   return (
     <div className="space-y-3">
       <div>
@@ -143,7 +146,7 @@ function DeclQuestion({
       </div>
       <YesNo name={name} value={value} onChange={onChange} error={error} />
       {error && (
-        <FieldError msg="Please select Yes or No" />
+        <FieldError msg={t("selectError")} />
       )}
       {value === true && detailLabel && onDetailChange !== undefined && (
         <div>
@@ -172,6 +175,7 @@ export function StepC({
   onPsPreviousEmployeeChange,
   attempted,
 }: Props) {
+  const t = useTranslations("Z83");
   const set = <K extends keyof Z83Declarations>(k: K, v: Z83Declarations[K]) =>
     onDeclarationsChange({ ...declarations, [k]: v });
 
@@ -207,27 +211,25 @@ export function StepC({
       {/* ── Session-only notice ───────────────────────────────────────── */}
       <div className="border-l-2 border-[var(--color-amber)] bg-[var(--color-amber-dim)] px-4 py-3">
         <p className="text-sm font-medium text-[var(--color-ink)]">
-          These answers are never saved — not even when you are signed in.
+          {t("stepC.noticePrimary")}
         </p>
         <p className="mt-1 text-xs text-[var(--color-muted)]">
-          Criminal record, disciplinary history, and business-interest disclosures
-          are treated as sensitive by design. They are cleared when you close this
-          tab and must be re-entered each session.
+          {t("stepC.noticeSecondary")}
         </p>
       </div>
 
       {/* ── Past conduct ─────────────────────────────────────────────── */}
       <section>
         <h2 className="mb-5 text-base font-semibold text-[var(--color-ink)]">
-          Past conduct
+          {t("stepC.pastConductHeading")}
         </h2>
         <div className="space-y-8">
           <DeclQuestion
-            label="Have you been convicted of a criminal offence?"
+            label={t("stepC.q1")}
             name="z83-criminal-conviction"
             value={declarations.criminal_conviction}
             onChange={(v) => set("criminal_conviction", v)}
-            detailLabel="Provide details — nature of the offence, date, and sentence imposed"
+            detailLabel={t("stepC.q1Detail")}
             detailPlaceholder="e.g. Reckless driving, Cape Town, 2018 — fine of R3 000"
             detailValue={declarations.criminal_conviction_details}
             onDetailChange={(v) => set("criminal_conviction_details", v)}
@@ -235,11 +237,11 @@ export function StepC({
           />
 
           <DeclQuestion
-            label="Do you have any pending criminal charges against you?"
+            label={t("stepC.q2")}
             name="z83-pending-criminal"
             value={declarations.pending_criminal}
             onChange={(v) => set("pending_criminal", v)}
-            detailLabel="Provide details of the pending charges"
+            detailLabel={t("stepC.q2Detail")}
             detailPlaceholder="e.g. Theft charges, Johannesburg Magistrate's Court"
             detailValue={declarations.pending_criminal_details}
             onDetailChange={(v) => set("pending_criminal_details", v)}
@@ -247,11 +249,11 @@ export function StepC({
           />
 
           <DeclQuestion
-            label="Have you been dismissed from employment due to misconduct in the last 5 years?"
+            label={t("stepC.q3")}
             name="z83-dismissed-misconduct"
             value={declarations.dismissed_misconduct}
             onChange={(v) => set("dismissed_misconduct", v)}
-            detailLabel="Provide details — employer, date, and nature of misconduct"
+            detailLabel={t("stepC.q3Detail")}
             detailPlaceholder="e.g. Dept of Health Gauteng, August 2022 — gross negligence"
             detailValue={declarations.dismissed_misconduct_details}
             onDetailChange={(v) => set("dismissed_misconduct_details", v)}
@@ -259,11 +261,11 @@ export function StepC({
           />
 
           <DeclQuestion
-            label="Are there any pending disciplinary proceedings against you?"
+            label={t("stepC.q4")}
             name="z83-pending-disciplinary"
             value={declarations.pending_disciplinary}
             onChange={(v) => set("pending_disciplinary", v)}
-            detailLabel="Provide details of the pending proceedings"
+            detailLabel={t("stepC.q4Detail")}
             detailPlaceholder="e.g. Current employer — hearing scheduled Nov 2026"
             detailValue={declarations.pending_disciplinary_details}
             onDetailChange={(v) => set("pending_disciplinary_details", v)}
@@ -271,11 +273,11 @@ export function StepC({
           />
 
           <DeclQuestion
-            label="Have you resigned from employment while disciplinary proceedings were pending against you?"
+            label={t("stepC.q5")}
             name="z83-resigned-pending"
             value={declarations.resigned_pending}
             onChange={(v) => set("resigned_pending", v)}
-            detailLabel="Provide details — employer, position, date, and nature of proceedings"
+            detailLabel={t("stepC.q5Detail")}
             detailPlaceholder="e.g. ABC Municipality, March 2023 — insubordination allegation"
             detailValue={declarations.resigned_pending_details}
             onDetailChange={(v) => set("resigned_pending_details", v)}
@@ -283,7 +285,7 @@ export function StepC({
           />
 
           <DeclQuestion
-            label="Have you been discharged from the public service on grounds of ill health?"
+            label={t("stepC.q6")}
             name="z83-discharged-ill-health"
             value={declarations.discharged_ill_health}
             onChange={(v) => set("discharged_ill_health", v)}
@@ -295,15 +297,15 @@ export function StepC({
       {/* ── Business interests ───────────────────────────────────────── */}
       <section>
         <h2 className="mb-5 text-base font-semibold text-[var(--color-ink)]">
-          Business interests
+          {t("stepC.businessHeading")}
         </h2>
         <div className="space-y-8">
           <DeclQuestion
-            label="Do you conduct business with the state, or are you a director of a company that conducts business with the state?"
+            label={t("stepC.q7")}
             name="z83-business-with-state"
             value={declarations.business_with_state}
             onChange={(v) => set("business_with_state", v)}
-            detailLabel="Provide details — nature of the business and name of the state entity"
+            detailLabel={t("stepC.q7Detail")}
             detailPlaceholder="e.g. Director of XYZ Trading (Pty) Ltd, contracted to Dept of Public Works"
             detailValue={declarations.business_with_state_details}
             onDetailChange={(v) => set("business_with_state_details", v)}
@@ -312,7 +314,7 @@ export function StepC({
 
           {declarations.business_with_state === true && (
             <DeclQuestion
-              label="If appointed, will you relinquish those business interests?"
+              label={t("stepC.q8")}
               name="z83-will-relinquish"
               value={declarations.will_relinquish}
               onChange={(v) => set("will_relinquish", v)}
@@ -325,16 +327,16 @@ export function StepC({
       {/* ── Previous public service ──────────────────────────────────── */}
       <section>
         <h2 className="mb-5 text-base font-semibold text-[var(--color-ink)]">
-          Previous public service
+          {t("stepC.prevPublicHeading")}
         </h2>
         <div className="space-y-6">
           <DeclQuestion
-            label="Were you previously employed in the public service?"
-            hint="Includes national or provincial government, municipalities, and state entities."
+            label={t("stepC.q9")}
+            hint={t("stepC.q9Hint")}
             name="z83-ps-previous-employee"
             value={psPreviousEmployee}
             onChange={onPsPreviousEmployeeChange}
-            detailLabel="Provide details — department, period of employment, reason for leaving"
+            detailLabel={t("stepC.q9Detail")}
             detailPlaceholder="e.g. Dept of Finance, 2015–2021 — resigned to pursue private sector role"
             detailValue={declarations.ps_reappointment_details}
             onDetailChange={(v) => set("ps_reappointment_details", v)}

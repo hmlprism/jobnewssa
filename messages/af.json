@@ -684,6 +684,33 @@
       "citizenshipHeading": "Burgerskap",
       "citizenQuestion": "Is jy 'n Suid-Afrikaanse burger?",
       "workPermitQuestion": "Het jy 'n geldige werkspermit?"
+    },
+    "stepC": {
+      "noticePrimary": "Hierdie antwoorde word nooit gestoor nie — selfs nie wanneer jy aangemeld is nie.",
+      "noticeSecondary": "Kriminele rekord, dissiplin\u00ebre geskiedenis en openbarings oor sakebelange word doelbewus as sensitiewe inligting hanteer. Dit word uitgevee wanneer jy hierdie oortjie sluit en moet elke sessie opnuut ingevoer word.",
+      "pastConductHeading": "Vorige gedrag",
+      "businessHeading": "Sakebelange",
+      "prevPublicHeading": "Vorige staatsdiens",
+      "selectError": "Kies asseblief Ja of Nee",
+      "yes": "Ja",
+      "no": "Nee",
+      "q1": "Is jy al skuldig bevind aan 'n kriminele oortreding?",
+      "q1Detail": "Verskaf besonderhede — aard van die oortreding, datum en opgelegde vonnis",
+      "q2": "Is daar enige hangende kriminele klagte teen jou?",
+      "q2Detail": "Verskaf besonderhede van die hangende klagte",
+      "q3": "Is jy in die laaste 5 jaar weens wangedrag uit diens ontslaan?",
+      "q3Detail": "Verskaf besonderhede — werkgewer, datum en aard van wangedrag",
+      "q4": "Is daar enige hangende dissiplin\u00ebre verrigtinge teen jou?",
+      "q4Detail": "Verskaf besonderhede van die hangende verrigtinge",
+      "q5": "Het jy bedank terwyl dissiplin\u00ebre verrigtinge teen jou hangende was?",
+      "q5Detail": "Verskaf besonderhede — werkgewer, pos, datum en aard van verrigtinge",
+      "q6": "Is jy weens swak gesondheid uit die staatsdiens ontslaan?",
+      "q7": "Doen jy sake met die staat, of is jy 'n direkteur van 'n maatskappy wat sake met die staat doen?",
+      "q7Detail": "Verskaf besonderhede — aard van die besigheid en naam van die staatsinstansie",
+      "q8": "Indien aangestel, sal jy afstand doen van hierdie sakebelange?",
+      "q9": "Was jy voorheen in diens van die staatsdiens?",
+      "q9Hint": "Sluit nasionale of provinsiale regering, munisipaliteite en staatsinstansies in.",
+      "q9Detail": "Verskaf besonderhede — departement, dienstydperk en rede vir vertrek"
     }
   }
 }
