@@ -24,6 +24,23 @@ const RACES: Array<Z83SectionB["race"]> = [
   "Other",
 ];
 
+// Display-only labels — the only strings that get translated in a future pass.
+// The data values (RACES entries, "Male"/"Female") are stored in state and fed
+// to lib/z83-fill.ts → RACE_CHOICE / GENDER_CHOICE. Never translate the
+// onChange argument — always close over the English constant from RACES.
+const RACE_LABELS: Record<string, string> = {
+  African: "African",
+  White: "White",
+  Coloured: "Coloured",
+  Indian: "Indian",
+  Other: "Other",
+};
+
+const GENDER_LABELS: Record<string, string> = {
+  Male: "Male",
+  Female: "Female",
+};
+
 // ─── Shared style helpers ─────────────────────────────────────────────────────
 
 const inputOk =
@@ -288,7 +305,7 @@ export function StepB({
               {RACES.map((race) => (
                 <OptionPill
                   key={race}
-                  label={race}
+                  label={RACE_LABELS[race] ?? race}
                   checked={sectionB.race === race}
                   name="z83-race"
                   value={race}
@@ -310,7 +327,7 @@ export function StepB({
               {(["Male", "Female"] as const).map((g) => (
                 <OptionPill
                   key={g}
-                  label={g}
+                  label={GENDER_LABELS[g] ?? g}
                   checked={sectionB.gender === g}
                   name="z83-gender"
                   value={g}

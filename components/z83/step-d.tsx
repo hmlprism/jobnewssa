@@ -16,6 +16,16 @@ interface Props {
 
 const COMM_PREFS = ["Post", "Email", "Fax", "Tel"] as const;
 
+// Display-only labels — the only strings that get translated in a future pass.
+// Data values (COMM_PREFS entries) are fed to lib/z83-fill.ts → COMM_CHOICE.
+// Never translate the onChange argument — always close over the English constant.
+const COMM_PREF_LABELS: Record<string, string> = {
+  Post: "Post",
+  Email: "Email",
+  Fax: "Fax",
+  Tel: "Tel",
+};
+
 const CONTACT_LABEL: Record<(typeof COMM_PREFS)[number] | "", string> = {
   Post: "Postal address",
   Email: "Email address",
@@ -60,11 +70,13 @@ function FieldError({ msg }: { msg?: string }) {
 
 function CommPill({
   label,
+  value,
   checked,
   onChange,
   error,
 }: {
   label: string;
+  value: string;
   checked: boolean;
   onChange: () => void;
   error?: boolean;
@@ -92,7 +104,7 @@ function CommPill({
       <input
         type="radio"
         name="z83-comm-pref"
-        value={label}
+        value={value}
         checked={checked}
         onChange={onChange}
         className="sr-only"
@@ -188,7 +200,8 @@ export function StepD({
               {COMM_PREFS.map((pref) => (
                 <CommPill
                   key={pref}
-                  label={pref}
+                  label={COMM_PREF_LABELS[pref] ?? pref}
+                  value={pref}
                   checked={commPref === pref}
                   onChange={() => setB("communication_pref", pref)}
                   error={!!errs.communication_pref}
