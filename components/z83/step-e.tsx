@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Z83Qualification } from "@/types/z83";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -49,6 +50,8 @@ export function StepE({
   onSectionEChange,
   onSectionECurrentChange,
 }: Props) {
+  const t = useTranslations("Z83.stepE");
+
   const addQual = () => {
     if (sectionE.length < 4) onSectionEChange([...sectionE, { ...EMPTY_QUAL }]);
   };
@@ -61,13 +64,13 @@ export function StepE({
   const rowErrs = attempted
     ? sectionE.map((q) => ({
         institution: !validText(q.institution)
-          ? "At least 3 characters and must include a letter"
+          ? t("errText")
           : undefined,
         qualification: !validText(q.qualification)
-          ? "At least 3 characters and must include a letter"
+          ? t("errText")
           : undefined,
         year: !validYear(q.year)
-          ? "Enter a 4-digit year between 1950 and 2026"
+          ? t("errYear")
           : undefined,
       }))
     : sectionE.map(() => ({} as Record<string, undefined>));
@@ -77,10 +80,10 @@ export function StepE({
       {/* ── Qualifications ───────────────────────────────────────────── */}
       <section>
         <h2 className="mb-1 text-base font-semibold text-[var(--color-ink)]">
-          Qualifications
+          {t("qualsHeading")}
         </h2>
         <p className="mb-5 text-sm text-[var(--color-muted)]">
-          Up to 4 rows. List highest qualification first.
+          {t("qualsHint")}
         </p>
 
         <div className="space-y-4">
@@ -90,21 +93,21 @@ export function StepE({
               <div key={i} className="border border-[var(--color-line)] p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                    Qualification {i + 1}
+                    {t("qualN", { n: i + 1 })}
                   </span>
                   <button
                     type="button"
                     onClick={() => removeQual(i)}
                     className="text-xs text-[var(--color-muted)] hover:text-[var(--color-rust)] transition-colors"
                   >
-                    Remove
+                    {t("qualRemove")}
                   </button>
                 </div>
 
                 <div className="space-y-3">
                   <div>
                     <label className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                      Institution
+                      {t("qualInstitution")}
                     </label>
                     <input
                       type="text"
@@ -119,7 +122,7 @@ export function StepE({
                   <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
                     <div>
                       <label className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                        Qualification obtained
+                        {t("qualObtained")}
                       </label>
                       <input
                         type="text"
@@ -135,7 +138,7 @@ export function StepE({
 
                     <div>
                       <label className="mb-1 block text-[10px] font-medium uppercase tracking-wide text-[var(--color-muted)]">
-                        Year
+                        {t("qualYear")}
                       </label>
                       <input
                         type="text"
@@ -163,7 +166,7 @@ export function StepE({
               onClick={addQual}
               className="w-full border border-dashed border-[var(--color-line)] py-2.5 text-sm text-[var(--color-muted)] hover:border-[var(--color-line-hover)] hover:text-[var(--color-ink)] transition-colors"
             >
-              + Add qualification
+              {t("qualAdd")}
             </button>
           )}
         </div>
@@ -172,10 +175,10 @@ export function StepE({
       {/* ── Current studies ───────────────────────────────────────────── */}
       <section>
         <h2 className="mb-1 text-base font-semibold text-[var(--color-ink)]">
-          Current studies
+          {t("currentHeading")}
         </h2>
         <p className="mb-3 text-sm text-[var(--color-muted)]">
-          Leave blank if not currently studying.
+          {t("currentHint")}
         </p>
         <input
           type="text"

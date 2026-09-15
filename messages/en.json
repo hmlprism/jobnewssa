@@ -751,6 +751,20 @@
       "errMaxYears": "Maximum 60 years",
       "errProfRegDate": "Enter a 4-digit year between 1966 and 2026",
       "errLangName": "Language name cannot contain numbers"
+    },
+    "stepE": {
+      "qualsHeading": "Qualifications",
+      "qualsHint": "Up to 4 rows. List highest qualification first.",
+      "qualN": "Qualification {n}",
+      "qualRemove": "Remove",
+      "qualInstitution": "Institution",
+      "qualObtained": "Qualification obtained",
+      "qualYear": "Year",
+      "qualAdd": "+ Add qualification",
+      "currentHeading": "Current studies",
+      "currentHint": "Leave blank if not currently studying.",
+      "errText": "At least 3 characters and must include a letter",
+      "errYear": "Enter a 4-digit year between 1950 and 2026"
     }
   }
 }

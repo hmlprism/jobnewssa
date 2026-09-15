@@ -751,6 +751,20 @@
       "errMaxYears": "Maksimum 60 jaar",
       "errProfRegDate": "Voer 'n 4-syfer jaar tussen 1966 en 2026 in",
       "errLangName": "Taalnaam kan nie syfers bevat nie"
+    },
+    "stepE": {
+      "qualsHeading": "Kwalifikasies",
+      "qualsHint": "Tot 4 rye. Lys hoogste kwalifikasie eerste.",
+      "qualN": "Kwalifikasie {n}",
+      "qualRemove": "Verwyder",
+      "qualInstitution": "Instelling",
+      "qualObtained": "Kwalifikasie behaal",
+      "qualYear": "Jaar",
+      "qualAdd": "+ Voeg kwalifikasie by",
+      "currentHeading": "Huidige studies",
+      "currentHint": "Laat leeg as jy nie tans studeer nie.",
+      "errText": "Minstens 3 karakters en moet 'n letter bevat",
+      "errYear": "Voer 'n 4-syfer jaar tussen 1950 en 2026 in"
     }
   }
 }
