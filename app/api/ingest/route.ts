@@ -19,7 +19,7 @@ function isAuthorized(request: Request): boolean {
   return auth === `Bearer ${process.env.CRON_SECRET}`;
 }
 
-export async function POST(request: Request) {
+async function handleIngest(request: Request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -35,9 +35,12 @@ export async function POST(request: Request) {
   });
 }
 
+export async function POST(request: Request) {
+  return handleIngest(request);
+}
+
+// Vercel Cron invokes scheduled paths via GET with the Authorization header
+// set automatically — must run the same authenticated logic as POST.
 export async function GET(request: Request) {
-  if (process.env.NODE_ENV === "production") {
-    return NextResponse.json({ error: "Use POST with cron secret" }, { status: 405 });
-  }
-  return POST(request);
+  return handleIngest(request);
 }

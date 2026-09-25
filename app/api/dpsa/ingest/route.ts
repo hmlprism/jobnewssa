@@ -4,6 +4,9 @@
  * Weekly cron: 0 6 * * 5  (Friday 06:00 UTC = 08:00 SAST — circulars
  * are published on Thursdays; Friday morning pick-up ensures availability).
  *
+ * Vercel Cron invokes this path via GET with the CRON_SECRET auth header set
+ * automatically — an authenticated GET runs the real ingestion, same as POST.
+ *
  * Manual preview (before trusting at scale):
  *   POST /api/dpsa/ingest?preview=true   → returns parsed posts as JSON, no DB writes
  *   GET  /api/dpsa/ingest?preview=true   → same, dev-only (no auth required)
@@ -212,14 +215,11 @@ export async function POST(request: Request) {
   return runDpsaIngestion({ circularOverride, yearOverride, preview });
 }
 
-// Dev-only GET for quick manual testing in the browser.
+// Vercel Cron invokes scheduled paths via GET with the Authorization header
+// set automatically — authenticated GET runs the real job, same as POST.
+// Unauthenticated GET stays a dev-only preview convenience (never in production).
 export async function GET(request: Request) {
-  if (process.env.NODE_ENV === "production") {
-    return NextResponse.json({ error: "Use POST with cron secret" }, { status: 405 });
-  }
-
   const url = new URL(request.url);
-  const preview = url.searchParams.get("preview") !== "false"; // default true in dev
   const circularOverride = url.searchParams.get("circular")
     ? parseInt(url.searchParams.get("circular")!, 10)
     : undefined;
@@ -227,5 +227,15 @@ export async function GET(request: Request) {
     ? parseInt(url.searchParams.get("year")!, 10)
     : undefined;
 
+  if (isAuthorized(request)) {
+    const preview = url.searchParams.get("preview") === "true";
+    return runDpsaIngestion({ circularOverride, yearOverride, preview });
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const preview = url.searchParams.get("preview") !== "false"; // default true in dev
   return runDpsaIngestion({ circularOverride, yearOverride, preview });
 }

@@ -71,3 +71,9 @@ export async function POST(request: Request) {
     errors,
   });
 }
+
+// Vercel Cron invokes scheduled paths via GET with the Authorization header
+// set automatically — must run the same authenticated logic as POST.
+export async function GET(request: Request) {
+  return POST(request);
+}
