@@ -10,6 +10,17 @@ const nextConfig: NextConfig = {
   // @react-pdf/renderer uses Node.js canvas APIs not compatible with webpack bundling
   serverExternalPackages: ["pdfjs-dist", "@react-pdf/renderer"],
 
+  // pdfjs-dist's Node.js "fake worker" fallback loads its worker code via a
+  // dynamic `import()` of GlobalWorkerOptions.workerSrc (see PDFWorker in
+  // pdfjs-dist's source) — there is no way to run without this file. Because
+  // that import path is only known at runtime (lib/dpsa-pdf.ts builds it from
+  // process.cwd()), Next's build-time file tracer (@vercel/nft) never sees it
+  // and pdf.worker.mjs is missing from the deployed function, causing
+  // "Cannot find module .../pdf.worker.mjs" in production only. Force it in.
+  outputFileTracingIncludes: {
+    "/api/dpsa/ingest": ["./node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs"],
+  },
+
   // Restrict all /api/* routes to requests originating from our own domain.
   // CORS is a browser enforcement mechanism — this has no effect on server-to-
   // server calls (Vercel cron, Supabase webhooks, etc.), which are already
